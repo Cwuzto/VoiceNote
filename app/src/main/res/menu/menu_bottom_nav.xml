@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/nav_overview"
+        android:icon="@drawable/ic_home_24"
+        android:title="@string/tab_overview"/>
+    <item android:id="@+id/nav_qr"
+        android:icon="@drawable/ic_qr_24"
+        android:title="@string/tab_qr"/>
+    <item android:id="@+id/nav_sale"
+        android:icon="@drawable/ic_shop_24"
+        android:title="@string/tab_sale"/>
+    <item android:id="@+id/nav_invoice"
+        android:icon="@drawable/ic_receipt_24"
+        android:title="@string/tab_invoice"/>
+    <item android:id="@+id/nav_more"
+        android:icon="@drawable/ic_menu_24"
+        android:title="@string/tab_more"/>
+</menu>

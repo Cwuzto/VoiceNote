@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_soft_gradient"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingBottom="12dp">
+
+            <TextView
+                android:id="@+id/tvClose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Đóng lại"
+                android:textStyle="bold"
+                android:textColor="#2563EB"
+                android:textSize="18sp" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageButton
+                    android:id="@+id/btnEdit"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_edit_24"
+                    app:tint="#111827" />
+
+                <ImageButton
+                    android:id="@+id/btnMore"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_more_vert_24"
+                    app:tint="#111827" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Card thông tin hóa đơn -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card_16"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Khách + thời gian -->
+            <TextView
+                android:id="@+id/tvCustomer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Khách lẻ"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:textColor="#0F172A" />
+
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="22/10/2025 18:55"
+                android:textColor="#64748B"
+                android:textSize="14sp"
+                android:layout_marginTop="2dp" />
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_marginVertical="12dp"
+                android:background="@drawable/divider_dashed" />
+
+            <!-- Danh sách món -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Item món -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="4dp">
+
+                    <TextView
+                        android:id="@+id/tvItemName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Ba rọi"
+                        android:textColor="#0F172A"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tvItemPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="100,000"
+                        android:textColor="#0F172A"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvItemQty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="5 x 20,000"
+                    android:textColor="#64748B"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- Divider sau danh sách món -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/divider_dashed" />
+
+            <!-- Tổng tiền hàng -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="4dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Tổng tiền hàng"
+                    android:textColor="#64748B"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tvSubtotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="100,000"
+                    android:textColor="#0F172A"
+                    android:textStyle="bold"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <!-- Tổng cộng -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Tổng cộng"
+                    android:textColor="#0F172A"
+                    android:textStyle="bold"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tvTotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="100,000"
+                    android:textColor="#0F172A"
+                    android:textStyle="bold"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <!-- Divider sau tổng cộng -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/divider_dashed" />
+
+            <!-- QR box -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_dashed_box"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Muốn tạo mã QR kèm báo ting ting?"
+                    android:textAlignment="center"
+                    android:textColor="#475569"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tvLinkBank"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Liên kết tài khoản ngân hàng"
+                    android:textColor="#2563EB"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:textSize="16sp"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <!-- Đã nhận tiền -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Xác nhận đã thanh toán?"
+                    android:textColor="#0F172A"
+                    android:textSize="16sp" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <LinearLayout
+                    android:id="@+id/btnPaid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_outline_pill"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="8dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <CheckBox
+                        android:id="@+id/cbPaid"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:clickable="false"/>
+
+                    <TextView
+                        android:id="@+id/tvPaidLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:text="Đã nhận tiền"
+                        android:textColor="#0F172A"
+                        android:textSize="16sp"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

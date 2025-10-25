@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">VoicePOS</string>
+    <string name="tab_overview">Tổng quan</string>
+    <string name="tab_qr">QR ting ting</string>
+    <string name="tab_sale">Bán hàng</string>
+    <string name="tab_invoice">Hoá đơn</string>
+    <string name="tab_more">Nhiều hơn</string>
+
+    <string name="overview_title">Knote</string>
+    <string name="revenue_this_month">Doanh thu tháng này</string>
+    <string name="orders_this_month">Đơn tháng này</string>
+    <string name="revenue_card_title">Doanh thu</string>
+    <string name="bestseller_title">Hàng hoá bán chạy</string>
+    <string name="this_month">Tháng này</string>
+    <string name="empty_revenue_desc">Tự động tổng hợp doanh thu, không cần ghi sổ</string>
+    <string name="cta_create_dummy_order">Tạo thử đơn</string>
+    <string name="close">Đóng</string>
+    <string name="edit">Sửa</string>
+    <string name="label_subtotal">Tổng tiền hàng</string>
+    <string name="label_grand_total">Tổng cộng</string>
+    <string name="qr_hint">Muốn tạo mã QR kèm báo ting ting?</string>
+    <string name="link_bank">Liên kết tài khoản ngân hàng</string>
+    <string name="label_paid_confirm">Xác nhận đã thanh toán?</string>
+    <string name="paid_yes">Đã nhận tiền</string>
+    <string name="action_new_order">Tạo đơn mới</string>
+    <string name="action_share">Chia sẻ</string>
+    <string name="action_print">In</string>
+
+</resources>

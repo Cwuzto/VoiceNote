@@ -1,0 +1,67 @@
+<!-- res/layout/dialog_edit_customer.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_dialog_rounded"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Thông tin đơn"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:textColor="#0F172A"
+        android:layout_marginBottom="12dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="@drawable/bg_field_outline_blue"
+        android:padding="16dp"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/edtCustomer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nhập tên khách / bàn…"
+            android:background="@android:color/transparent"
+            android:textSize="18sp"
+            android:singleLine="true"
+            android:imeOptions="actionDone"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:id="@+id/btnCancel"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Bỏ qua"
+            android:textColor="#0F172A"
+            android:background="@drawable/bg_button_secondary"/>
+
+        <Space
+            android:layout_width="12dp"
+            android:layout_height="1dp"/>
+
+        <TextView
+            android:id="@+id/btnOk"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Xong"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bg_button_primary"/>
+    </LinearLayout>
+</LinearLayout>

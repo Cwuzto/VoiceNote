@@ -1,0 +1,272 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/bg_soft"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+            <!-- Logo placeholder (có thể thay bằng ImageView logo của bạn) -->
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_home_24"
+                app:tint="@color/brand_blue"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/overview_title"
+                android:textColor="@color/text_primary"
+                android:textStyle="bold"
+                android:textSize="22sp"/>
+        </LinearLayout>
+
+        <!-- 2 ô thống kê nhỏ -->
+        <LinearLayout
+            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2"
+            android:orientation="horizontal">
+
+            <!-- Doanh thu -->
+            <LinearLayout
+                android:id="@+id/tileRevenue"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_card_16"
+                android:padding="12dp"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_trending_24"
+                    app:tint="@color/brand_blue"/>
+
+                <TextView
+                    android:id="@+id/tvRevenueValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textStyle="bold"
+                    android:textSize="24sp"
+                    android:layout_marginTop="6dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/revenue_this_month"
+                    android:textColor="@color/text_muted"
+                    android:textSize="12sp"/>
+            </LinearLayout>
+
+            <Space android:layout_width="12dp" android:layout_height="1dp"/>
+
+            <!-- Đơn tháng này -->
+            <LinearLayout
+                android:id="@+id/tileOrders"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_card_16"
+                android:padding="12dp"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_receipt_long_24"
+                    app:tint="@color/brand_blue"/>
+
+                <TextView
+                    android:id="@+id/tvOrdersValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textStyle="bold"
+                    android:textSize="24sp"
+                    android:layout_marginTop="6dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/orders_this_month"
+                    android:textColor="@color/text_muted"
+                    android:textSize="12sp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Card Doanh thu -->
+        <LinearLayout
+            android:id="@+id/cardRevenue"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_card_16"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Title + chip Tháng này -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="@string/revenue_card_title"
+                    android:textStyle="bold"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/chipMonth1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_chip"
+                    android:text="@string/this_month"
+                    android:textColor="@color/chip_text" />
+            </LinearLayout>
+
+
+            <!-- EMPTY STATE (groupEmptyRevenue) -->
+            <LinearLayout
+                android:id="@+id/groupEmptyRevenue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:paddingTop="12dp"
+                android:paddingBottom="4dp">
+
+                <ImageView
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:src="@drawable/ic_trending_24"
+                    app:tint="@color/brand_blue"/>
+
+                <TextView
+                    android:layout_marginTop="6dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/empty_revenue_desc"
+                    android:textColor="@color/text_muted"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCreateDummy"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/cta_create_dummy_order"/>
+            </LinearLayout>
+
+            <!-- DATA STATE (groupDataRevenue) – ví dụ sau có số liệu -->
+            <LinearLayout
+                android:id="@+id/groupDataRevenue"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="12dp">
+
+                <TextView
+                    android:id="@+id/tvRevenueSummary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tổng doanh thu: 12.500.000đ"
+                    android:textStyle="bold"/>
+                <!-- chỗ này bạn có thể thay bằng chart sau -->
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Card Hàng hoá bán chạy -->
+        <LinearLayout
+            android:id="@+id/cardBestseller"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_card_16"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Title + chip -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="@string/bestseller_title"
+                    android:textStyle="bold"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/chipMonth2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_chip"
+                    android:text="@string/this_month"
+                    android:textColor="@color/chip_text" />
+            </LinearLayout>
+
+
+            <!-- EMPTY -->
+            <LinearLayout
+                android:id="@+id/groupEmptyBest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingTop="12dp">
+                <ImageView
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:src="@drawable/ic_receipt_long_24"
+                    app:tint="@color/brand_blue"/>
+                <TextView
+                    android:layout_marginTop="6dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chưa có dữ liệu bán chạy"
+                    android:textColor="@color/text_muted"/>
+            </LinearLayout>
+
+            <!-- DATA -->
+            <LinearLayout
+                android:id="@+id/groupDataBest"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="8dp">
+                <!-- ví dụ list 3 món -->
+                <TextView android:text="1) Cà phê sữa — 120 ly" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:text="2) Trà đào — 85 ly" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:text="3) Bánh mì — 60 ổ" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <Space android:layout_width="1dp" android:layout_height="20dp"/>
+    </LinearLayout>
+</ScrollView>

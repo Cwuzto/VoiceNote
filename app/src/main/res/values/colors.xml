@@ -1,0 +1,14 @@
+<resources>
+    <color name="bg_soft">#F4F7FD</color>
+    <color name="card_bg">#FFFFFFFF</color>
+    <color name="text_primary">#121826</color>
+    <color name="text_muted">#6B7280</color>
+    <color name="brand_blue">#2F6BFF</color>
+    <color name="chip_bg">#EEF2FF</color>
+    <color name="chip_text">#2F6BFF</color>
+    <color name="pastel_blue">#E0F2FF</color>
+    <color name="pastel_purple">#F0E7FF</color>
+    <color name="pastel_green">#E6FBE4</color>
+    <color name="pastel_orange">#FFF3E0</color>
+    <color name="pastel_pink">#FFE4EC</color>
+</resources>

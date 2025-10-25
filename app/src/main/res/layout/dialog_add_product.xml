@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:orientation="vertical" android:padding="20dp">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+        <TextView
+            android:text="Thêm hàng hoá" android:textStyle="bold" android:textSize="20sp"
+            android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"/>
+        <ImageView
+            android:id="@+id/btnClose"
+            android:layout_width="28dp" android:layout_height="28dp"
+            android:src="@drawable/ic_close_24"/>
+    </LinearLayout>
+
+    <!-- Thêm ảnh -->
+    <TextView
+        android:id="@+id/btnAddImage"
+        android:text="Thêm ảnh" android:textStyle="bold"
+        android:textColor="#1565FF" android:layout_marginTop="12dp"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+    <!-- Tên hàng -->
+    <TextView
+        android:text="Tên hàng" android:textColor="#6B7280"
+        android:layout_marginTop="12dp"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <EditText
+        android:id="@+id/edtName"
+        android:hint="Nhập tên hàng"
+        android:layout_width="match_parent" android:layout_height="48dp"
+        android:paddingStart="14dp" android:paddingEnd="14dp"
+        android:background="@drawable/bg_field_outline_blue"/>
+
+    <!-- Giá bán -->
+    <TextView
+        android:text="Giá bán" android:textColor="#6B7280"
+        android:layout_marginTop="12dp"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_width="match_parent" android:layout_height="48dp"
+        android:gravity="center_vertical" android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/btnDec"
+            android:layout_width="48dp" android:layout_height="48dp"
+            android:gravity="center" android:text="–" android:textSize="20sp"
+            android:background="@drawable/bg_circle_soft"/>
+
+        <EditText
+            android:id="@+id/edtPrice"
+            android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp"
+            android:layout_marginStart="8dp" android:layout_marginEnd="8dp"
+            android:gravity="center" android:inputType="number"
+            android:background="@drawable/bg_field_outline_blue" android:text="0"/>
+
+        <TextView
+            android:id="@+id/btnInc"
+            android:layout_width="48dp" android:layout_height="48dp"
+            android:gravity="center" android:text="+" android:textSize="20sp"
+            android:background="@drawable/bg_circle_soft"/>
+    </LinearLayout>
+
+    <!-- Nút -->
+    <LinearLayout
+        android:layout_marginTop="16dp" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/btnCancel"
+            android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp"
+            android:gravity="center" android:text="Bỏ qua"
+            android:background="@drawable/bg_button_secondary"/>
+
+        <Space android:layout_width="12dp" android:layout_height="1dp"/>
+
+        <TextView
+            android:id="@+id/btnAdd"
+            android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp"
+            android:gravity="center" android:text="Thêm" android:textStyle="bold"
+            android:textColor="#FFFFFF" android:background="@drawable/bg_button_primary"/>
+    </LinearLayout>
+</LinearLayout>
