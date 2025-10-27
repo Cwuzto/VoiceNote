@@ -1,61 +1,47 @@
 package com.example.voicenote;
 
-import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import com.example.voicenote.ui.InvoiceFragment;
-import com.example.voicenote.ui.MoreFragment;
-import com.example.voicenote.ui.OverviewFragment;
-import com.example.voicenote.ui.PlaceholderFragment;
-import com.example.voicenote.ui.SaleFragment;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
+
+import com.example.voicenote.ui.invoice.InvoiceListFragment;
+import com.example.voicenote.ui.more.MoreFragment;
+import com.example.voicenote.ui.overview.OverviewFragment;
+import com.example.voicenote.ui.sale.SaleFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+
+/**
+ * Fixed IDs to match your XML: bottom_nav, fragment_container, nav_* menu IDs.
+ */
 public class MainActivity extends AppCompatActivity {
-
-    @Override protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(R.style.Theme_VoiceNote);
         setContentView(R.layout.activity_main);
-
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new OverviewFragment())
-                    .commit();
-        }
         BottomNavigationView nav = findViewById(R.id.bottom_nav);
-        nav.setOnItemSelectedListener(this::onTabSelected);
-        nav.setSelectedItemId(R.id.nav_overview);
+        nav.setOnItemSelectedListener(this::onNavItemSelected);
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new OverviewFragment()).commit();
+        }
     }
 
-    private boolean onTabSelected(MenuItem item){
-        if (item.getItemId() == R.id.nav_overview) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new OverviewFragment()).commit();
-            return true;
-        }
-        else if (item.getItemId() == R.id.nav_sale) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new SaleFragment())
-                    .commit();
-            return true;
-        }
-        else if (item.getItemId() == R.id.nav_invoice) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new InvoiceFragment())
-                    .commit();
-            return true;
-        }
-        else if (item.getItemId() == R.id.nav_more) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new MoreFragment())
-                    .commit();
-            return true;
-        }
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, PlaceholderFragment.newInstance(
-                        item.getTitle().toString()))
-                .commit();
+
+    private boolean onNavItemSelected(@NonNull MenuItem item) {
+        Fragment frag;
+        int id = item.getItemId();
+        if (id == R.id.nav_overview) frag = new OverviewFragment();
+        else if (id == R.id.nav_sale) frag = new SaleFragment();
+        else if (id == R.id.nav_invoice) frag = new InvoiceListFragment();
+        else if (id == R.id.nav_more) frag = new MoreFragment();
+        else return false;
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, frag).commit();
         return true;
     }
 }
