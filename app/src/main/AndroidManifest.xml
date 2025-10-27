@@ -22,11 +22,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.InvoiceDetailActivity"
+            android:name="com.example.voicenote.ui.invoice.InvoiceDetailActivity"
             android:exported="false"
-            android:theme="@style/Theme.VoiceNote">
-        </activity>
-        <activity android:name="com.example.voicenote.ui.InvoiceEditActivity" />
+            android:theme="@style/Theme.VoiceNote" />
+
+        <activity
+            android:name="com.example.voicenote.ui.invoice.InvoiceEditActivity"
+            android:exported="false"
+            android:theme="@style/Theme.VoiceNote" />
     </application>
 
 </manifest>
