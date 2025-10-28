@@ -5,4 +5,11 @@
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowIsTranslucent">false</item>
     </style>
+    <style name="Dialog_Rounded_Overlay" parent="Theme.Material3.Light.Dialog">
+        <item name="android:windowMinWidthMajor">92%</item>
+        <item name="android:windowMinWidthMinor">92%</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.5</item>
+    </style>
 </resources>

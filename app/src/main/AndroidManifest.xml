@@ -21,6 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name="com.example.voicenote.ui.invoice.InvoiceDetailActivity"
             android:exported="false"
@@ -30,6 +31,13 @@
             android:name="com.example.voicenote.ui.invoice.InvoiceEditActivity"
             android:exported="false"
             android:theme="@style/Theme.VoiceNote" />
+
+        <activity
+            android:name=".ui.sale.SaleActivity"
+            android:exported="false"
+            android:theme="@style/Theme.VoiceNote"
+            android:windowSoftInputMode="adjustResize"/>
+
     </application>
 
 </manifest>

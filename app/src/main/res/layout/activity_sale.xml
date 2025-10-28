@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootSale"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_soft_gradient">
@@ -11,16 +12,15 @@
         android:layout_height="56dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp">
+        android:paddingHorizontal="12dp">
 
-        <ImageView
+        <ImageButton
             android:id="@+id/btnClose"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:padding="8dp"
-            android:src="@drawable/ic_close_24"
-            android:contentDescription="@string/close" />
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_close_24" />
 
         <TextView
             android:layout_width="0dp"
@@ -28,39 +28,49 @@
             android:layout_weight="1"
             android:text="Bán hàng"
             android:textStyle="bold"
-            android:textSize="18sp"
-            android:gravity="center"/>
+            android:textSize="22sp"
+            android:gravity="start" />
 
         <TextView
             android:id="@+id/btnDone"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
+            android:paddingHorizontal="24dp"
             android:gravity="center"
             android:text="Xong"
+            android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#5E7BFF"
-            android:background="@drawable/bg_pill_soft"/>
+            android:textColor="#f2f2f2"
+            android:background="@drawable/bg_pill_soft" />
     </LinearLayout>
 
-    <!-- Ô khách hàng/phòng bàn -->
-    <EditText
-        android:id="@+id/edtCustomer"
+    <!-- Ô chọn khách hàng -->
+    <LinearLayout
+        android:id="@+id/rowCustomer"
         android:layout_below="@id/header"
         android:layout_margin="16dp"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Khách hàng, phòng bàn..."
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:background="@drawable/bg_input_pill"
-        android:inputType="textPersonName"/>
+        android:layout_height="56dp"
+        android:background="@drawable/bg_card_16"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:clickable="true"
+        android:focusable="true">
 
-    <!-- Khối hướng dẫn giữa màn -->
+        <TextView
+            android:id="@+id/tvCustomer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="Khách hàng, phòng bàn..."
+            android:textColor="#8f8f8f"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <!-- Hướng dẫn khi chưa có hàng -->
     <LinearLayout
-        android:layout_below="@id/edtCustomer"
-        android:layout_above="@+id/bottomBar"
+        android:id="@+id/contentGuide"
+        android:layout_below="@id/rowCustomer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -79,7 +89,7 @@
 
         <TextView
             android:id="@+id/tvSub"
-            android:text="Chat tên hàng hoặc đọc tên hàng để tính tiền nhanh."
+            android:text="Chat tên hàng hoặc đọc tên hàng để VoiceNote tính tiền nhanh."
             android:textColor="#6B7280"
             android:gravity="center"
             android:layout_width="wrap_content"
@@ -87,49 +97,50 @@
             android:layout_marginTop="8dp"/>
     </LinearLayout>
 
-    <!-- Thanh nhập đáy -->
+    <!-- ⚡ QUICK BAR -->
     <LinearLayout
-        android:id="@+id/bottomBar"
-        android:layout_alignParentBottom="true"
-        android:layout_width="match_parent"
-        android:layout_height="72dp"
+        android:id="@+id/quickBar"
+        android:layout_alignParentBottom="true" android:layout_width="match_parent"
+        android:layout_height="68dp"
+        android:background="#F7F8FA"
         android:padding="12dp"
-        android:gravity="center_vertical"
-        android:background="@android:color/transparent">
+        android:elevation="8dp"
+        android:gravity="center_vertical">
 
-        <!-- Nút lưới trái -->
         <ImageButton
             android:id="@+id/btnGrid"
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:background="@drawable/bg_circle_soft"
             android:src="@drawable/ic_grid_24"
-            android:contentDescription="Grid"
-            app:tint="#1F2937"/>
+            android:contentDescription="grid button"/>
 
-        <!-- Ô nhập trung tâm -->
         <EditText
             android:id="@+id/edtLine"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
-            android:hint="Nhập số lương + tên hàng + giá"
+            android:layout_marginHorizontal="12dp"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            android:background="@drawable/bg_input_pill"
-            android:inputType="text"/>
+            android:hint="Nhập tên hàng + giá"
+            android:background="@drawable/bg_input_pill"/>
 
-        <!-- Nút mic phải -->
         <ImageButton
             android:id="@+id/btnMic"
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:background="@drawable/bg_circle_soft"
             android:src="@drawable/ic_mic_24"
-            android:contentDescription="Mic"
-            app:tint="#1F2937"/>
+            android:contentDescription="mic button"/>
     </LinearLayout>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvQuickGrid"
+        android:layout_alignParentBottom="true" android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:visibility="gone" android:background="@android:color/white"
+        android:elevation="4dp"
+        android:padding="12dp"
+        android:clipToPadding="false"/>
 </RelativeLayout>
