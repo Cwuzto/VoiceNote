@@ -6,8 +6,8 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Room;
 
 import com.example.voicenote.data.local.AppDatabase;
-import com.example.voicenote.data.local.dao.InvoiceDao;
-import com.example.voicenote.data.local.dao.LineItemDao;
+import com.example.voicenote.data.local.dao.InvoiceDAO;
+import com.example.voicenote.data.local.dao.LineItemDAO;
 import com.example.voicenote.data.local.entity.InvoiceEntity;
 import com.example.voicenote.data.local.entity.LineItemEntity;
 import com.example.voicenote.data.local.rel.InvoiceWithLines;
@@ -21,8 +21,8 @@ import java.util.concurrent.Executors;
  * VI: Repository xử lý các thao tác hoá đơn và dòng hàng.
  */
 public class InvoiceRepository {
-    private final InvoiceDao invoiceDao;
-    private final LineItemDao lineItemDao;
+    private final InvoiceDAO invoiceDao;
+    private final LineItemDAO lineItemDao;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public InvoiceRepository(Application app) {

@@ -16,7 +16,7 @@ import java.util.List;
  * VI: DAO cho các sản phẩm nhanh hiển thị trong lưới chọn.
  */
 @Dao
-public interface QuickItemDao {
+public interface QuickItemDAO {
 
     /**
      * EN: Insert new quick item.

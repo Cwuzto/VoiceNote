@@ -5,7 +5,7 @@ import android.app.Application;
 import androidx.lifecycle.LiveData;
 
 import com.example.voicenote.data.local.AppDatabase;
-import com.example.voicenote.data.local.dao.QuickItemDao;
+import com.example.voicenote.data.local.dao.QuickItemDAO;
 import com.example.voicenote.data.local.entity.QuickItemEntity;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.concurrent.Executors;
  * VI: Repository quản lý các sản phẩm nhanh hiển thị trong lưới chọn (shortcut grid).
  */
 public class QuickItemRepository {
-    private final QuickItemDao quickItemDao;
+    private final QuickItemDAO quickItemDao;
     private final ExecutorService executor;
 
     public QuickItemRepository(Application application) {
