@@ -6,9 +6,9 @@ import androidx.room.RoomDatabase;
 
 import android.content.Context;
 
-import com.example.voicenote.data.local.dao.InvoiceDao;
-import com.example.voicenote.data.local.dao.LineItemDao;
-import com.example.voicenote.data.local.dao.QuickItemDao;
+import com.example.voicenote.data.local.dao.InvoiceDAO;
+import com.example.voicenote.data.local.dao.LineItemDAO;
+import com.example.voicenote.data.local.dao.QuickItemDAO;
 import com.example.voicenote.data.local.entity.InvoiceEntity;
 import com.example.voicenote.data.local.entity.LineItemEntity;
 import com.example.voicenote.data.local.entity.QuickItemEntity;
@@ -25,11 +25,11 @@ import com.example.voicenote.data.local.entity.QuickItemEntity;
 public abstract class AppDatabase extends RoomDatabase {
 
     // --- DAO accessors ---
-    public abstract InvoiceDao invoiceDao();
+    public abstract InvoiceDAO invoiceDao();
 
-    public abstract LineItemDao lineItemDao();
+    public abstract LineItemDAO lineItemDao();
 
-    public abstract QuickItemDao quickItemDao();
+    public abstract QuickItemDAO quickItemDao();
 
     private static volatile AppDatabase INSTANCE;
 

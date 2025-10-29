@@ -11,7 +11,7 @@ import com.example.voicenote.data.local.entity.LineItemEntity;
 import java.util.List;
 
 @Dao
-public interface LineItemDao {
+public interface LineItemDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertLineItem(LineItemEntity item);

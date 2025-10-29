@@ -19,7 +19,7 @@ import java.util.List;
  * VI: DAO Hoá đơn — sắp xếp theo time_millis (khớp InvoiceEntity).
  */
 @Dao
-public interface InvoiceDao {
+public interface InvoiceDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertInvoice(InvoiceEntity invoice);
