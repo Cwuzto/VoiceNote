@@ -9,28 +9,34 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.voicenote.R;
-import com.example.voicenote.data.local.entity.QuickItemEntity;
+// [SỬA] Import entity mới
+import com.example.voicenote.data.local.entity.ProductEntity;
 
 import java.util.List;
 
+/**
+ * 4-column grid with a static "Add item" tile at position 0.
+ */
 public class QuickGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // --- Interfaces for callbacks ---
     public interface OnAddClick { void onAddClick(); }
-    public interface OnPick { void onPick(QuickItemEntity item, int position); }
-    public interface OnRemove { void onRemove(QuickItemEntity item, int position); }
+    // [SỬA] Cập nhật interface
+    public interface OnPick { void onPick(ProductEntity item, int position); }
+    public interface OnRemove { void onRemove(ProductEntity item, int position); }
 
     // --- View Types ---
     private static final int VT_ADD = 0;
     private static final int VT_ITEM = 1;
 
     // --- Fields ---
-    private final List<QuickItemEntity> data; // chỉ chứa item thật, KHÔNG chứa ô Add
+    private final List<ProductEntity> data; // [SỬA]
     private final OnAddClick onAddClick;
     private final OnPick onPick;
     private final OnRemove onRemove;
 
-    public QuickGridAdapter(List<QuickItemEntity> data, OnAddClick onAddClick, OnPick onPick, OnRemove onRemove) {
+    // [SỬA] Cập nhật constructor
+    public QuickGridAdapter(List<ProductEntity> data, OnAddClick onAddClick, OnPick onPick, OnRemove onRemove) {
         this.data = data;
         this.onAddClick = onAddClick;
         this.onPick = onPick;
@@ -64,30 +70,29 @@ public class QuickGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        // Case 1: Bind ô "Thêm hàng" (vị trí 0)
         if (getItemViewType(position) == VT_ADD) {
             ((VHAdd) holder).bind(onAddClick);
             return;
         }
 
-        // Case 2: Bind ô item hàng hoá (vị trí 1 trở đi)
-        // Lấy item thật (phải trừ 1 vì data list không chứa ô "Add")
-        final QuickItemEntity item = data.get(position - 1);
+        // [SỬA] Lấy ProductEntity
+        final ProductEntity item = data.get(position - 1);
         final VHItem itemViewHolder = (VHItem) holder;
 
         // Gán dữ liệu cơ bản
-        itemViewHolder.tvInitial.setText(item.initial);
         itemViewHolder.tvName.setText(item.name);
+
+        // [MỚI] Tính toán "initial" vì ProductEntity không có trường này
+        itemViewHolder.tvInitial.setText(makeInitial(item.name));
 
         // EN: pastel background per position; VI: đổi màu pastel theo vị trí
         int[] pastel = {0xFFEAF1FF, 0xFFF0E7FF, 0xFFEFFCF3, 0xFFFFF3E0, 0xFFFFE4EC};
         View chip = itemViewHolder.itemView.findViewById(R.id.chipBox);
         if (chip.getBackground() != null) {
-            // Dùng (position - 1) để index của màu khớp với index của data
             chip.getBackground().setTint(pastel[(position - 1) % pastel.length]);
         }
 
-        // Hiển thị badge số lượng
+        // Hiển thị badge số lượng (dùng trường @Ignore 'selected')
         if (item.selected > 0) {
             itemViewHolder.tvBadge.setVisibility(View.VISIBLE);
             itemViewHolder.tvBadge.setText(String.valueOf(item.selected));
@@ -95,38 +100,43 @@ public class QuickGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             itemViewHolder.tvBadge.setVisibility(View.GONE);
         }
 
-        // Hiển thị nút xoá (dấu trừ)
+        // Hiển thị nút xoá (dùng trường @Ignore 'showRemove')
         itemViewHolder.ivRemove.setVisibility(item.showRemove ? View.VISIBLE : View.GONE);
 
         // --- Gán Listeners ---
 
-        // 1. Click thường:
         itemViewHolder.itemView.setOnClickListener(view -> {
-            if (item.showRemove) return; // Nếu đang ở chế độ xoá thì không làm gì
+            if (item.showRemove) return;
             if (onPick != null) {
-                // Chỉ gọi callback, để Activity xử lý logic (tăng selected, notify...)
-                onPick.onPick(item, position - 1); // position - 1 là index trong 'data'
+                onPick.onPick(item, position - 1);
             }
         });
 
-        // 2. Long click:
         itemViewHolder.itemView.setOnLongClickListener(view -> {
-            item.showRemove = !item.showRemove; // Đảo trạng thái hiển thị nút xoá
-
-            // Thông báo cho adapter cập nhật lại chính item này
+            item.showRemove = !item.showRemove;
             RecyclerView.Adapter<?> adapter = itemViewHolder.getBindingAdapter();
             if (adapter != null) {
                 adapter.notifyItemChanged(itemViewHolder.getBindingAdapterPosition());
             }
-            return true; // Đã xử lý long click
+            return true;
         });
 
-        // 3. Click nút xoá (dấu trừ):
         itemViewHolder.ivRemove.setOnClickListener(view -> {
             if (onRemove != null) {
-                onRemove.onRemove(item, position - 1); // position - 1 là index trong 'data'
+                onRemove.onRemove(item, position - 1);
             }
         });
+    }
+
+    /**
+     * [MỚI] Hàm helper để tính toán initial từ tên
+     */
+    private String makeInitial(String name){
+        if (name == null || name.isEmpty()) return "?";
+        String[] parts = name.trim().split("\\s+");
+        if (parts.length == 0) return "?";
+        if (parts.length == 1) return parts[0].substring(0,1).toUpperCase();
+        return (parts[0].substring(0,1) + parts[1].substring(0,1)).toUpperCase();
     }
 
     // --- ViewHolders ---
@@ -148,7 +158,6 @@ public class QuickGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     /** ViewHolder cho ô item hàng hoá */
     static class VHItem extends RecyclerView.ViewHolder {
-        // Khai báo các view
         TextView tvInitial, tvName, tvBadge, ivRemove;
 
         VHItem(@NonNull View itemView) {

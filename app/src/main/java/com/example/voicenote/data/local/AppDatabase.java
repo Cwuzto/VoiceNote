@@ -6,46 +6,61 @@ import androidx.room.RoomDatabase;
 
 import android.content.Context;
 
-import com.example.voicenote.data.local.dao.InvoiceDAO;
-import com.example.voicenote.data.local.dao.LineItemDAO;
-import com.example.voicenote.data.local.dao.QuickItemDAO;
-import com.example.voicenote.data.local.entity.InvoiceEntity;
-import com.example.voicenote.data.local.entity.LineItemEntity;
-import com.example.voicenote.data.local.entity.QuickItemEntity;
+// [SỬA] Import các DAO và Entity mới
+import com.example.voicenote.data.local.dao.BankAccountDao;
+import com.example.voicenote.data.local.dao.OrderDao;
+import com.example.voicenote.data.local.dao.OrderItemDao;
+import com.example.voicenote.data.local.dao.ProductDao;
+import com.example.voicenote.data.local.dao.UserDao;
+import com.example.voicenote.data.local.entity.BankAccountEntity;
+import com.example.voicenote.data.local.entity.OrderEntity;
+import com.example.voicenote.data.local.entity.OrderItemEntity;
+import com.example.voicenote.data.local.entity.ProductEntity;
+import com.example.voicenote.data.local.entity.UserEntity;
 
 /**
  * EN: Central Room database class for VoiceNote app.
  * VI: Lớp cơ sở dữ liệu trung tâm của ứng dụng VoiceNote, quản lý toàn bộ bảng và DAO.
  */
 @Database(
-        entities = {InvoiceEntity.class, LineItemEntity.class, QuickItemEntity.class},
-        version = 1,
+        // [SỬA] Khai báo 5 entity mới
+        entities = {
+                UserEntity.class,
+                ProductEntity.class,
+                OrderEntity.class,
+                OrderItemEntity.class,
+                BankAccountEntity.class
+        },
+        version = 1, // Bạn có thể cần tăng version nếu migrate
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
 
-    // --- DAO accessors ---
-    public abstract InvoiceDAO invoiceDao();
+    // --- [SỬA] Khai báo 5 DAO mới ---
+    public abstract UserDao userDao();
+    public abstract ProductDao productDao();
+    public abstract OrderDao orderDao();
+    public abstract OrderItemDao orderItemDao();
+    public abstract BankAccountDao bankAccountDao();
+    // --- (Xoá các DAO cũ: invoiceDao, lineItemDao, quickItemDao) ---
 
-    public abstract LineItemDAO lineItemDao();
-
-    public abstract QuickItemDAO quickItemDao();
 
     private static volatile AppDatabase INSTANCE;
 
-    /**
-     * EN: Singleton pattern to get a single instance of the database.
-     * VI: Áp dụng Singleton để tạo một thể hiện duy nhất của cơ sở dữ liệu.
-     */
     public static AppDatabase getInstance(Context context) {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(
-                            context.getApplicationContext(),
-                            AppDatabase.class,
-                            "voicenote_db"
-                    ).fallbackToDestructiveMigration().build();
+                                    context.getApplicationContext(),
+                                    AppDatabase.class,
+                                    "voicenote_db"
+                            )
+                            // [QUAN TRỌNG] Vì bạn thay đổi schema,
+                            // bạn cần .fallbackToDestructiveMigration()
+                            // để xoá DB cũ và tạo lại.
+                            .fallbackToDestructiveMigration()
+                            .build();
                 }
             }
         }

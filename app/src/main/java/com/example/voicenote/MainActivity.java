@@ -1,17 +1,15 @@
 package com.example.voicenote;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-
-import com.example.voicenote.ui.invoice.InvoiceListFragment;
+// [SỬA] Import fragment mới
+import com.example.voicenote.ui.order.OrderListFragment;
 import com.example.voicenote.ui.more.MoreFragment;
 import com.example.voicenote.ui.overview.OverviewFragment;
 import com.example.voicenote.ui.sale.SaleActivity;
@@ -33,14 +31,13 @@ public class MainActivity extends AppCompatActivity {
     private boolean onNavItemSelected(@NonNull MenuItem item){
         int id = item.getItemId();
         if (id == R.id.nav_sale) {
-            // EN: open fullscreen sale and DO NOT change current tab content underneath
-            // VI: mở màn bán hàng full screen, không thay Fragment hiện tại
             startActivity(new Intent(this, SaleActivity.class));
-            return false; // không giữ chọn tab sale (để khi quay lại vẫn ở tab cũ)
+            return false;
         }
         Fragment frag;
         if(id==R.id.nav_overview) frag = new OverviewFragment();
-        else if(id==R.id.nav_invoice) frag = new InvoiceListFragment();
+            // [SỬA] Thay thế InvoiceListFragment
+        else if(id==R.id.nav_invoice) frag = new OrderListFragment();
         else if(id==R.id.nav_more) frag = new MoreFragment();
         else return false;
 
