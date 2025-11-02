@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_card_16"
+    android:padding="16dp"
+    android:layout_marginBottom="12dp">
+
+    <!-- Khu vực click -->
+    <LinearLayout
+        android:id="@+id/clickableArea"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground">
+
+        <!-- Dòng 1: Tên món -->
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Kim chi"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textColor="#0F172A"
+            android:ellipsize="end"
+            android:maxLines="1"/>
+
+        <!-- Dòng 2: Giá tiền bên trái + cụm cộng trừ bên phải -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="4dp">
+
+            <!-- Giá tiền -->
+            <TextView
+                android:id="@+id/tvTotalPriceLine"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="20,000"
+                android:textSize="18sp"
+                android:textColor="#0F172A"/>
+
+            <!-- Cụm cộng/trừ bên phải -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageButton
+                    android:id="@+id/btnMinus"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_circle_soft"
+                    android:src="@drawable/ic_remove_24"
+                    app:tint="#111827"/>
+
+                <TextView
+                    android:id="@+id/tvQty"
+                    android:layout_width="50dp"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:text="1"
+                    android:textSize="17sp"
+                    android:textColor="#0F172A"
+                    android:background="@drawable/bg_outline_pill"
+                    android:layout_marginHorizontal="6dp"/>
+
+                <ImageButton
+                    android:id="@+id/btnPlus"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_circle_soft"
+                    android:src="@drawable/ic_add_24"
+                    app:tint="#111827"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Dòng 3: Ghi chú -->
+    <EditText
+        android:id="@+id/edtNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Ghi chú..."
+        android:textSize="14sp"
+        android:textColor="#374151"
+        android:textColorHint="#9CA3AF"
+        android:background="@android:color/transparent"
+        android:paddingTop="6dp"
+        android:singleLine="true"
+        android:imeOptions="actionDone" />
+</LinearLayout>

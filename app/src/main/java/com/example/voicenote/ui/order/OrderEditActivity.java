@@ -23,7 +23,6 @@ public class OrderEditActivity extends AppCompatActivity {
     protected void onCreate(Bundle b) {
         super.onCreate(b);
         // [SỬA] Đổi layout (bạn cần đổi tên file XML)
-        setContentView(R.layout.activity_order_edit);
 
         // [SỬA] ViewModel
         viewModel = new ViewModelProvider(this).get(OrderEditViewModel.class);
