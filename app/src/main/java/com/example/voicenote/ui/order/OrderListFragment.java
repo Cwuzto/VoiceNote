@@ -1,4 +1,5 @@
-package com.example.voicenote.ui.invoice;
+// File: com/example/voicenote/ui/invoice/OrderListFragment.java
+package com.example.voicenote.ui.order;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -20,17 +21,21 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.voicenote.R;
-import com.example.voicenote.ui.invoice.adapter.InvoiceAdapter;
-import com.example.voicenote.vm.InvoiceListViewModel;
+// [SỬA] Import adapter và viewmodel mới
+import com.example.voicenote.ui.order.adapter.OrderAdapter;
+import com.example.voicenote.vm.OrderListViewModel;
 
-public class InvoiceListFragment extends Fragment {
-    private InvoiceListViewModel viewModel;
-    private InvoiceAdapter adapter;
+/**
+ * Fragment hiển thị danh sách Order (đã refactor từ InvoiceListFragment)
+ */
+public class OrderListFragment extends Fragment {
+    private OrderListViewModel viewModel; // [SỬA]
+    private OrderAdapter adapter; // [SỬA]
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_invoice, container, false);
+        View v = inflater.inflate(R.layout.fragment_order_list, container, false);
 
         RecyclerView rv = v.findViewById(R.id.rvInvoice);
         TextView tvEmpty = v.findViewById(R.id.tvEmptyHint);
@@ -40,13 +45,15 @@ public class InvoiceListFragment extends Fragment {
         ImageView btnSearch = v.findViewById(R.id.btnSearch);
 
         rv.setLayoutManager(new LinearLayoutManager(requireContext()));
-        adapter = new InvoiceAdapter((invoice, checked) -> viewModel.setPaid(incomeSafe(invoice), checked));
+
+        // [SỬA] Khởi tạo adapter và viewmodel mới
+        adapter = new OrderAdapter((order, checked) -> viewModel.updatePaymentStatus(order, checked));
         rv.setAdapter(adapter);
 
-        viewModel = new ViewModelProvider(this).get(InvoiceListViewModel.class);
-        viewModel.getAllInvoices().observe(getViewLifecycleOwner(), invoices -> {
-            adapter.submit(invoices);
-            tvEmpty.setVisibility(invoices == null || invoices.isEmpty() ? View.VISIBLE : View.GONE);
+        viewModel = new ViewModelProvider(this).get(OrderListViewModel.class);
+        viewModel.getAllOrders().observe(getViewLifecycleOwner(), orders -> { // [SỬA]
+            adapter.submit(orders); // [SỬA]
+            tvEmpty.setVisibility(orders == null || orders.isEmpty() ? View.VISIBLE : View.GONE);
         });
 
         // --- Xử lý hiển thị search bar ---
@@ -71,7 +78,7 @@ public class InvoiceListFragment extends Fragment {
         edtSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                viewModel.filterInvoices(s.toString());
+                viewModel.filterOrders(s.toString()); // [SỬA]
             }
             @Override public void afterTextChanged(Editable s) {}
         });
@@ -79,7 +86,5 @@ public class InvoiceListFragment extends Fragment {
         return v;
     }
 
-    private com.example.voicenote.data.local.entity.InvoiceEntity incomeSafe(com.example.voicenote.data.local.entity.InvoiceEntity iv) {
-        return iv; // placeholder for potential mapping
-    }
+    // [XOÁ] Hàm incomeSafe không còn cần thiết
 }

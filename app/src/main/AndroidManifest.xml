@@ -23,12 +23,12 @@
         </activity>
 
         <activity
-            android:name="com.example.voicenote.ui.invoice.InvoiceDetailActivity"
+            android:name="com.example.voicenote.ui.order.OrderDetailActivity"
             android:exported="false"
             android:theme="@style/Theme.VoiceNote" />
 
         <activity
-            android:name="com.example.voicenote.ui.invoice.InvoiceEditActivity"
+            android:name="com.example.voicenote.ui.order.OrderEditActivity"
             android:exported="false"
             android:theme="@style/Theme.VoiceNote" />
 
