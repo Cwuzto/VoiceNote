@@ -10,25 +10,149 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.voicenote.R;
+import com.example.voicenote.ui.auth.LoginActivity;
+import com.example.voicenote.util.SessionManager;
+import com.example.voicenote.vm.ProfileViewModel;
 
 /**
  * EN: Fragment displaying user info, hotline, and extra options.
  * VI: Fragment hiển thị thông tin người dùng, hotline và các tuỳ chọn thêm.
  */
 public class MoreFragment extends Fragment {
+    private ProfileViewModel profileViewModel;
+    private SessionManager sessionManager;
+
+    // Khai báo các TextView cần cập nhật
+    private TextView tvOwnerName, tvOwnerPhone, tvRole;
+    private TextView btnLogout;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) { // [MỚI]
+        super.onCreate(savedInstanceState);
+
+        // Khởi tạo các đối tượng này 1 lần
+        sessionManager = new SessionManager(requireContext());
+        profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_more, container, false);
+
+        // --- Ánh xạ View ---
+        tvOwnerName = v.findViewById(R.id.tvOwnerName);
+        tvOwnerPhone = v.findViewById(R.id.tvOwnerPhone);
+        tvRole = v.findViewById(R.id.tvRole);
+        btnLogout = v.findViewById(R.id.btnLogout);
+
         TextView tvHotline = v.findViewById(R.id.tvHotline);
         View rowHotline = v.findViewById(R.id.rowHotline);
         rowHotline.setOnClickListener(x -> {
             Intent i = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + tvHotline.getText().toString().replace(" ", "")));
             startActivity(i);
         });
+
+        // 1. Thông tin cá nhân
+        v.findViewById(R.id.rowProfile).setOnClickListener(view -> {
+            startActivity(new Intent(getContext(), ProfileActivity.class));
+        });
+
+        // 2. Thông tin cửa hàng
+        v.findViewById(R.id.rowStoreInfo).setOnClickListener(view -> {
+            startActivity(new Intent(getContext(), StoreInfoActivity.class));
+        });
+
+        // 3. Quản lý nhân viên
+        v.findViewById(R.id.rowEmployeeManagement).setOnClickListener(view -> {
+            startActivity(new Intent(getContext(), EmployeeListActivity.class));
+        });
+
+        // Nút đăng xuất ---
+        btnLogout.setOnClickListener(view -> {
+            showLogoutConfirmDialog();
+        });
+
+        // Tải dữ liệu người dùng ---
+        loadUserData();
+
         return v;
+    }
+
+    /**
+     * Lấy UserID từ Session và tải dữ liệu từ ViewModel
+     */
+    private void loadUserData() {
+        long userId = sessionManager.getUserId();
+        if (userId == -1) {
+            // Trường hợp lỗi (chưa đăng nhập)
+            tvOwnerName.setText("Khách");
+            tvOwnerPhone.setText("");
+            return;
+        }
+
+        // Lắng nghe dữ liệu User từ DB
+        profileViewModel.getUser(userId).observe(getViewLifecycleOwner(), user -> {
+            if (user == null) return;
+
+            // 1. Cập nhật tên ở Header
+            tvOwnerName.setText(user.fullName);
+
+            // 2. Cập nhật SĐT (nếu có)
+            if (user.phone != null && !user.phone.isEmpty()) {
+                tvOwnerPhone.setText(user.phone);
+            } else {
+                tvOwnerPhone.setText(""); // Để trống
+            }
+
+            // 3. (Bonus) Cập nhật luôn dòng Role trong Card
+            String roleDisplay;
+            if ("OWNER".equals(user.role)) {
+                roleDisplay = "Chủ quán";
+            } else {
+                roleDisplay = "Nhân viên";
+            }
+            tvRole.setText(roleDisplay + " " + user.fullName);
+        });
+    }
+
+    /**
+     *  Xử lý logic Đăng xuất
+     */
+    private void logout() {
+        // 1. Xoá session đã lưu
+        sessionManager.clearSession();
+
+        // 2. Chuyển về màn hình Login
+        Intent intent = new Intent(getContext(), LoginActivity.class);
+
+        // 3. [QUAN TRỌNG] Xoá tất cả Activity cũ khỏi stack
+        // (Đảm bảo người dùng không thể bấm Back quay lại MainActivity)
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        startActivity(intent);
+    }
+
+    /**
+     * [MỚI] Hiển thị hộp thoại xác nhận đăng xuất
+     */
+    private void showLogoutConfirmDialog() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Đăng xuất")
+                .setMessage("Bạn có chắc chắn muốn đăng xuất?")
+                .setPositiveButton("Đăng xuất", (dialog, which) -> {
+                    // Nếu người dùng bấm "Đăng xuất"
+                    logout();
+                })
+                .setNegativeButton("Huỷ", (dialog, which) -> {
+                    // Nếu người dùng bấm "Huỷ", không làm gì cả
+                    dialog.dismiss();
+                })
+                .show();
     }
 }
