@@ -11,7 +11,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Header -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -56,7 +55,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Card thông tin hóa đơn -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -64,7 +62,6 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Khách + thời gian -->
             <TextView
                 android:id="@+id/tvCustomer"
                 android:layout_width="match_parent"
@@ -83,55 +80,20 @@
                 android:textSize="14sp"
                 android:layout_marginTop="2dp" />
 
-            <!-- Divider -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
                 android:layout_marginVertical="12dp"
                 android:background="@drawable/divider_dashed" />
 
-            <!-- Danh sách món -->
             <LinearLayout
+                android:id="@+id/containerItems"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- Item món -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="4dp">
-
-                    <TextView
-                        android:id="@+id/tvItemName"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Ba rọi"
-                        android:textColor="#0F172A"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:id="@+id/tvItemPrice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="100,000"
-                        android:textColor="#0F172A"
-                        android:textSize="16sp" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/tvItemQty"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="5 x 20,000"
-                    android:textColor="#64748B"
-                    android:textSize="14sp" />
             </LinearLayout>
 
-            <!-- Divider sau danh sách món -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
@@ -139,7 +101,6 @@
                 android:layout_marginBottom="12dp"
                 android:background="@drawable/divider_dashed" />
 
-            <!-- Tổng tiền hàng -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -159,13 +120,12 @@
                     android:id="@+id/tvSubtotal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="100,000"
+                    android:text=""
                     android:textColor="#0F172A"
                     android:textStyle="bold"
                     android:textSize="16sp" />
             </LinearLayout>
 
-            <!-- Tổng cộng -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -185,20 +145,18 @@
                     android:id="@+id/tvTotal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="100,000"
+                    android:text=""
                     android:textColor="#0F172A"
                     android:textStyle="bold"
                     android:textSize="20sp" />
             </LinearLayout>
 
-            <!-- Divider sau tổng cộng -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="12dp"
                 android:background="@drawable/divider_dashed" />
 
-            <!-- QR box -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -227,7 +185,6 @@
                     android:layout_marginTop="4dp" />
             </LinearLayout>
 
-            <!-- Đã nhận tiền -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

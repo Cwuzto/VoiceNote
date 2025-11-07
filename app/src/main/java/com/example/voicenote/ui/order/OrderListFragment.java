@@ -2,6 +2,7 @@
 package com.example.voicenote.ui.order;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextWatcher;
 import android.text.Editable;
@@ -46,8 +47,24 @@ public class OrderListFragment extends Fragment {
 
         rv.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        // [SỬA] Khởi tạo adapter và viewmodel mới
-        adapter = new OrderAdapter((order, checked) -> viewModel.updatePaymentStatus(order, checked));
+        // [SỬA] Khởi tạo adapter với 2 listener
+        adapter = new OrderAdapter(
+                // 1. Listener cho nút Checkbox "Đã thanh toán"
+                (order, checked) -> {
+                    viewModel.updatePaymentStatus(order, checked);
+                },
+
+                // 2. [MỚI] Listener khi bấm vào thẻ card
+                (orderWithItems) -> {
+                    // Tạo Intent để mở OrderDetailActivity
+                    Intent intent = new Intent(getContext(), OrderDetailActivity.class);
+
+                    // Gửi ID của đơn hàng qua
+                    intent.putExtra("order_id", orderWithItems.order.id);
+
+                    startActivity(intent);
+                }
+        );
         rv.setAdapter(adapter);
 
         viewModel = new ViewModelProvider(this).get(OrderListViewModel.class);

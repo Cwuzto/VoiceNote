@@ -21,16 +21,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-/** * Adapter cho danh sách Order (đã refactor từ InvoiceAdapter) 
+/**
+ * Adapter cho danh sách Order (đã refactor từ InvoiceAdapter)
  */
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.VH> {
 
-    // [SỬA] Interface
-    public interface OnPaidChange { void onChange(OrderEntity order, boolean checked); }
-    private final List<OrderWithItems> data = new ArrayList<>();
-    private final OnPaidChange callback;
+    // [SỬA] Thêm interface mới
+    public interface OnPaidChange {
+        void onChange(OrderEntity order, boolean checked);
+    }
 
-    public OrderAdapter(OnPaidChange cb) { this.callback = cb; }
+    public interface OnItemClickListener {
+        void onItemClick(OrderWithItems orderWithItems);
+    }
+
+    private final List<OrderWithItems> data = new ArrayList<>();
+    private final OnPaidChange onPaidChangeCallback;
+    private final OnItemClickListener onItemClickCallback; // [MỚI]
+
+    public OrderAdapter(OnPaidChange onPaidChange, OnItemClickListener onItemClick) {
+        this.onPaidChangeCallback = onPaidChange;
+        this.onItemClickCallback = onItemClick; // [MỚI]
+    }
 
     public void submit(List<OrderWithItems> orders) { // [SỬA]
         data.clear();
@@ -47,16 +59,21 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.VH> {
 
     @Override
     public void onBindViewHolder(@NonNull VH holder, int position) {
-        holder.bind(data.get(position), callback);
+        // [SỬA] Truyền cả 2 callback vào
+        holder.bind(data.get(position), onPaidChangeCallback, onItemClickCallback);
     }
 
     @Override
-    public int getItemCount() { return data.size(); }
+    public int getItemCount() {
+        return data.size();
+    }
 
     static class VH extends RecyclerView.ViewHolder {
         TextView tvCustomer, tvTime, tvTotal, tvLines;
         CheckBox cbPaid;
-        VH(View v) { super(v);
+
+        VH(View v) {
+            super(v);
             tvCustomer = v.findViewById(R.id.tvCustomer);
             tvTime = v.findViewById(R.id.tvTime);
             tvTotal = v.findViewById(R.id.tvTotal);
@@ -65,10 +82,11 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.VH> {
         }
 
         // [SỬA] Cập nhật hàm bind
-        void bind(OrderWithItems orderWithItems, OnPaidChange cb) {
+        // [SỬA] Cập nhật hàm bind
+        void bind(OrderWithItems orderWithItems, OnPaidChange paidChangeCb, OnItemClickListener itemClickCb) {
             OrderEntity order = orderWithItems.order;
 
-            // 1. Bind dữ liệu Order
+            // 1. Bind dữ liệu Order (Code cũ)
             tvCustomer.setText(order.customerName);
             tvTotal.setText(String.format(Locale.US, "%,d", order.totalAmount));
             boolean isPaid = "PAID".equals(order.status);
@@ -76,14 +94,13 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.VH> {
             SimpleDateFormat df = new SimpleDateFormat("HH:mm", Locale.getDefault());
             tvTime.setText(df.format(order.createdAt));
 
-            // 2. [MỚI] Build chuỗi tóm tắt món hàng
+            // 2. Build chuỗi tóm tắt món hàng (Code cũ)
             if (orderWithItems.orderItems != null && !orderWithItems.orderItems.isEmpty()) {
                 StringBuilder linesSummary = new StringBuilder();
                 for (int i = 0; i < orderWithItems.orderItems.size(); i++) {
                     OrderItemEntity item = orderWithItems.orderItems.get(i);
-                    // Dòng đầu tiên
                     if (i > 0) {
-                        linesSummary.append("\n"); // Thêm xuống dòng nếu có > 1 món
+                        linesSummary.append("\n");
                     }
                     linesSummary.append(item.quantity)
                             .append(" x ")
@@ -91,14 +108,18 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.VH> {
                 }
                 tvLines.setText(linesSummary.toString());
             } else {
-                tvLines.setText("Đơn hàng trống"); // Trường hợp không có món
+                tvLines.setText("Đơn hàng trống");
             }
 
             // 3. Gán listener
-            cbPaid.setOnCheckedChangeListener((b, checked) -> cb.onChange(order, checked));
+            cbPaid.setOnCheckedChangeListener((b, checked) -> paidChangeCb.onChange(order, checked));
 
-            // (Bạn cũng có thể thêm OnClickListener cho itemView ở đây
-            // để mở OrderDetailActivity)
+            // [MỚI] Gán listener cho toàn bộ card
+            itemView.setOnClickListener(v -> {
+                if (itemClickCb != null) {
+                    itemClickCb.onItemClick(orderWithItems);
+                }
+            });
         }
     }
 }
