@@ -1,3 +1,4 @@
+// File: com/example/voicenote/data/local/entity/UserEntity.java
 package com.example.voicenote.data.local.entity;
 
 import androidx.room.ColumnInfo;
@@ -5,29 +6,37 @@ import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-/**
- * Quản lý tài khoản & phân quyền
- */
 @Entity(
         tableName = "users",
-        indices = {@Index(value = "username", unique = true)} // Đảm bảo tên đăng nhập là duy nhất
+        indices = {@Index(value = "username", unique = true)}
 )
 public class UserEntity {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    public long id; // Dùng long cho PK auto-generate
+    public long id;
 
     @ColumnInfo(name = "username")
     public String username;
 
-    @ColumnInfo(name = "password")
-    public String password; // Lưu ý: Cần mã hoá (hash) mật khẩu này
+    // [SỬA] Đổi tên 2 cột này
+    @ColumnInfo(name = "password_hash")
+    public String passwordHash; // Sẽ lưu hash
+
+    @ColumnInfo(name = "password_salt")
+    public String passwordSalt; // Sẽ lưu salt
+    // [XOÁ] Xoá cột 'password' cũ
 
     @ColumnInfo(name = "full_name")
     public String fullName;
 
     @ColumnInfo(name = "role")
-    public String role; // "OWNER" / "EMPLOYEE"
+    public String role;
+
+    @ColumnInfo(name = "phone")
+    public String phone;
+
+    @ColumnInfo(name = "email")
+    public String email;
 
     @ColumnInfo(name = "is_active")
     public boolean isActive;

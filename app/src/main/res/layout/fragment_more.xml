@@ -11,7 +11,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Profile -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -46,7 +45,6 @@
                 android:textColor="#64748B"/>
         </LinearLayout>
 
-        <!-- Card: Chủ quán + Quét QR -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -56,9 +54,12 @@
             android:layout_marginBottom="12dp">
 
             <LinearLayout
+                android:id="@+id/rowProfile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:paddingVertical="4dp"
+                android:background="?attr/selectableItemBackground">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -72,9 +73,9 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="10dp"
-                    android:text="Chủ quán Tạ Bảo"
+                    android:text="Thông tin cá nhân"
                     android:textStyle="bold"
-                    android:textColor="#0F172A"
+                    android:textColor="#2563EB"
                     android:textSize="18sp"/>
             </LinearLayout>
 
@@ -86,17 +87,17 @@
                 android:background="#EEF2F7"/>
 
             <LinearLayout
-                android:id="@+id/rowScanOtherShop"
+                android:id="@+id/rowStoreInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp">
+                android:paddingVertical="4dp"
+                android:background="?attr/selectableItemBackground">
 
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_qr_24"
+                    android:src="@drawable/ic_home_24"
                     app:tint="#2563EB"/>
 
                 <TextView
@@ -104,14 +105,13 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="10dp"
-                    android:text="Quét QR để vào quán khác"
+                    android:text="Thông tin cửa hàng"
                     android:textColor="#2563EB"
                     android:textStyle="bold"
                     android:textSize="18sp"/>
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Card: Loa đọc tiền -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -149,7 +149,6 @@
                 android:layout_marginBottom="12dp"
                 android:background="#EEF2F7"/>
 
-            <!-- Dòng Thêm QR -->
             <LinearLayout
                 android:id="@+id/rowAddQR"
                 android:layout_width="match_parent"
@@ -182,14 +181,13 @@
                 android:layout_marginBottom="12dp"
                 android:background="#EEF2F7"/>
 
-            <!-- Dòng Thêm nhân viên -->
             <LinearLayout
-                android:id="@+id/rowAddEmployee"
+                android:id="@+id/rowEmployeeManagement"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp">
+                android:paddingVertical="4dp"
+                android:background="?attr/selectableItemBackground">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -202,14 +200,13 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="10dp"
-                    android:text="Thêm nhân viên"
+                    android:text="Quản lý nhân viên"
                     android:textColor="#2563EB"
                     android:textStyle="bold"
                     android:textSize="18sp"/>
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Card: Gọi tổng đài -->
         <LinearLayout
             android:id="@+id/rowHotline"
             android:layout_width="match_parent"
@@ -249,6 +246,20 @@
                 android:textSize="16sp"/>
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/btnLogout"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:text="Đăng xuất"
+            android:textColor="#D91C1C"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:background="@drawable/bg_button_secondary"
+            android:foreground="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"/>
         <TextView
             android:id="@+id/tvVersion"
             android:layout_width="match_parent"

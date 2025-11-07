@@ -11,11 +11,13 @@ import com.example.voicenote.data.local.dao.BankAccountDao;
 import com.example.voicenote.data.local.dao.OrderDao;
 import com.example.voicenote.data.local.dao.OrderItemDao;
 import com.example.voicenote.data.local.dao.ProductDao;
+import com.example.voicenote.data.local.dao.StoreDao;
 import com.example.voicenote.data.local.dao.UserDao;
 import com.example.voicenote.data.local.entity.BankAccountEntity;
 import com.example.voicenote.data.local.entity.OrderEntity;
 import com.example.voicenote.data.local.entity.OrderItemEntity;
 import com.example.voicenote.data.local.entity.ProductEntity;
+import com.example.voicenote.data.local.entity.StoreEntity;
 import com.example.voicenote.data.local.entity.UserEntity;
 
 /**
@@ -29,7 +31,8 @@ import com.example.voicenote.data.local.entity.UserEntity;
                 ProductEntity.class,
                 OrderEntity.class,
                 OrderItemEntity.class,
-                BankAccountEntity.class
+                BankAccountEntity.class,
+                StoreEntity.class
         },
         version = 1, // Bạn có thể cần tăng version nếu migrate
         exportSchema = false
@@ -42,8 +45,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract OrderDao orderDao();
     public abstract OrderItemDao orderItemDao();
     public abstract BankAccountDao bankAccountDao();
-    // --- (Xoá các DAO cũ: invoiceDao, lineItemDao, quickItemDao) ---
-
+    public  abstract StoreDao storeDao();
 
     private static volatile AppDatabase INSTANCE;
 
@@ -56,8 +58,7 @@ public abstract class AppDatabase extends RoomDatabase {
                                     AppDatabase.class,
                                     "voicenote_db"
                             )
-                            // [QUAN TRỌNG] Vì bạn thay đổi schema,
-                            // bạn cần .fallbackToDestructiveMigration()
+                            // cần .fallbackToDestructiveMigration()
                             // để xoá DB cũ và tạo lại.
                             .fallbackToDestructiveMigration()
                             .build();

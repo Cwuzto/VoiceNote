@@ -1,0 +1,79 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_soft_gradient"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerInParent="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tạo cửa hàng đầu tiên"
+            android:textStyle="bold"
+            android:textSize="26sp"
+            android:textColor="#0F172A"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="12dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thông tin này sẽ dùng để quản lý bán hàng"
+            android:textSize="16sp"
+            android:textColor="#374151"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="32dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tên cửa hàng"
+            android:textColor="#374151"
+            android:textSize="14sp"
+            android:layout_marginBottom="4dp"/>
+        <EditText
+            android:id="@+id/edtStoreName"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:hint="Ví dụ: Quán Bún Bò Huế"
+            android:inputType="textCapWords"
+            android:singleLine="true"
+            android:background="@drawable/bg_card_16"
+            android:paddingHorizontal="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Địa chỉ (Không bắt buộc)"
+            android:textColor="#374151"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp"/>
+        <EditText
+            android:id="@+id/edtStoreAddress"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:hint="Ví dụ: 123 Đường ABC, Quận 1"
+            android:inputType="textCapSentences"
+            android:singleLine="true"
+            android:background="@drawable/bg_card_16"
+            android:paddingHorizontal="16dp"/>
+
+        <TextView
+            android:id="@+id/btnCreateStore"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="24dp"
+            android:text="Tạo cửa hàng"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:background="@drawable/bg_button_primary"/>
+    </LinearLayout>
+</RelativeLayout>
