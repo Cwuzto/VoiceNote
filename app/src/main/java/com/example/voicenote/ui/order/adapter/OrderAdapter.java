@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.voicenote.R;
 // [SỬA] Import entity và relation mới
 import com.example.voicenote.data.local.entity.OrderEntity;
+import com.example.voicenote.data.local.entity.OrderItemEntity;
 import com.example.voicenote.data.local.rel.OrderWithItems;
 
 import java.text.SimpleDateFormat;
@@ -53,29 +54,51 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.VH> {
     public int getItemCount() { return data.size(); }
 
     static class VH extends RecyclerView.ViewHolder {
-        TextView tvCustomer, tvTime, tvTotal; CheckBox cbPaid;
+        TextView tvCustomer, tvTime, tvTotal, tvLines;
+        CheckBox cbPaid;
         VH(View v) { super(v);
             tvCustomer = v.findViewById(R.id.tvCustomer);
             tvTime = v.findViewById(R.id.tvTime);
             tvTotal = v.findViewById(R.id.tvTotal);
+            tvLines = v.findViewById(R.id.tvLines);
             cbPaid = v.findViewById(R.id.cbPaid);
         }
 
-        // [SỬA] Bind logic
+        // [SỬA] Cập nhật hàm bind
         void bind(OrderWithItems orderWithItems, OnPaidChange cb) {
             OrderEntity order = orderWithItems.order;
+
+            // 1. Bind dữ liệu Order
             tvCustomer.setText(order.customerName);
             tvTotal.setText(String.format(Locale.US, "%,d", order.totalAmount));
-
-            // [SỬA] So sánh status
             boolean isPaid = "PAID".equals(order.status);
             cbPaid.setChecked(isPaid);
-
             SimpleDateFormat df = new SimpleDateFormat("HH:mm", Locale.getDefault());
             tvTime.setText(df.format(order.createdAt));
 
-            // [SỬA] Cập nhật listener
+            // 2. [MỚI] Build chuỗi tóm tắt món hàng
+            if (orderWithItems.orderItems != null && !orderWithItems.orderItems.isEmpty()) {
+                StringBuilder linesSummary = new StringBuilder();
+                for (int i = 0; i < orderWithItems.orderItems.size(); i++) {
+                    OrderItemEntity item = orderWithItems.orderItems.get(i);
+                    // Dòng đầu tiên
+                    if (i > 0) {
+                        linesSummary.append("\n"); // Thêm xuống dòng nếu có > 1 món
+                    }
+                    linesSummary.append(item.quantity)
+                            .append(" x ")
+                            .append(item.productName);
+                }
+                tvLines.setText(linesSummary.toString());
+            } else {
+                tvLines.setText("Đơn hàng trống"); // Trường hợp không có món
+            }
+
+            // 3. Gán listener
             cbPaid.setOnCheckedChangeListener((b, checked) -> cb.onChange(order, checked));
+
+            // (Bạn cũng có thể thêm OnClickListener cho itemView ở đây
+            // để mở OrderDetailActivity)
         }
     }
 }
