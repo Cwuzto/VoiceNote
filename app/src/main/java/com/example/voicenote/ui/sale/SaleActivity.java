@@ -2,6 +2,7 @@
 package com.example.voicenote.ui.sale;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas; // [MỚI]
 import android.graphics.Color; // [MỚI]
 import android.graphics.drawable.ColorDrawable; // [MỚI]
@@ -27,6 +28,7 @@ import androidx.recyclerview.widget.ItemTouchHelper; // [MỚI]
 import androidx.recyclerview.widget.LinearLayoutManager; // [MỚI]
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.voicenote.MainActivity;
 import com.example.voicenote.R;
 // [SỬA] Import các entity và adapter mới
 import com.example.voicenote.data.local.entity.OrderEntity;
@@ -333,6 +335,17 @@ public class SaleActivity extends AppCompatActivity {
         // 6. Gọi ViewModel để lưu
         // (currentOrderItems chính là List<OrderItemEntity> mà ViewModel cần)
         orderEditViewModel.saveOrder(order, currentOrderItems);
+
+        // 7. [SỬA] Chuyển hướng về MainActivity VÀ yêu cầu mở tab Order
+        Intent intent = new Intent(this, MainActivity.class);
+
+        // Đặt cờ để không tạo MainActivity mới nếu nó đã chạy
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        // Gửi "tin nhắn"
+        intent.putExtra("NAVIGATE_TO", "ORDERS_TAB");
+
+        startActivity(intent);
 
         // 7. Lưu thành công, đóng Activity
         finish();
