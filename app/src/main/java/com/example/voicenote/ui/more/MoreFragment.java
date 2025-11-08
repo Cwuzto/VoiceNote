@@ -27,9 +27,13 @@ public class MoreFragment extends Fragment {
     private ProfileViewModel profileViewModel;
     private SessionManager sessionManager;
 
-    // Khai báo các TextView cần cập nhật
+    // Views cho header
     private TextView tvOwnerName, tvOwnerPhone, tvRole;
     private TextView btnLogout;
+
+    // [MỚI] Views cho phân quyền
+    private View rowStoreInfo, dividerStoreInfo;
+    private View rowEmployeeManagement, dividerEmployee;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) { // [MỚI]
@@ -45,18 +49,19 @@ public class MoreFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_more, container, false);
 
-        // --- Ánh xạ View ---
+        // --- Ánh xạ View header ---
         tvOwnerName = v.findViewById(R.id.tvOwnerName);
         tvOwnerPhone = v.findViewById(R.id.tvOwnerPhone);
         tvRole = v.findViewById(R.id.tvRole);
         btnLogout = v.findViewById(R.id.btnLogout);
 
+        // [MỚI] Ánh xạ view phân quyền
+        rowStoreInfo = v.findViewById(R.id.rowStoreInfo);
+        dividerStoreInfo = v.findViewById(R.id.dividerStoreInfo);
+        rowEmployeeManagement = v.findViewById(R.id.rowEmployeeManagement);
+        dividerEmployee = v.findViewById(R.id.dividerEmployee);
+
         TextView tvHotline = v.findViewById(R.id.tvHotline);
-        View rowHotline = v.findViewById(R.id.rowHotline);
-        rowHotline.setOnClickListener(x -> {
-            Intent i = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + tvHotline.getText().toString().replace(" ", "")));
-            startActivity(i);
-        });
 
         // 1. Thông tin cá nhân
         v.findViewById(R.id.rowProfile).setOnClickListener(view -> {
@@ -73,6 +78,12 @@ public class MoreFragment extends Fragment {
             startActivity(new Intent(getContext(), EmployeeListActivity.class));
         });
 
+        // 4. Hiển thị số điện thoại theo user
+        v.findViewById(R.id.rowHotline).setOnClickListener(x -> {
+            Intent i = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + tvHotline.getText().toString().replace(" ", "")));
+            startActivity(i);
+        });
+
         // Nút đăng xuất ---
         btnLogout.setOnClickListener(view -> {
             showLogoutConfirmDialog();
@@ -85,7 +96,7 @@ public class MoreFragment extends Fragment {
     }
 
     /**
-     * Lấy UserID từ Session và tải dữ liệu từ ViewModel
+     * Tải dữ liệu người dùng VÀ XỬ LÝ PHÂN QUYỀN
      */
     private void loadUserData() {
         long userId = sessionManager.getUserId();
@@ -110,12 +121,22 @@ public class MoreFragment extends Fragment {
                 tvOwnerPhone.setText(""); // Để trống
             }
 
-            // 3. (Bonus) Cập nhật luôn dòng Role trong Card
+            // 3. Cập nhật luôn dòng Role trong Card
             String roleDisplay;
             if ("OWNER".equals(user.role)) {
                 roleDisplay = "Chủ quán";
+                // Hiển thị các mục của Owner
+                rowStoreInfo.setVisibility(View.VISIBLE);
+                dividerStoreInfo.setVisibility(View.VISIBLE);
+                rowEmployeeManagement.setVisibility(View.VISIBLE);
+                dividerEmployee.setVisibility(View.VISIBLE);
             } else {
                 roleDisplay = "Nhân viên";
+                // Ẩn các mục của Owner
+                rowStoreInfo.setVisibility(View.GONE);
+                dividerStoreInfo.setVisibility(View.GONE);
+                rowEmployeeManagement.setVisibility(View.GONE);
+                dividerEmployee.setVisibility(View.GONE);
             }
             tvRole.setText(roleDisplay + " " + user.fullName);
         });
@@ -131,7 +152,7 @@ public class MoreFragment extends Fragment {
         // 2. Chuyển về màn hình Login
         Intent intent = new Intent(getContext(), LoginActivity.class);
 
-        // 3. [QUAN TRỌNG] Xoá tất cả Activity cũ khỏi stack
+        // 3. Xoá tất cả Activity cũ khỏi stack
         // (Đảm bảo người dùng không thể bấm Back quay lại MainActivity)
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 

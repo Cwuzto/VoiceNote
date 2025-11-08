@@ -80,6 +80,7 @@
             </LinearLayout>
 
             <View
+                android:id="@+id/dividerStoreInfo"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="12dp"
@@ -175,6 +176,7 @@
             </LinearLayout>
 
             <View
+                android:id="@+id/dividerEmployee"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="12dp"
@@ -250,6 +252,7 @@
             android:id="@+id/btnLogout"
             android:layout_width="match_parent"
             android:layout_height="56dp"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:gravity="center"
             android:text="Đăng xuất"
@@ -260,6 +263,7 @@
             android:foreground="?attr/selectableItemBackground"
             android:clickable="true"
             android:focusable="true"/>
+
         <TextView
             android:id="@+id/tvVersion"
             android:layout_width="match_parent"
@@ -267,7 +271,6 @@
             android:text="Phiên bản 1.1.1"
             android:textAlignment="center"
             android:textColor="#94A3B8"
-            android:layout_marginTop="16dp"
             android:layout_marginBottom="24dp"/>
     </LinearLayout>
 </ScrollView>
