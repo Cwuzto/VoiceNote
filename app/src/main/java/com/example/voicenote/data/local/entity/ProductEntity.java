@@ -21,9 +21,6 @@ public class ProductEntity {
     @ColumnInfo(name = "price")
     public long price;
 
-    @ColumnInfo(name = "image_url")
-    public String imageUrl; // (nullable)
-
     // --- Các trường này dùng cho UI (SaleActivity), không lưu vào DB ---
     @Ignore public int selected = 0;
     @Ignore public boolean showRemove = false;

@@ -7,17 +7,22 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
-// [SỬA] Import fragment mới
+import com.example.voicenote.ui.product.ProductListFragment;
 import com.example.voicenote.ui.order.OrderListFragment;
 import com.example.voicenote.ui.more.MoreFragment;
 import com.example.voicenote.ui.overview.OverviewFragment;
 import com.example.voicenote.ui.sale.SaleActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.example.voicenote.util.SessionManager;
+import com.example.voicenote.vm.ProfileViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView navView;
+    private SessionManager sessionManager;
+    private ProfileViewModel profileViewModel;
 
     @Override protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -26,15 +31,48 @@ public class MainActivity extends AppCompatActivity {
         navView = findViewById(R.id.bottom_nav);
         navView.setOnItemSelectedListener(this::onNavItemSelected);
 
+        // Thêm SessionManager và ViewModel
+        sessionManager = new SessionManager(this);
+        profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
+
         if(savedInstanceState==null){
             // Nếu là lần chạy đầu
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, new OverviewFragment())
                     .commit();
 
-            // [MỚI] Kiểm tra Intent ngay khi tạo
+            //  Kiểm tra Intent ngay khi tạo
             handleNavigationIntent(getIntent());
         }
+        // Tải dữ liệu User để phân quyền
+        loadUserAndSetupPermissions();
+    }
+
+    /**
+     * [MỚI] Tải User và ẩn Tab nếu là EMPLOYEE
+     */
+    private void loadUserAndSetupPermissions() {
+        long userId = sessionManager.getUserId();
+        if (userId == -1) return; // Lỗi (nên quay về Login)
+
+        profileViewModel.getUser(userId).observe(this, user -> {
+            if (user == null) return;
+
+            if ("EMPLOYEE".equals(user.role)) {
+                // LÀ NHÂN VIÊN -> ẨN TAB
+                navView.getMenu().findItem(R.id.nav_overview).setVisible(false);
+                navView.getMenu().findItem(R.id.nav_products).setVisible(false);
+
+                // (Optional) Nếu tab Overview đang được chọn, chuyển họ sang tab Hoá đơn
+                if (navView.getSelectedItemId() == R.id.nav_overview) {
+                    navView.setSelectedItemId(R.id.nav_invoice);
+                }
+            } else {
+                // LÀ OWNER -> HIỂN THỊ
+                navView.getMenu().findItem(R.id.nav_overview).setVisible(true);
+                navView.getMenu().findItem(R.id.nav_products).setVisible(true);
+            }
+        });
     }
 
     /**
@@ -76,9 +114,9 @@ public class MainActivity extends AppCompatActivity {
         }
         Fragment frag;
         if(id==R.id.nav_overview) frag = new OverviewFragment();
+        else if(id==R.id.nav_products) frag = new ProductListFragment();
         else if(id==R.id.nav_invoice) frag = new OrderListFragment();
         else if(id==R.id.nav_more) frag = new MoreFragment();
-        // tab qr // else if(id==R.id.nav_qr) ...
         else return false;
 
         getSupportFragmentManager().beginTransaction()

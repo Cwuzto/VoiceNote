@@ -1,11 +1,10 @@
 <resources>
     <string name="app_name">VoicePOS</string>
     <string name="tab_overview">Tổng quan</string>
-    <string name="tab_qr">QR ting ting</string>
+    <string name="tab_products">Sản phẩm</string>
     <string name="tab_sale">Bán hàng</string>
     <string name="tab_invoice">Hoá đơn</string>
     <string name="tab_more">Nhiều hơn</string>
-
     <string name="overview_title">VoiceNote</string>
     <string name="revenue_this_month">Doanh thu tháng này</string>
     <string name="orders_this_month">Đơn tháng này</string>

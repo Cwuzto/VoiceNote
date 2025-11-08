@@ -1,13 +1,16 @@
 // File: com/example/voicenote/ui/invoice/adapter/OrderAdapter.java
 package com.example.voicenote.ui.order.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.voicenote.R;
@@ -71,30 +74,37 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.VH> {
     static class VH extends RecyclerView.ViewHolder {
         TextView tvCustomer, tvTime, tvTotal, tvLines;
         CheckBox cbPaid;
+        LinearLayout btnPaidArea;
+        Context context;
 
         VH(View v) {
             super(v);
+            context = v.getContext(); // Lấy context để show Dialog
             tvCustomer = v.findViewById(R.id.tvCustomer);
             tvTime = v.findViewById(R.id.tvTime);
             tvTotal = v.findViewById(R.id.tvTotal);
             tvLines = v.findViewById(R.id.tvLines);
             cbPaid = v.findViewById(R.id.cbPaid);
+            btnPaidArea = v.findViewById(R.id.btnPaidArea);
         }
 
-        // [SỬA] Cập nhật hàm bind
-        // [SỬA] Cập nhật hàm bind
         void bind(OrderWithItems orderWithItems, OnPaidChange paidChangeCb, OnItemClickListener itemClickCb) {
             OrderEntity order = orderWithItems.order;
 
-            // 1. Bind dữ liệu Order (Code cũ)
+            // Bind dữ liệu Order
             tvCustomer.setText(order.customerName);
             tvTotal.setText(String.format(Locale.US, "%,d", order.totalAmount));
+
+            // Logic hiển thị và Khóa Checkbox
             boolean isPaid = "PAID".equals(order.status);
             cbPaid.setChecked(isPaid);
+            cbPaid.setEnabled(!isPaid); // Yêu cầu 2: Khóa nếu đã thanh toán
+            btnPaidArea.setEnabled(!isPaid); // Khóa luôn cả layout cha
+
             SimpleDateFormat df = new SimpleDateFormat("HH:mm", Locale.getDefault());
             tvTime.setText(df.format(order.createdAt));
 
-            // 2. Build chuỗi tóm tắt món hàng (Code cũ)
+            // Build chuỗi tóm tắt món hàng (Code cũ)
             if (orderWithItems.orderItems != null && !orderWithItems.orderItems.isEmpty()) {
                 StringBuilder linesSummary = new StringBuilder();
                 for (int i = 0; i < orderWithItems.orderItems.size(); i++) {
@@ -111,10 +121,23 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.VH> {
                 tvLines.setText("Đơn hàng trống");
             }
 
-            // 3. Gán listener
-            cbPaid.setOnCheckedChangeListener((b, checked) -> paidChangeCb.onChange(order, checked));
+            // OnClickListener
+            btnPaidArea.setOnClickListener(v -> {
+                // Nếu đã paid (bị khóa) thì không làm gì
+                if (isPaid) return;
+                //  Hỏi xác nhận
+                new AlertDialog.Builder(context)
+                        .setTitle("Xác nhận thanh toán")
+                        .setMessage("Bạn có chắc chắn muốn đánh dấu đơn hàng này là ĐÃ NHẬN TIỀN?")
+                        .setPositiveButton("Xác nhận", (dialog, which) -> {
+                            // Chỉ gọi callback khi người dùng bấm "Xác nhận"
+                            paidChangeCb.onChange(order, true);
+                        })
+                        .setNegativeButton("Huỷ", null)
+                        .show();
+            });
 
-            // [MỚI] Gán listener cho toàn bộ card
+            // Gán listener cho toàn bộ card
             itemView.setOnClickListener(v -> {
                 if (itemClickCb != null) {
                     itemClickCb.onItemClick(orderWithItems);
