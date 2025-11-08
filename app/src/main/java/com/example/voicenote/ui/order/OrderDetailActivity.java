@@ -1,10 +1,12 @@
 // File: com/example/voicenote/ui/order/OrderDetailActivity.java
 package com.example.voicenote.ui.order; // [SỬA] Package
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -16,11 +18,13 @@ import com.example.voicenote.R;
 import com.example.voicenote.data.local.entity.OrderEntity;
 import com.example.voicenote.data.local.entity.OrderItemEntity;
 import com.example.voicenote.data.local.rel.OrderWithItems;
+import com.example.voicenote.ui.sale.SaleActivity;
 import com.example.voicenote.vm.OrderDetailViewModel;
 
 import org.jspecify.annotations.NonNull;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Locale;
 
 /** * Activity chi tiết Order (đã refactor từ InvoiceDetailActivity) 
@@ -32,6 +36,8 @@ public class OrderDetailActivity extends AppCompatActivity {
     private TextView tvCustomer, tvDate, tvSubtotal, tvTotal;
     private CheckBox cbPaid;
     private LinearLayout containerItems;
+    private ImageButton btnEdit;
+    private OrderWithItems currentOrder;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,13 +56,14 @@ public class OrderDetailActivity extends AppCompatActivity {
         tvDate = findViewById(R.id.tvDate);
         tvSubtotal = findViewById(R.id.tvSubtotal);
         containerItems = findViewById(R.id.containerItems);
+        btnEdit = findViewById(R.id.btnEdit);
 
         // --- Lấy ViewModel và Quan sát Dữ liệu ---
         viewModel = new ViewModelProvider(this).get(OrderDetailViewModel.class);
         viewModel.getOrderById(orderId).observe(this, orderWithItems -> {
             if (orderWithItems != null && orderWithItems.order != null) {
-                // [MỚI] Gọi hàm để điền dữ liệu
-                populateData(orderWithItems);
+                this.currentOrder = orderWithItems; // Lưu lại đơn hàng hiện tại
+                populateData(orderWithItems); // Gọi hàm để điền dữ liệu
             }
         });
 
@@ -72,6 +79,33 @@ public class OrderDetailActivity extends AppCompatActivity {
 
         // Nút đóng
         findViewById(R.id.tvClose).setOnClickListener(v -> finish());
+
+        // Nút sửa
+        btnEdit.setOnClickListener(v -> openEditMode());
+    }
+
+    /**
+     * [MỚI] Gửi dữ liệu đơn hàng sang SaleActivity
+     */
+    private void openEditMode() {
+        if (currentOrder == null || currentOrder.order == null) return;
+
+        Intent intent = new Intent(this, SaleActivity.class);
+
+        // Gửi ID của đơn hàng đang sửa
+        intent.putExtra("EDIT_ORDER_ID", currentOrder.order.id);
+
+        // Gửi Tên khách
+        intent.putExtra("CUSTOMER_NAME", currentOrder.order.customerName);
+
+        // Gửi danh sách món (đã làm Parcelable)
+        intent.putParcelableArrayListExtra(
+                "ORDER_ITEMS",
+                new ArrayList<>(currentOrder.orderItems)
+        );
+
+        startActivity(intent);
+        finish(); // Đóng màn hình Detail
     }
 
     /**

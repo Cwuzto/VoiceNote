@@ -1,6 +1,8 @@
 // File: com/example/voicenote/data/local/entity/OrderItemEntity.java
 package com.example.voicenote.data.local.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -20,7 +22,7 @@ import androidx.room.PrimaryKey;
         ),
         indices = {@Index("order_id")}
 )
-public class OrderItemEntity {
+public class OrderItemEntity implements Parcelable{
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     public long id; // Dùng long cho PK auto-generate
@@ -41,4 +43,41 @@ public class OrderItemEntity {
     public String note; // (nullable)
 
     public OrderItemEntity() {}
+
+    // --- Code cho Parcelable ---
+    protected OrderItemEntity(Parcel in) {
+        id = in.readLong();
+        orderId = in.readLong();
+        productName = in.readString();
+        unitPrice = in.readLong();
+        quantity = in.readInt();
+        note = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeLong(orderId);
+        dest.writeString(productName);
+        dest.writeLong(unitPrice);
+        dest.writeInt(quantity);
+        dest.writeString(note);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<OrderItemEntity> CREATOR = new Creator<OrderItemEntity>() {
+        @Override
+        public OrderItemEntity createFromParcel(Parcel in) {
+            return new OrderItemEntity(in);
+        }
+
+        @Override
+        public OrderItemEntity[] newArray(int size) {
+            return new OrderItemEntity[size];
+        }
+    }; //end Parcelable
 }
