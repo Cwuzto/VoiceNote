@@ -65,7 +65,11 @@ public class SaleActivity extends AppCompatActivity {
 
     // --- Data ---
     private final List<ProductEntity> quickProducts = new ArrayList<>();
-    private final List<OrderItemEntity> currentOrderItems = new ArrayList<>(); // [MỚI] Giỏ hàng
+    private final List<OrderItemEntity> currentOrderItems = new ArrayList<>(); // Giỏ hàng
+
+    // Biến theo dõi chế độ Sửa
+    private boolean isEditMode = false;
+    private long editingOrderId = 0; // ID của đơn hàng đang sửa
 
     private boolean gridVisible = false;
 
@@ -84,6 +88,9 @@ public class SaleActivity extends AppCompatActivity {
         // --- Thiết lập Listeners ---
         setupListeners();
 
+        // Kiểm tra xem có phải chế độ Sửa không
+        checkEditMode();
+
         // --- Thiết lập RecyclerViews ---
         setupQuickGrid(); // Lưới chọn nhanh
         setupOrderLines(); // Giỏ hàng [MỚI]
@@ -96,6 +103,36 @@ public class SaleActivity extends AppCompatActivity {
 
         // --- Cập nhật UI lần đầu ---
         updateCartUI();
+    }
+
+    /**
+     * Kiểm tra Intent xem có phải là sửa đơn hàng không
+     */
+    private void checkEditMode() {
+        Intent intent = getIntent();
+        if (intent.hasExtra("EDIT_ORDER_ID")) {
+            isEditMode = true;
+            editingOrderId = intent.getLongExtra("EDIT_ORDER_ID", 0);
+
+            // Lấy dữ liệu cũ
+            String customerName = intent.getStringExtra("CUSTOMER_NAME");
+            ArrayList<OrderItemEntity> items = intent.getParcelableArrayListExtra("ORDER_ITEMS");
+
+            // Tải dữ liệu vào UI
+            if (customerName != null) {
+                tvCustomer.setText(customerName);
+            }
+            if (items != null) {
+                currentOrderItems.clear();
+                currentOrderItems.addAll(items);
+                // Đã có adapter, chỉ cần thông báo
+                if (orderLineAdapter != null) {
+                    orderLineAdapter.notifyDataSetChanged();
+                }
+            }
+            // Đổi text nút "Xong"
+            btnDone.setText("Cập nhật");
+        }
     }
 
     private void findViews() {
@@ -152,7 +189,7 @@ public class SaleActivity extends AppCompatActivity {
         rvQuickGrid.setAdapter(quickGridAdapter);
     }
 
-    // [MỚI] Thiết lập RecyclerView cho giỏ hàng
+    // Thiết lập RecyclerView cho giỏ hàng
     private void setupOrderLines() {
         rvOrderLines.setLayoutManager(new LinearLayoutManager(this));
         rvOrderLines.setNestedScrollingEnabled(false);
@@ -301,7 +338,7 @@ public class SaleActivity extends AppCompatActivity {
         tvTotal.setText(String.format(Locale.US, "%,d", total));
     }
 
-    // [MỚI] Lưu đơn hàng và thoát
+    // Lưu đơn hàng và thoát
     private void saveOrderAndFinish() {
         // 1. Kiểm tra (dù nút đã bị disable)
         if (currentOrderItems.isEmpty()) {
@@ -310,6 +347,11 @@ public class SaleActivity extends AppCompatActivity {
 
         // 2. Tạo OrderEntity mới
         OrderEntity order = new OrderEntity();
+
+        // Nếu là Sửa, dùng lại ID cũ
+        if (isEditMode) {
+            order.id = editingOrderId;
+        }
 
         // 3. Lấy thông tin khách hàng
         String customerName = tvCustomer.getText().toString();
@@ -335,6 +377,19 @@ public class SaleActivity extends AppCompatActivity {
         // 6. Gọi ViewModel để lưu
         // (currentOrderItems chính là List<OrderItemEntity> mà ViewModel cần)
         orderEditViewModel.saveOrder(order, currentOrderItems);
+
+        // [SỬA] Logic điều hướng
+        if (isEditMode) {
+            // Nếu là Sửa, chỉ cần đóng lại
+            finish();
+        } else {
+            // Nếu là Tạo mới, quay về Main và mở tab Order
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent.putExtra("NAVIGATE_TO", "ORDERS_TAB");
+            startActivity(intent);
+            finish();
+        }
 
         // 7. [SỬA] Chuyển hướng về MainActivity VÀ yêu cầu mở tab Order
         Intent intent = new Intent(this, MainActivity.class);

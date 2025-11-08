@@ -30,8 +30,10 @@ import com.example.voicenote.vm.OrderListViewModel;
  * Fragment hiển thị danh sách Order (đã refactor từ InvoiceListFragment)
  */
 public class OrderListFragment extends Fragment {
-    private OrderListViewModel viewModel; // [SỬA]
-    private OrderAdapter adapter; // [SỬA]
+    private OrderListViewModel viewModel;
+    private OrderAdapter adapter;
+    private TextView chipStatus;
+    private String currentFilterStatus = "ALL";
 
     @Nullable
     @Override
@@ -44,6 +46,7 @@ public class OrderListFragment extends Fragment {
         EditText edtSearch = v.findViewById(R.id.edtSearch);
         TextView btnCancelSearch = v.findViewById(R.id.btnCancelSearch);
         ImageView btnSearch = v.findViewById(R.id.btnSearch);
+        chipStatus = v.findViewById(R.id.chipStatus);
 
         rv.setLayoutManager(new LinearLayoutManager(requireContext()));
 
@@ -89,6 +92,22 @@ public class OrderListFragment extends Fragment {
             edtSearch.clearFocus();
             InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(edtSearch.getWindowToken(), 0);
+        });
+
+        // [MỚI] Xử lý click cho Chip Lọc
+        chipStatus.setOnClickListener(view -> {
+            if ("ALL".equals(currentFilterStatus)) {
+                // Đang là "Tất cả" -> Chuyển sang "Chưa thanh toán"
+                currentFilterStatus = "UNPAID";
+                viewModel.setStatusFilter("UNPAID");
+                chipStatus.setText("Chưa thanh toán");
+                // (Bạn có thể đổi màu chip ở đây)
+            } else {
+                // Đang là "Chưa thanh toán" -> Chuyển về "Tất cả"
+                currentFilterStatus = "ALL";
+                viewModel.setStatusFilter("ALL");
+                chipStatus.setText("Tất cả");
+            }
         });
 
         // --- Lọc danh sách khi người dùng nhập ---

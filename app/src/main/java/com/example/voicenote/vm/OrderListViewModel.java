@@ -32,6 +32,7 @@ public class OrderListViewModel extends AndroidViewModel {
 
     // Từ khoá hiện tại
     private String currentKeyword = "";
+    private String currentStatusFilter = "ALL"; // [MỚI] Thêm bộ lọc trạng thái
 
     public OrderListViewModel(@NonNull Application app) {
         super(app);
@@ -42,7 +43,8 @@ public class OrderListViewModel extends AndroidViewModel {
 
         // Gắn nguồn vào Mediator
         filteredOrders.addSource(allOrders, list -> {
-            filteredOrders.setValue(applyFilter(list, currentKeyword));
+            // [SỬA] Áp dụng cả 2 bộ lọc
+            filteredOrders.setValue(applyFilter(list, currentKeyword, currentStatusFilter));
         });
     }
 
@@ -59,7 +61,18 @@ public class OrderListViewModel extends AndroidViewModel {
     public void filterOrders(String keyword) { // [SỬA]
         currentKeyword = keyword != null ? keyword.trim() : "";
         List<OrderWithItems> source = allOrders.getValue();
-        filteredOrders.setValue(applyFilter(source, currentKeyword));
+        //  Áp dụng cả 2 bộ lọc
+        filteredOrders.setValue(applyFilter(source, currentKeyword, currentStatusFilter));
+    }
+
+    /**
+     * [MỚI] Lọc theo trạng thái (chip)
+     */
+    public void setStatusFilter(String status) {
+        currentStatusFilter = status;
+        List<OrderWithItems> source = allOrders.getValue();
+        // [SỬA] Áp dụng cả 2 bộ lọc
+        filteredOrders.setValue(applyFilter(source, currentKeyword, currentStatusFilter));
     }
 
     /**
@@ -69,41 +82,49 @@ public class OrderListViewModel extends AndroidViewModel {
         repository.updatePaymentStatus(order, isPaid); // [SỬA]
     }
 
-    // [XOÁ] Hàm setPaid cũ (thay bằng updatePaymentStatus)
-
     // ----------------- Helpers -----------------
 
-    private List<OrderWithItems> applyFilter(List<OrderWithItems> sourceList, String keyword) {
-        if (sourceList == null) return new ArrayList<>();
-        String query = keyword == null ? "" : keyword.trim().toLowerCase(Locale.getDefault());
-        if (query.isEmpty()) {
-            return new ArrayList<>(sourceList);
+    // [SỬA] Cập nhật hàm applyFilter
+    private List<OrderWithItems> applyFilter(List<OrderWithItems> src, String keyword, String status) {
+        if (src == null) return new ArrayList<>();
+
+        // 1. Lọc theo Trạng thái trước
+        List<OrderWithItems> statusFilteredList = new ArrayList<>();
+        if ("ALL".equals(status)) {
+            statusFilteredList.addAll(src); // Lấy tất cả
+        } else {
+            for (OrderWithItems ivw : src) {
+                if (ivw.order != null && status.equals(ivw.order.status)) {
+                    statusFilteredList.add(ivw); // Chỉ lấy trạng thái UNPAID/PAID
+                }
+            }
         }
 
-        List<OrderWithItems> outputList = new ArrayList<>();
-        for (OrderWithItems orderWithItems : sourceList) {
-            boolean match = false;
+        // 2. Lọc theo Từ khoá (từ kết quả của bước 1)
+        String q = keyword == null ? "" : keyword.trim().toLowerCase(Locale.getDefault());
+        if (q.isEmpty()) {
+            return statusFilteredList; // Không có keyword, trả về ds đã lọc status
+        }
 
-            // 1) So khớp theo tên khách
-            if (orderWithItems.order != null && orderWithItems.order.customerName != null) {
-                if (orderWithItems.order.customerName.toLowerCase(Locale.getDefault()).contains(query)) { // [SỬA]
+        List<OrderWithItems> outPutList = new ArrayList<>();
+        for (OrderWithItems ivw : statusFilteredList) { // [SỬA] Lọc trên ds đã lọc status
+            boolean match = false;
+            if (ivw.order != null && ivw.order.customerName != null) {
+                if (ivw.order.customerName.toLowerCase(Locale.getDefault()).contains(q)) {
                     match = true;
                 }
             }
-
-            // 2) Nếu chưa khớp, so tiếp theo tên từng dòng hàng
-            if (!match && orderWithItems.orderItems != null) { // [SỬA]
-                for (int i = 0; i < orderWithItems.orderItems.size(); i++) {
-                    if (orderWithItems.orderItems.get(i).productName != null && // [SỬA]
-                            orderWithItems.orderItems.get(i).productName.toLowerCase(Locale.getDefault()).contains(query)) { // [SỬA]
+            if (!match && ivw.orderItems != null) {
+                for (int i = 0; i < ivw.orderItems.size(); i++) {
+                    if (ivw.orderItems.get(i).productName != null &&
+                            ivw.orderItems.get(i).productName.toLowerCase(Locale.getDefault()).contains(q)) {
                         match = true;
                         break;
                     }
                 }
             }
-
-            if (match) outputList.add(orderWithItems);
+            if (match) outPutList.add(ivw);
         }
-        return outputList;
+        return outPutList;
     }
 }
