@@ -25,15 +25,6 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/btnAddImage"
-        android:text="Thêm ảnh"
-        android:textStyle="bold"
-        android:textColor="#1565FF"
-        android:layout_marginTop="12dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <TextView
         android:text="Tên hàng"
         android:textColor="#6B7280"
         android:layout_marginTop="12dp"

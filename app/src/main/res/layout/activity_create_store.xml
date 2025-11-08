@@ -58,7 +58,7 @@
             android:id="@+id/edtStoreAddress"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:hint="Ví dụ: 123 Đường ABC, Quận 1"
+            android:hint="Ví dụ: Số 1 đường Trần Văn Ơn"
             android:inputType="textCapSentences"
             android:singleLine="true"
             android:background="@drawable/bg_card_16"

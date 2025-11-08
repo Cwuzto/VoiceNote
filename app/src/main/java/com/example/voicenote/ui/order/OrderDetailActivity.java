@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -36,8 +37,9 @@ public class OrderDetailActivity extends AppCompatActivity {
     private TextView tvCustomer, tvDate, tvSubtotal, tvTotal;
     private CheckBox cbPaid;
     private LinearLayout containerItems;
+    private LinearLayout btnPaid; //layout cha của checkbox
+    private OrderWithItems currentOrder; // Biến này được Observer gán
     private ImageButton btnEdit;
-    private OrderWithItems currentOrder;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +55,7 @@ public class OrderDetailActivity extends AppCompatActivity {
         tvCustomer = findViewById(R.id.tvCustomer);
         tvTotal = findViewById(R.id.tvTotal);
         cbPaid = findViewById(R.id.cbPaid);
+        btnPaid = findViewById(R.id.btnPaid);
         tvDate = findViewById(R.id.tvDate);
         tvSubtotal = findViewById(R.id.tvSubtotal);
         containerItems = findViewById(R.id.containerItems);
@@ -67,14 +70,29 @@ public class OrderDetailActivity extends AppCompatActivity {
             }
         });
 
-        // --- Listener cho Checkbox (Giữ nguyên) ---
-        cbPaid.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (viewModel.getOrderById(orderId).getValue() != null) {
-                OrderEntity current = viewModel.getOrderById(orderId).getValue().order;
-                if (current != null) {
-                    viewModel.updatePaymentStatus(current, isChecked);
-                }
+        // [MỚI] Thêm OnClickListener vào layout cha
+        btnPaid.setOnClickListener(v -> {
+            if (this.currentOrder == null || this.currentOrder.order == null) {
+                // Dữ liệu chưa tải xong, không làm gì cả
+                return;
             }
+
+            // Lấy trạng thái hiện tại
+            OrderEntity current = this.currentOrder.order; // Lấy order từ biến đã lưu
+
+            // Nếu đã paid (bị khóa) thì không làm gì
+            if ("PAID".equals(current.status)) return;
+
+            // Yêu cầu 1: Hỏi xác nhận
+            new AlertDialog.Builder(this)
+                    .setTitle("Xác nhận thanh toán")
+                    .setMessage("Bạn có chắc chắn muốn đánh dấu đơn hàng này là ĐÃ NHẬN TIỀN?")
+                    .setPositiveButton("Xác nhận", (dialog, which) -> {
+                        // Chỉ gọi ViewModel khi người dùng bấm "Xác nhận"
+                        viewModel.updatePaymentStatus(current, true);
+                    })
+                    .setNegativeButton("Huỷ", null)
+                    .show();
         });
 
         // Nút đóng
@@ -123,6 +141,12 @@ public class OrderDetailActivity extends AppCompatActivity {
         // Định dạng ngày giờ
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
         tvDate.setText(sdf.format(order.createdAt));
+
+        // Logic hiển thị và Khóa Checkbox
+        boolean isPaid = "PAID".equals(order.status);
+        cbPaid.setChecked(isPaid);
+        cbPaid.setEnabled(!isPaid); // Khóa nếu đã thanh toán
+        btnPaid.setEnabled(!isPaid); // Khóa luôn cả layout cha
 
         // 2. Điền danh sách món hàng
         containerItems.removeAllViews(); // Xoá hết view giả (nếu có)
