@@ -2,16 +2,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:paddingTop="4dp"
-    android:paddingBottom="4dp"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp">
+    android:orientation="horizontal"
+    android:paddingHorizontal="16dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="8dp"
+    android:gravity="center_vertical">
 
     <TextView
-        android:id="@+id/tvDay"
+        android:id="@+id/tvDateHeader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Hôm nay, 10/11/2025"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="#374151" />
+
+    <TextView
+        android:id="@+id/tvDateTotal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#475569"
-        android:textStyle="bold" />
+        android:text="50,000"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="#1565FF" />
 </LinearLayout>
