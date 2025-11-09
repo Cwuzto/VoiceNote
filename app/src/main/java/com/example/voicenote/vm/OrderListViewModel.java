@@ -133,33 +133,34 @@ public class OrderListViewModel extends AndroidViewModel {
             }
         }
 
-        // 3. Lọc theo Từ khoá
+        // 3. Lọc theo Từ khoá (lọc trên danh sách 2)
+        List<OrderWithItems> keywordFilteredList = new ArrayList<>();
         String q = keyword == null ? "" : keyword.trim().toLowerCase(Locale.getDefault());
-        if (q.isEmpty()) {
-            filteredList.addAll(timeFilteredList); // Trả về ds đã lọc status & time
-        }
 
-        List<OrderWithItems> outPutList = new ArrayList<>();
-        for (OrderWithItems ivw : filteredList) { // Lọc trên ds đã lọc status
-            boolean match = false;
-            if (ivw.order != null && ivw.order.customerName != null) {
-                if (ivw.order.customerName.toLowerCase(Locale.getDefault()).contains(q)) {
-                    match = true;
-                }
-            }
-            if (!match && ivw.orderItems != null) {
-                for (int i = 0; i < ivw.orderItems.size(); i++) {
-                    if (ivw.orderItems.get(i).productName != null &&
-                            ivw.orderItems.get(i).productName.toLowerCase(Locale.getDefault()).contains(q)) {
+        if (q.isEmpty()) {
+            keywordFilteredList.addAll(timeFilteredList); // Không có từ khoá
+        } else {
+            for (OrderWithItems ivw : timeFilteredList) {
+                boolean match = false;
+                if (ivw.order != null && ivw.order.customerName != null) {
+                    if (ivw.order.customerName.toLowerCase(Locale.getDefault()).contains(q)) {
                         match = true;
-                        break;
                     }
                 }
+                if (!match && ivw.orderItems != null) {
+                    for (int i = 0; i < ivw.orderItems.size(); i++) {
+                        if (ivw.orderItems.get(i).productName != null &&
+                                ivw.orderItems.get(i).productName.toLowerCase(Locale.getDefault()).contains(q)) {
+                            match = true;
+                            break;
+                        }
+                    }
+                }
+                if (match) keywordFilteredList.add(ivw);
             }
-            if (match) outPutList.add(ivw);
         }
-        // Nhóm danh sách đã lọc
-        return groupFilteredList(filteredList);
+        // Nhóm danh sách (danh sách cuối cùng đã lọc)
+        return groupFilteredList(keywordFilteredList);
     }
     /**
      * [MỚI] Hàm này nhận danh sách đã lọc và chèn các Header vào
