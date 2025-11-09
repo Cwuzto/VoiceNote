@@ -1,0 +1,73 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/bg_bottomsheet_round">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Thời gian"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textColor="@color/text_primary"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:id="@+id/tvFilterTimeAll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Toàn thời gian"
+        android:textSize="18sp"
+        android:padding="12dp"
+        android:background="?attr/selectableItemBackground"/>
+    <TextView
+        android:id="@+id/tvFilterTimeToday"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Hôm nay"
+        android:textSize="18sp"
+        android:padding="12dp"
+        android:background="?attr/selectableItemBackground"/>
+    <TextView
+        android:id="@+id/tvFilterTimeYesterday"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Hôm qua"
+        android:textSize="18sp"
+        android:padding="12dp"
+        android:background="?attr/selectableItemBackground"/>
+    <TextView
+        android:id="@+id/tvFilterTime7Days"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="7 ngày qua"
+        android:textSize="18sp"
+        android:padding="12dp"
+        android:background="?attr/selectableItemBackground"/>
+    <TextView
+        android:id="@+id/tvFilterTimeThisMonth"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tháng này"
+        android:textSize="18sp"
+        android:padding="12dp"
+        android:background="?attr/selectableItemBackground"/>
+    <TextView
+        android:id="@+id/tvFilterTimeLastMonth"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tháng trước"
+        android:textSize="18sp"
+        android:padding="12dp"
+        android:background="?attr/selectableItemBackground"/>
+    <TextView
+        android:id="@+id/tvFilterTimeCustom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tuỳ chỉnh"
+        android:textSize="18sp"
+        android:padding="12dp"
+        android:background="?attr/selectableItemBackground"/>
+</LinearLayout>

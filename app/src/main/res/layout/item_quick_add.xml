@@ -30,5 +30,5 @@
         android:text="Thêm hàng"
         android:textStyle="bold"
         android:textColor="#000000"
-        android:textSize="13sp"/>
+        android:textSize="12sp"/>
 </LinearLayout>

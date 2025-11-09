@@ -6,8 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -75,6 +77,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.VH> {
         TextView tvCustomer, tvTime, tvTotal, tvLines;
         CheckBox cbPaid;
         LinearLayout btnPaidArea;
+        TextView btnDelete;
         Context context;
 
         VH(View v) {
@@ -86,6 +89,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.VH> {
             tvLines = v.findViewById(R.id.tvLines);
             cbPaid = v.findViewById(R.id.cbPaid);
             btnPaidArea = v.findViewById(R.id.btnPaidArea);
+            btnDelete = v.findViewById(R.id.btnDelete);
         }
 
         void bind(OrderWithItems orderWithItems, OnPaidChange paidChangeCb, OnItemClickListener itemClickCb) {
@@ -104,17 +108,35 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.VH> {
             SimpleDateFormat df = new SimpleDateFormat("HH:mm", Locale.getDefault());
             tvTime.setText(df.format(order.createdAt));
 
-            // Build chuỗi tóm tắt món hàng (Code cũ)
+            // Build chuỗi tóm tắt món hàng giới hạn là 5
             if (orderWithItems.orderItems != null && !orderWithItems.orderItems.isEmpty()) {
                 StringBuilder linesSummary = new StringBuilder();
-                for (int i = 0; i < orderWithItems.orderItems.size(); i++) {
-                    OrderItemEntity item = orderWithItems.orderItems.get(i);
-                    if (i > 0) {
-                        linesSummary.append("\n");
+
+                // Giới hạn 5 dòng
+                int maxLinesToShow = 5;
+                int totalItems = orderWithItems.orderItems.size();
+
+                for (int i = 0; i < totalItems; i++) {
+
+                    if (i < maxLinesToShow) {
+                        // Hiển thị các món 1, 2, 3, 4
+                        OrderItemEntity item = orderWithItems.orderItems.get(i);
+                        if (i > 0) {
+                            linesSummary.append("\n"); // Thêm xuống dòng
+                        }
+                        linesSummary.append(item.quantity)
+                                .append(" x ")
+                                .append(item.productName);
+                    } else if (i == maxLinesToShow) {
+                        // Tại món thứ 5 (nếu có nhiều hơn 5)
+                        int remaining = totalItems - maxLinesToShow;
+                        if (remaining > 0) {
+                            linesSummary.append("\n+ ")
+                                    .append(remaining)
+                                    .append(" hàng khác");
+                        }
+                        break; // Dừng vòng lặp
                     }
-                    linesSummary.append(item.quantity)
-                            .append(" x ")
-                            .append(item.productName);
                 }
                 tvLines.setText(linesSummary.toString());
             } else {
@@ -142,6 +164,12 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.VH> {
                 if (itemClickCb != null) {
                     itemClickCb.onItemClick(orderWithItems);
                 }
+            });
+
+            // [MỚI] Gán listener cho nút Xóa (chưa có logic)
+            btnDelete.setOnClickListener(v -> {
+                // TODO: Gọi callback để xóa (nếu cần)
+                Toast.makeText(context, "Chức năng Xóa đang chờ...", Toast.LENGTH_SHORT).show();
             });
         }
     }

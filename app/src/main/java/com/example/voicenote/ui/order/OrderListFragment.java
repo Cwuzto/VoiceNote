@@ -16,15 +16,23 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.voicenote.R;
-// [SỬA] Import adapter và viewmodel mới
+import com.example.voicenote.ui.dialog.StatusFilterSheet;
+import com.example.voicenote.ui.dialog.TimeFilterSheet;
 import com.example.voicenote.ui.order.adapter.OrderAdapter;
 import com.example.voicenote.vm.OrderListViewModel;
+import com.google.android.material.datepicker.MaterialDatePicker;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Fragment hiển thị danh sách Order (đã refactor từ InvoiceListFragment)
@@ -32,7 +40,7 @@ import com.example.voicenote.vm.OrderListViewModel;
 public class OrderListFragment extends Fragment {
     private OrderListViewModel viewModel;
     private OrderAdapter adapter;
-    private TextView chipStatus;
+    private TextView chipStatus, chipTime;
     private String currentFilterStatus = "ALL";
 
     @Nullable
@@ -47,10 +55,11 @@ public class OrderListFragment extends Fragment {
         TextView btnCancelSearch = v.findViewById(R.id.btnCancelSearch);
         ImageView btnSearch = v.findViewById(R.id.btnSearch);
         chipStatus = v.findViewById(R.id.chipStatus);
+        chipTime = v.findViewById(R.id.chipTime);
 
         rv.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        // [SỬA] Khởi tạo adapter với 2 listener
+        // Khởi tạo adapter với 2 listener
         adapter = new OrderAdapter(
                 // 1. Listener cho nút Checkbox "Đã thanh toán"
                 (order, checked) -> {
@@ -94,21 +103,11 @@ public class OrderListFragment extends Fragment {
             imm.hideSoftInputFromWindow(edtSearch.getWindowToken(), 0);
         });
 
-        // [MỚI] Xử lý click cho Chip Lọc
-        chipStatus.setOnClickListener(view -> {
-            if ("ALL".equals(currentFilterStatus)) {
-                // Đang là "Tất cả" -> Chuyển sang "Chưa thanh toán"
-                currentFilterStatus = "UNPAID";
-                viewModel.setStatusFilter("UNPAID");
-                chipStatus.setText("Chưa thanh toán");
-                // (Bạn có thể đổi màu chip ở đây)
-            } else {
-                // Đang là "Chưa thanh toán" -> Chuyển về "Tất cả"
-                currentFilterStatus = "ALL";
-                viewModel.setStatusFilter("ALL");
-                chipStatus.setText("Tất cả");
-            }
-        });
+        // Xử lý click cho Chip Lọc Trạng thái
+        chipStatus.setOnClickListener(view -> showStatusFilter());
+
+        // Xử lý click cho Chip Lọc Thời gian
+        chipTime.setOnClickListener(view -> showTimeFilter());
 
         // --- Lọc danh sách khi người dùng nhập ---
         edtSearch.addTextChangedListener(new TextWatcher() {
@@ -121,6 +120,143 @@ public class OrderListFragment extends Fragment {
 
         return v;
     }
+    /**
+     * Mở BottomSheet chọn Trạng thái
+     */
+    private void showStatusFilter() {
+        StatusFilterSheet sheet = new StatusFilterSheet();
+        sheet.setListener((status, statusText) -> {
+            // Cập nhật UI
+            chipStatus.setText(statusText);
+            // Gọi ViewModel
+            viewModel.setStatusFilter(status);
+        });
+        sheet.show(getParentFragmentManager(), "StatusFilterSheet");
+    }
 
-    // [XOÁ] Hàm incomeSafe không còn cần thiết
+    /**
+     * Mở BottomSheet chọn Thời gian
+     */
+    private void showTimeFilter() {
+        TimeFilterSheet sheet = new TimeFilterSheet();
+        sheet.setListener(new TimeFilterSheet.OnTimeSelectedListener() {
+            @Override
+            public void onTimeSelected(String rangeKey, String rangeText) {
+                // Cập nhật UI
+                chipTime.setText(rangeText);
+
+                // Tính toán ngày và gọi ViewModel
+                Calendar cal = Calendar.getInstance();
+                long endTime = cal.getTimeInMillis(); // Mặc định là bây giờ
+
+                // Set về cuối ngày
+                cal.set(Calendar.HOUR_OF_DAY, 23);
+                cal.set(Calendar.MINUTE, 59);
+                cal.set(Calendar.SECOND, 59);
+                endTime = cal.getTimeInMillis();
+
+                switch(rangeKey) {
+                    case "ALL":
+                        viewModel.setDateRange(0, 0); // 0 = không lọc
+                        break;
+                    case "TODAY":
+                        cal.set(Calendar.HOUR_OF_DAY, 0);
+                        cal.set(Calendar.MINUTE, 0);
+                        cal.set(Calendar.SECOND, 0);
+                        long startToday = cal.getTimeInMillis();
+                        viewModel.setDateRange(startToday, endTime);
+                        break;
+                    case "YESTERDAY":
+                        cal.add(Calendar.DAY_OF_YEAR, -1);
+                        cal.set(Calendar.HOUR_OF_DAY, 0);
+                        cal.set(Calendar.MINUTE, 0);
+                        cal.set(Calendar.SECOND, 0);
+                        long startYes = cal.getTimeInMillis();
+                        cal.set(Calendar.HOUR_OF_DAY, 23);
+                        cal.set(Calendar.MINUTE, 59);
+                        cal.set(Calendar.SECOND, 59);
+                        long endYes = cal.getTimeInMillis();
+                        viewModel.setDateRange(startYes, endYes);
+                        break;
+                    case "7DAYS":
+                        cal.set(Calendar.HOUR_OF_DAY, 0);
+                        cal.set(Calendar.MINUTE, 0);
+                        cal.set(Calendar.SECOND, 0);
+                        cal.add(Calendar.DAY_OF_YEAR, -6); // 6 ngày trước + hôm nay = 7
+                        long start7 = cal.getTimeInMillis();
+                        viewModel.setDateRange(start7, endTime);
+                        break;
+                    case "THIS_MONTH":
+                        cal.set(Calendar.DAY_OF_MONTH, 1);
+                        cal.set(Calendar.HOUR_OF_DAY, 0);
+                        cal.set(Calendar.MINUTE, 0);
+                        cal.set(Calendar.SECOND, 0);
+                        long startMonth = cal.getTimeInMillis();
+                        viewModel.setDateRange(startMonth, endTime);
+                        break;
+                    case "LAST_MONTH":
+                        cal.set(Calendar.DAY_OF_MONTH, 1); // Về ngày 1 tháng này
+                        cal.add(Calendar.DAY_OF_YEAR, -1); // Về ngày cuối tháng trước
+                        cal.set(Calendar.HOUR_OF_DAY, 23);
+                        cal.set(Calendar.MINUTE, 59);
+                        long endLastMonth = cal.getTimeInMillis();
+                        cal.set(Calendar.DAY_OF_MONTH, 1); // Về ngày 1 tháng trước
+                        cal.set(Calendar.HOUR_OF_DAY, 0);
+                        cal.set(Calendar.MINUTE, 0);
+                        long startLastMonth = cal.getTimeInMillis();
+                        viewModel.setDateRange(startLastMonth, endLastMonth);
+                        break;
+                }
+            }
+
+            @Override
+            public void onCustomRangeClicked() {
+                // Xử lý "Tuỳ chỉnh" (Ảnh 3)
+                showDateRangePicker();
+            }
+        });
+        sheet.show(getParentFragmentManager(), "TimeFilterSheet");
+    }
+
+    /**
+     * [MỚI] Mở Date Picker chuẩn của Material
+     */
+    private void showDateRangePicker() {
+
+        // Tạo Date Picker
+        MaterialDatePicker<Pair<Long, Long>> dateRangePicker =
+                MaterialDatePicker.Builder.dateRangePicker()
+                        .setTitleText("Chọn khoảng thời gian")
+                        .build();
+
+        // Lắng nghe khi người dùng bấm "Xác nhận"
+        dateRangePicker.addOnPositiveButtonClickListener(selection -> {
+            long startTime = selection.first;
+            long endTime = selection.second;
+
+            // Chuyển múi giờ (DatePicker dùng UTC, DB dùng local)
+            TimeZone timeZone = TimeZone.getDefault();
+            long offset = timeZone.getOffset(startTime);
+
+            long adjustedStartTime = startTime + offset;
+            long adjustedEndTime = endTime + offset;
+
+            // Set EndTime về cuối ngày
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(adjustedEndTime);
+            cal.set(Calendar.HOUR_OF_DAY, 23);
+            cal.set(Calendar.MINUTE, 59);
+            adjustedEndTime = cal.getTimeInMillis();
+
+            // Cập nhật ViewModel
+            viewModel.setDateRange(adjustedStartTime, adjustedEndTime);
+
+            // Cập nhật UI
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM", Locale.getDefault());
+            String rangeText = sdf.format(adjustedStartTime) + " - " + sdf.format(adjustedEndTime);
+            chipTime.setText(rangeText);
+        });
+
+        dateRangePicker.show(getParentFragmentManager(), "DateRangePicker");
+    }
 }
