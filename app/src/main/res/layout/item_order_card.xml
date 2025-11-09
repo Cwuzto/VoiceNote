@@ -7,7 +7,6 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- tiêu đề & giờ & tổng -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,14 +18,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Khách lẻ"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textSize="16sp"
+            android:textColor="#0F172A"/>
 
         <TextView
             android:id="@+id/tvTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="18:55"
+            android:text="10:09"
             android:textColor="#64748B" />
     </LinearLayout>
 
@@ -36,70 +35,85 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/divider_dashed" />
 
-    <TextView
-        android:id="@+id/tvLines"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="5 x ba rọi" />
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:id="@+id/tvTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="16dp"
+            android:text="275,000"
+            android:textColor="#0F172A"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvLines"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/tvTotal"
+            android:layout_alignParentStart="true"
+            android:text="3 x Kim chi\n1 x Bún bò\n1 x Phở bò"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="#374151"
+            android:lineSpacingExtra="4dp"/>
+
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="16dp"
         android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/btnDelete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Xoá"
-            android:textColor="#6B7280" />
+            android:text="Xóa"
+            android:textStyle="bold"
+            android:textColor="#d62300"
+            android:textSize="16sp"
+            android:padding="8dp"
+            android:background="?attr/selectableItemBackground"/>
 
         <Space
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_weight="1" />
 
-        <TextView
-            android:id="@+id/tvTotal"
+        <LinearLayout
+            android:id="@+id/btnPaidArea"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="100,000"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:layout_height="40dp"
+            android:background="@drawable/bg_outline_pill"
+            android:gravity="center_vertical"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:clickable="true"
+            android:focusable="true">
 
-    <!-- toggle Đã nhận tiền -->
-    <LinearLayout
-        android:id="@+id/btnPaidArea"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_gravity="end"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/bg_outline_pill"
-        android:gravity="center_vertical"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp"
-        android:clickable="true"
-        android:focusable="true">
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/cbPaid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:clickable="false"/>
 
-        <CheckBox
-            android:id="@+id/cbPaid"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:gravity="center"
-            android:padding="12dp"
-            android:focusable="false"
-            android:clickable="false"/>
-
-        <TextView
-            android:id="@+id/tvPaidLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
-            android:text="Đã nhận tiền"
-            android:textColor="#0F172A"
-            android:textSize="14sp"/>
+            <TextView
+                android:id="@+id/tvPaidLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="Đã nhận tiền"
+                android:textColor="#0F172A"
+                android:textStyle="bold"
+                android:textSize="14sp"/>
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

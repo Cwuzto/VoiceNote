@@ -1,0 +1,41 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/bg_bottomsheet_round">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Trạng thái đơn"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textColor="@color/text_primary"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:id="@+id/tvFilterAll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tất cả đơn"
+        android:textSize="18sp"
+        android:padding="12dp"
+        android:background="?attr/selectableItemBackground"/>
+    <TextView
+        android:id="@+id/tvFilterPaid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Đã nhận tiền"
+        android:textSize="18sp"
+        android:padding="12dp"
+        android:background="?attr/selectableItemBackground"/>
+    <TextView
+        android:id="@+id/tvFilterUnpaid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Chưa nhận tiền"
+        android:textSize="18sp"
+        android:padding="12dp"
+        android:background="?attr/selectableItemBackground"/>
+</LinearLayout>

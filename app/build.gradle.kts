@@ -62,7 +62,9 @@ dependencies {
     // Room (Java) — dùng annotationProcessor, KHÔNG dùng kapt
     implementation("androidx.room:room-runtime:2.6.1")
     annotationProcessor("androidx.room:room-compiler:2.6.1")
-    // (tuỳ chọn) Paging: implementation("androidx.room:room-paging:2.6.1")
+
+    // Thư viện lottie
+    implementation("com.airbnb.android:lottie:6.4.1")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

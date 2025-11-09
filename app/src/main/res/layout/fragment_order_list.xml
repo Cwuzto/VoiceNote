@@ -1,26 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:orientation="vertical" android:background="@drawable/bg_soft_gradient">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg_soft_gradient">
 
-    <!-- Header title + search -->
     <LinearLayout
-        android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:padding="16dp" android:gravity="center_vertical">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:gravity="center_vertical">
 
         <TextView
-            android:text="Hoá đơn" android:textStyle="bold" android:textSize="26sp"
-            android:textColor="#0F172A" android:layout_width="0dp"
-            android:layout_height="wrap_content" android:layout_weight="1"/>
+            android:text="Hoá đơn"
+            android:textStyle="bold"
+            android:textSize="26sp"
+            android:textColor="#0F172A"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
 
         <ImageView
             android:id="@+id/btnSearch"
-            android:layout_width="40dp" android:layout_height="40dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@drawable/bg_circle_soft"
-            android:padding="8dp" android:src="@drawable/ic_search_24"/>
+            android:padding="8dp"
+            android:src="@drawable/ic_search_24"/>
     </LinearLayout>
 
-    <!-- SEARCH BAR (ẩn mặc định) -->
     <LinearLayout
         android:id="@+id/searchBar"
         android:visibility="gone"
@@ -53,49 +61,77 @@
             android:textColor="#1565FF"/>
     </LinearLayout>
 
-    <!-- filters -->
     <LinearLayout
-        android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:paddingStart="16dp" android:paddingEnd="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/chipTime"
-            android:layout_width="wrap_content" android:layout_height="36dp"
-            android:gravity="center" android:paddingLeft="14dp" android:paddingRight="14dp"
-            android:text="Tất cả" android:background="@drawable/bg_filter_chip"/>
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:gravity="center"
+            android:paddingLeft="14dp"
+            android:paddingRight="10dp"
+            android:text="Toàn thời gian"
+            android:textColor="#374151"
+            android:textStyle="bold"
+            android:background="@drawable/bg_filter_button"
+            android:drawableEnd="@drawable/ic_arrow_down_24"
+            android:drawablePadding="4dp"/>
 
         <Space android:layout_width="12dp" android:layout_height="1dp"/>
 
         <TextView
             android:id="@+id/chipStatus"
-            android:layout_width="wrap_content" android:layout_height="36dp"
-            android:gravity="center" android:paddingLeft="14dp" android:paddingRight="14dp"
-            android:text="Tất cả" android:background="@drawable/bg_filter_chip"/>
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:gravity="center"
+            android:paddingLeft="14dp"
+            android:paddingRight="10dp"
+            android:text="Tất cả đơn"
+            android:textColor="#374151"
+            android:textStyle="bold"
+            android:background="@drawable/bg_filter_button"
+            android:drawableEnd="@drawable/ic_arrow_down_24"
+            android:drawablePadding="4dp"/>
     </LinearLayout>
 
-    <!-- Today row (ẩn nếu 0) -->
     <LinearLayout
-        android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:padding="16dp" android:gravity="center_vertical">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:gravity="center_vertical">
         <TextView
-            android:text="Hôm nay," android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:textColor="#64748B"/>
+            android:text="Hôm nay,"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#64748B"/>
         <TextView
             android:id="@+id/tvTodayTotal"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="" android:textStyle="bold" android:textColor="#1565FF"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textStyle="bold"
+            android:textColor="#1565FF"
             android:layout_marginStart="8dp"/>
     </LinearLayout>
 
     <TextView
         android:id="@+id/tvEmptyHint"
-        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="Danh sách đơn hàng đang trống.\nBấm Bán hàng để tạo đơn"
-        android:textAlignment="center" android:paddingTop="48dp" android:textColor="#6B7280"/>
+        android:textAlignment="center"
+        android:paddingTop="48dp"
+        android:textColor="#6B7280"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvInvoice"
-        android:layout_width="match_parent" android:layout_height="0dp"
-        android:layout_weight="1" android:padding="16dp"/>
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="16dp"/>
 </LinearLayout>

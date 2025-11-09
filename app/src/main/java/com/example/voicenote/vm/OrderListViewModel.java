@@ -10,7 +10,9 @@ import androidx.lifecycle.MediatorLiveData;
 
 import com.example.voicenote.data.local.entity.OrderEntity;
 import com.example.voicenote.data.local.rel.OrderWithItems;
-import com.example.voicenote.data.repo.OrderRepository; // [SỬA]
+import com.example.voicenote.data.repo.OrderRepository;
+
+import java.util.Calendar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,29 +24,32 @@ import java.util.Locale;
  */
 public class OrderListViewModel extends AndroidViewModel {
 
-    private final OrderRepository repository; // [SỬA]
+    private final OrderRepository repository;
 
     // Nguồn dữ liệu gốc từ Room
-    private final LiveData<List<OrderWithItems>> allOrders; // [SỬA]
+    private final LiveData<List<OrderWithItems>> allOrders;
 
     // Dữ liệu đã lọc mà UI lắng nghe
-    private final MediatorLiveData<List<OrderWithItems>> filteredOrders = new MediatorLiveData<>(); // [SỬA]
+    private final MediatorLiveData<List<OrderWithItems>> filteredOrders = new MediatorLiveData<>();
 
     // Từ khoá hiện tại
     private String currentKeyword = "";
-    private String currentStatusFilter = "ALL"; // [MỚI] Thêm bộ lọc trạng thái
+    private String currentStatusFilter = "ALL"; // Thêm bộ lọc trạng thái
+    // Thêm biến lọc thời gian
+    private long filterStartDate = 0;
+    private long filterEndDate = 0;
 
     public OrderListViewModel(@NonNull Application app) {
         super(app);
-        repository = new OrderRepository(app); // [SỬA]
+        repository = new OrderRepository(app);
 
         // Lấy dữ liệu gốc từ Repository (Room)
-        allOrders = repository.getOrdersWithItems(); // [SỬA]
+        allOrders = repository.getOrdersWithItems();
 
         // Gắn nguồn vào Mediator
         filteredOrders.addSource(allOrders, list -> {
-            // [SỬA] Áp dụng cả 2 bộ lọc
-            filteredOrders.setValue(applyFilter(list, currentKeyword, currentStatusFilter));
+            // [SỬA] Áp dụng cả 3 bộ lọc
+            filteredOrders.setValue(applyFilter(list, currentKeyword, currentStatusFilter, filterStartDate, filterEndDate));
         });
     }
 
@@ -58,11 +63,11 @@ public class OrderListViewModel extends AndroidViewModel {
     /**
      * Lọc theo từ khoá, kiểm tra tên khách và tên từng món trong hoá đơn.
      */
-    public void filterOrders(String keyword) { // [SỬA]
+    public void filterOrders(String keyword) {
         currentKeyword = keyword != null ? keyword.trim() : "";
         List<OrderWithItems> source = allOrders.getValue();
-        //  Áp dụng cả 2 bộ lọc
-        filteredOrders.setValue(applyFilter(source, currentKeyword, currentStatusFilter));
+        //  Áp dụng cả 3 bộ lọc
+        filteredOrders.setValue(applyFilter(source, currentKeyword, currentStatusFilter, filterStartDate, filterEndDate));
     }
 
     /**
@@ -71,21 +76,31 @@ public class OrderListViewModel extends AndroidViewModel {
     public void setStatusFilter(String status) {
         currentStatusFilter = status;
         List<OrderWithItems> source = allOrders.getValue();
-        // [SỬA] Áp dụng cả 2 bộ lọc
-        filteredOrders.setValue(applyFilter(source, currentKeyword, currentStatusFilter));
+        // Áp dụng cả 2 bộ lọc
+        filteredOrders.setValue(applyFilter(source, currentKeyword, currentStatusFilter, filterStartDate, filterEndDate));
+    }
+
+    /**
+     * [MỚI] Set khoảng thời gian lọc (từ mili-giây)
+     */
+    public void setDateRange(long startTime, long endTime) {
+        filterStartDate = startTime;
+        filterEndDate = endTime;
+        List<OrderWithItems> source = allOrders.getValue();
+        filteredOrders.setValue(applyFilter(source, currentKeyword, currentStatusFilter, filterStartDate, filterEndDate));
     }
 
     /**
      * Cập nhật trạng thái "đã thanh toán"
      */
-    public void updatePaymentStatus(OrderEntity order, boolean isPaid) { // [SỬA]
-        repository.updatePaymentStatus(order, isPaid); // [SỬA]
+    public void updatePaymentStatus(OrderEntity order, boolean isPaid) {
+        repository.updatePaymentStatus(order, isPaid);
     }
 
     // ----------------- Helpers -----------------
 
-    // [SỬA] Cập nhật hàm applyFilter
-    private List<OrderWithItems> applyFilter(List<OrderWithItems> src, String keyword, String status) {
+    // Cập nhật hàm applyFilter
+    private List<OrderWithItems> applyFilter(List<OrderWithItems> src, String keyword, String status, long startTime, long endTime) {
         if (src == null) return new ArrayList<>();
 
         // 1. Lọc theo Trạng thái trước
@@ -100,14 +115,26 @@ public class OrderListViewModel extends AndroidViewModel {
             }
         }
 
-        // 2. Lọc theo Từ khoá (từ kết quả của bước 1)
+        // 2. Lọc theo Thời gian
+        List<OrderWithItems> timeFilteredList = new ArrayList<>();
+        if (startTime == 0) {
+            timeFilteredList.addAll(statusFilteredList); // Không lọc thời gian
+        } else {
+            for (OrderWithItems ivw : statusFilteredList) {
+                if (ivw.order != null && ivw.order.createdAt >= startTime && ivw.order.createdAt <= endTime) {
+                    timeFilteredList.add(ivw);
+                }
+            }
+        }
+
+        // 3. Lọc theo Từ khoá
         String q = keyword == null ? "" : keyword.trim().toLowerCase(Locale.getDefault());
         if (q.isEmpty()) {
-            return statusFilteredList; // Không có keyword, trả về ds đã lọc status
+            return timeFilteredList; // Trả về ds đã lọc status & time
         }
 
         List<OrderWithItems> outPutList = new ArrayList<>();
-        for (OrderWithItems ivw : statusFilteredList) { // [SỬA] Lọc trên ds đã lọc status
+        for (OrderWithItems ivw : statusFilteredList) { // Lọc trên ds đã lọc status
             boolean match = false;
             if (ivw.order != null && ivw.order.customerName != null) {
                 if (ivw.order.customerName.toLowerCase(Locale.getDefault()).contains(q)) {
