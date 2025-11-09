@@ -40,7 +40,7 @@ import java.util.TimeZone;
 public class OrderListFragment extends Fragment {
     private OrderListViewModel viewModel;
     private OrderAdapter adapter;
-    private TextView chipStatus, chipTime;
+    private TextView chipTime, chipStatus, tvEmpty;
     private String currentFilterStatus = "ALL";
 
     @Nullable
@@ -80,9 +80,10 @@ public class OrderListFragment extends Fragment {
         rv.setAdapter(adapter);
 
         viewModel = new ViewModelProvider(this).get(OrderListViewModel.class);
-        viewModel.getAllOrders().observe(getViewLifecycleOwner(), orders -> { // [SỬA]
-            adapter.submit(orders); // [SỬA]
-            tvEmpty.setVisibility(orders == null || orders.isEmpty() ? View.VISIBLE : View.GONE);
+        // Theo dõi LiveData
+        viewModel.getGroupedOrders().observe(getViewLifecycleOwner(), items -> {
+            adapter.submit(items); // Gửi List<Object> cho adapter
+            tvEmpty.setVisibility(items == null || items.isEmpty() ? View.VISIBLE : View.GONE);
         });
 
         // --- Xử lý hiển thị search bar ---

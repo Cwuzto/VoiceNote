@@ -208,28 +208,27 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_outline_pill"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="8dp"
                     android:clickable="true"
-                    android:focusable="true">
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
                     <CheckBox
                         android:id="@+id/cbPaid"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:focusable="false"
-                        android:clickable="false"/>
+                        android:clickable="false"
+                        android:focusable="false" />
 
                     <TextView
                         android:id="@+id/tvPaidLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
+                        android:paddingRight="12sp"
                         android:text="Đã nhận tiền"
                         android:textColor="#0F172A"
-                        android:textSize="16sp"/>
+                        android:textSize="16sp" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

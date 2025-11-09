@@ -2,6 +2,7 @@
 package com.example.voicenote.ui.order.adapter;
 
 import android.content.Context;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.example.voicenote.R;
 // [SỬA] Import entity và relation mới
 import com.example.voicenote.data.local.entity.OrderEntity;
 import com.example.voicenote.data.local.entity.OrderItemEntity;
+import com.example.voicenote.data.local.rel.OrderHeaderItem;
 import com.example.voicenote.data.local.rel.OrderWithItems;
 
 import java.text.SimpleDateFormat;
@@ -29,9 +31,11 @@ import java.util.Locale;
 /**
  * Adapter cho danh sách Order (đã refactor từ InvoiceAdapter)
  */
-public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.VH> {
+public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final int TYPE_HEADER = 0;
+    private static final int TYPE_ITEM = 1;
 
-    // [SỬA] Thêm interface mới
+    // Thêm interface mới
     public interface OnPaidChange {
         void onChange(OrderEntity order, boolean checked);
     }
@@ -40,7 +44,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.VH> {
         void onItemClick(OrderWithItems orderWithItems);
     }
 
-    private final List<OrderWithItems> data = new ArrayList<>();
+    private final List<Object> data = new ArrayList<>(); // Adapter này giờ sẽ chứa List<Object>
     private final OnPaidChange onPaidChangeCallback;
     private final OnItemClickListener onItemClickCallback; // [MỚI]
 
@@ -49,23 +53,47 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.VH> {
         this.onItemClickCallback = onItemClick; // [MỚI]
     }
 
-    public void submit(List<OrderWithItems> orders) { // [SỬA]
+    // Nhận List<Object> từ ViewModel
+    public void submit(List<Object> items) {
         data.clear();
-        data.addAll(orders);
+        data.addAll(items);
         notifyDataSetChanged();
+    }
+
+    // Quyết định kiểu View
+    @Override
+    public int getItemViewType(int position) {
+        if (data.get(position) instanceof OrderHeaderItem) {
+            return TYPE_HEADER;
+        }
+        return TYPE_ITEM;
     }
 
     @NonNull
     @Override
-    public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_order_card, parent, false);
-        return new VH(v);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // [SỬA] Inflate layout dựa trên viewType
+        if (viewType == TYPE_HEADER) {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_order_header, parent, false);
+            return new VHHeader(v);
+        } else {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_order_card, parent, false);
+            return new VHItem(v); // Đổi tên VH cũ thành VHItem
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull VH holder, int position) {
-        // [SỬA] Truyền cả 2 callback vào
-        holder.bind(data.get(position), onPaidChangeCallback, onItemClickCallback);
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        // [SỬA] Bind dựa trên kiểu ViewHolder
+        if (holder.getItemViewType() == TYPE_HEADER) {
+            OrderHeaderItem header = (OrderHeaderItem) data.get(position);
+            ((VHHeader) holder).bind(header);
+        } else {
+            OrderWithItems order = (OrderWithItems) data.get(position);
+            ((VHItem) holder).bind(order, onPaidChangeCallback, onItemClickCallback);
+        }
     }
 
     @Override
@@ -73,16 +101,43 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.VH> {
         return data.size();
     }
 
-    static class VH extends RecyclerView.ViewHolder {
+    /**
+     * [MỚI] ViewHolder cho Header
+     */
+    static class VHHeader extends RecyclerView.ViewHolder {
+        TextView tvDateHeader, tvDateTotal;
+        SimpleDateFormat sdf;
+
+        VHHeader(View v) {
+            super(v);
+            tvDateHeader = v.findViewById(R.id.tvDateHeader);
+            tvDateTotal = v.findViewById(R.id.tvDateTotal);
+            // Định dạng: "Chủ Nhật, 09/11/2025"
+            sdf = new SimpleDateFormat("EEEE, dd/MM/yyyy", new Locale("vi", "VN"));
+        }
+        void bind(OrderHeaderItem header) {
+            // Hiển thị tổng tiền
+            tvDateTotal.setText(String.format(Locale.US, "%,d", header.dayTotal));
+
+            // Hiển thị ngày (Xử lý logic "Hôm nay")
+            if (DateUtils.isToday(header.dateMillis)) {
+                SimpleDateFormat sdfToday = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                tvDateHeader.setText("Hôm nay, " + sdfToday.format(header.dateMillis));
+            } else {
+                tvDateHeader.setText(sdf.format(header.dateMillis));
+            }
+        }
+    }
+
+    static class VHItem extends RecyclerView.ViewHolder {
         TextView tvCustomer, tvTime, tvTotal, tvLines;
         CheckBox cbPaid;
         LinearLayout btnPaidArea;
         TextView btnDelete;
         Context context;
 
-        VH(View v) {
-            super(v);
-            context = v.getContext(); // Lấy context để show Dialog
+        VHItem(View v) { super(v);
+            context = v.getContext();
             tvCustomer = v.findViewById(R.id.tvCustomer);
             tvTime = v.findViewById(R.id.tvTime);
             tvTotal = v.findViewById(R.id.tvTotal);
