@@ -44,7 +44,7 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         void onItemClick(OrderWithItems orderWithItems);
     }
 
-    private final List<Object> data = new ArrayList<>(); // Adapter này giờ sẽ chứa List<Object>
+    private final List<Object> data = new ArrayList<>(); // Adapter này chứa List<Object>
     private final OnPaidChange onPaidChangeCallback;
     private final OnItemClickListener onItemClickCallback; // [MỚI]
 
@@ -80,13 +80,13 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         } else {
             View v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_order_card, parent, false);
-            return new VHItem(v); // Đổi tên VH cũ thành VHItem
+            return new VHItem(v);
         }
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        // [SỬA] Bind dựa trên kiểu ViewHolder
+        //  Bind dựa trên kiểu ViewHolder
         if (holder.getItemViewType() == TYPE_HEADER) {
             OrderHeaderItem header = (OrderHeaderItem) data.get(position);
             ((VHHeader) holder).bind(header);
@@ -102,7 +102,32 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     /**
-     * [MỚI] ViewHolder cho Header
+     * Lấy dữ liệu Header cho một vị trí bất kỳ
+     * (Hàm này sẽ tìm ngược lên để lấy Header của nhóm hiện tại)
+     */
+    public OrderHeaderItem getHeaderDataForPosition(int position) {
+        if (data.isEmpty() || position < 0 || position >= data.size()) {
+            return null;
+        }
+
+        for (int i = position; i >= 0; i--) {
+            Object item = data.get(i);
+            if (item instanceof OrderHeaderItem) {
+                return (OrderHeaderItem) item;
+            }
+        }
+        return null;
+    }
+
+    /**
+     *  Lấy item (để kiểm tra loại)
+     */
+    public Object getItem(int position) {
+        return data.get(position);
+    }
+
+    /**
+     *  ViewHolder cho Header
      */
     static class VHHeader extends RecyclerView.ViewHolder {
         TextView tvDateHeader, tvDateTotal;

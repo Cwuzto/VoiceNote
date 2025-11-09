@@ -2,23 +2,24 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:background="@drawable/bg_soft_gradient">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:padding="16dp">
 
         <TextView
-            android:text="Hoá đơn"
-            android:textStyle="bold"
-            android:textSize="26sp"
-            android:textColor="#0F172A"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:text="Hoá đơn"
+            android:textColor="#0F172A"
+            android:textSize="26sp"
+            android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/btnSearch"
@@ -26,7 +27,7 @@
             android:layout_height="40dp"
             android:background="@drawable/bg_circle_soft"
             android:padding="8dp"
-            android:src="@drawable/ic_search_24"/>
+            android:src="@drawable/ic_search_24" />
     </LinearLayout>
 
     <LinearLayout
@@ -108,10 +109,50 @@
         android:paddingTop="48dp"
         android:textColor="#6B7280"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvInvoice"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="16dp"/>
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvOrder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp"
+            android:clipToPadding="false"/>
+
+        <LinearLayout
+            android:id="@+id/stickyHeaderContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_soft_gradient"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <TextView
+                android:id="@+id/tvStickyDateHeader"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                tools:text="Chủ Nhật, 09/11/2025"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="#374151" />
+
+            <TextView
+                android:id="@+id/tvStickyDateTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="461,166"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="#1565FF" />
+        </LinearLayout>
+
+    </FrameLayout>
 </LinearLayout>
