@@ -6,6 +6,7 @@ import androidx.room.Relation;
 
 import com.example.voicenote.data.local.entity.OrderEntity;
 import com.example.voicenote.data.local.entity.OrderItemEntity;
+import com.example.voicenote.data.local.entity.UserEntity;
 
 import java.util.List;
 
@@ -17,6 +18,13 @@ public class OrderWithItems {
 
     @Embedded
     public OrderEntity order;
+
+    // Thêm liên kết với User (Seller)
+    @Relation(
+            parentColumn = "seller_id",
+            entityColumn = "id"
+    )
+    public UserEntity seller; // Room sẽ tự động lấy User có id = seller_id
 
     @Relation(
             parentColumn = "id",

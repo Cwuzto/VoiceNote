@@ -98,8 +98,8 @@ public class OrderLineAdapter extends RecyclerView.Adapter<OrderLineAdapter.View
             tvQty.setText(String.valueOf(item.quantity));
             edtNote.setText(item.note);
 
-            // Tính tổng giá của dòng
-            long lineTotal = item.unitPrice * item.quantity;
+            // Dán giá vào từng line
+            long lineTotal = item.unitPrice;
             tvTotalPriceLine.setText(String.format(Locale.US, "%,d", lineTotal));
 
             // Cập nhật listener cho TextWatcher

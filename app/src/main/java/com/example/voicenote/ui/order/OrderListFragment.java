@@ -8,14 +8,12 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextWatcher;
 import android.text.Editable;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -29,12 +27,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.voicenote.R;
-import com.example.voicenote.data.local.rel.OrderHeaderItem;
 import com.example.voicenote.ui.dialog.StatusFilterSheet;
 import com.example.voicenote.ui.dialog.TimeFilterSheet;
 import com.example.voicenote.ui.order.adapter.OrderAdapter;
+import com.example.voicenote.util.SessionManager;
 import com.example.voicenote.vm.OrderListViewModel;
+import com.example.voicenote.vm.ProfileViewModel;
 import com.google.android.material.datepicker.MaterialDatePicker;
+import com.example.voicenote.ui.order.adapter.StickyHeaderDecoration;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -46,15 +46,22 @@ import java.util.TimeZone;
  */
 public class OrderListFragment extends Fragment {
     private OrderListViewModel viewModel;
+    private ProfileViewModel profileViewModel;
+    private SessionManager sessionManager;
     private OrderAdapter adapter;
     private TextView chipTime, chipStatus, tvEmpty;
-    // [MỚI] Views cho Sticky Header
-    private LinearLayout stickyHeaderContainer;
-    private TextView tvStickyDateHeader, tvStickyDateTotal;
-    private SimpleDateFormat sdfHeader;
     private LinearLayoutManager layoutManager;
-    private OrderHeaderItem currentStickyHeader = null;
-    private RecyclerView rv; // Thêm biến cho RecyclerView
+    private RecyclerView rv;
+    private String currentUserRole = "EMPLOYEE"; // [MỚI] Mặc định là NV
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // Khởi tạo 1 lần
+        viewModel = new ViewModelProvider(this).get(OrderListViewModel.class);
+        profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
+        sessionManager = new SessionManager(requireContext());
+    }
 
     @Nullable
     @Override
@@ -66,10 +73,6 @@ public class OrderListFragment extends Fragment {
         chipTime = v.findViewById(R.id.chipTime);
         chipStatus = v.findViewById(R.id.chipStatus);
         tvEmpty = v.findViewById(R.id.tvEmptyHint);
-        stickyHeaderContainer = v.findViewById(R.id.stickyHeaderContainer);
-        tvStickyDateHeader = v.findViewById(R.id.tvStickyDateHeader);
-        tvStickyDateTotal = v.findViewById(R.id.tvStickyDateTotal);
-        sdfHeader = new SimpleDateFormat("EEEE, dd/MM/yyyy", new Locale("vi", "VN"));
 
         // (Các ánh xạ cho Search bar)
         View searchBar = v.findViewById(R.id.searchBar);
@@ -86,9 +89,16 @@ public class OrderListFragment extends Fragment {
                     Intent intent = new Intent(getContext(), OrderDetailActivity.class);
                     intent.putExtra("order_id", orderWithItems.order.id);
                     startActivity(intent);
+                },
+                // [MỚI] Thêm listener cho Xóa
+                (order) -> {
+                    viewModel.deleteOrder(order);
                 }
         );
         rv.setAdapter(adapter);
+
+        // Thêm ItemDecoration
+        rv.addItemDecoration(new StickyHeaderDecoration(adapter, layoutManager));
 
         // --- ViewModel ---
         viewModel = new ViewModelProvider(this).get(OrderListViewModel.class);
@@ -96,23 +106,9 @@ public class OrderListFragment extends Fragment {
         viewModel.getGroupedOrders().observe(getViewLifecycleOwner(), items -> {
             adapter.submit(items);
             tvEmpty.setVisibility(items == null || items.isEmpty() ? View.VISIBLE : View.GONE);
-
-            // [SỬA] Dùng Handler postDelayed
-            // Gỡ bỏ `addOnLayoutChangeListener` và `AdapterDataObserver`
-            // Đây là cách "thủ công" nhất để đảm bảo layout đã xong.
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                updateStickyHeader(layoutManager.findFirstVisibleItemPosition());
-            }, 50); // Chờ 50ms
         });
 
-        // Thêm Scroll Listener
-        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                updateStickyHeader(layoutManager.findFirstVisibleItemPosition());
-            }
-        });
+        loadUserRole();
 
         // --- Xử lý hiển thị search bar ---
         btnSearch.setOnClickListener(v1 -> {
@@ -151,43 +147,20 @@ public class OrderListFragment extends Fragment {
     }
 
     /**
-     * [MỚI] Logic chính để cập nhật Sticky Header
+     * [MỚI] Lấy user role và cập nhật adapter
      */
-    private void updateStickyHeader(int firstVisibleItemPosition) {
-        if (firstVisibleItemPosition < 0 || adapter.getItemCount() == 0) {
-            stickyHeaderContainer.setVisibility(View.GONE);
-            currentStickyHeader = null; // Reset
-            return;
-        }
+    private void loadUserRole() {
+        long userId = sessionManager.getUserId();
+        if (userId == -1) return;
 
-        // 1. Lấy Header của nhóm hiện tại
-        OrderHeaderItem header = adapter.getHeaderDataForPosition(firstVisibleItemPosition);
-
-        if (header == null) {
-            // Không tìm thấy header (có thể là list rỗng)
-            // Trường hợp không tìm thấy (ví dụ: đang cuộn)
-            stickyHeaderContainer.setVisibility(View.GONE);
-            currentStickyHeader = null;
-            return;
-        }
-
-        // Đã tìm thấy header, luôn hiển thị
-        stickyHeaderContainer.setVisibility(View.VISIBLE);
-
-        // Chỉ bind lại text nếu header thay đổi (để tối ưu)
-        if (currentStickyHeader == null || currentStickyHeader.dateMillis != header.dateMillis) {
-            currentStickyHeader = header;
-
-            // Bind data
-            tvStickyDateTotal.setText(String.format(Locale.US, "%,d", header.dayTotal));
-            if (DateUtils.isToday(header.dateMillis)) {
-                SimpleDateFormat sdfToday = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                tvStickyDateHeader.setText("Hôm nay, " + sdfToday.format(header.dateMillis));
-            } else {
-                tvStickyDateHeader.setText(sdfHeader.format(header.dateMillis));
+        profileViewModel.getUser(userId).observe(getViewLifecycleOwner(), user -> {
+            if (user != null) {
+                this.currentUserRole = user.role;
+                adapter.setUserRole(this.currentUserRole);
             }
-        }
+        });
     }
+
     /**
      * Mở BottomSheet chọn Trạng thái
      */

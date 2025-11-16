@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_soft_gradient"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -41,17 +42,21 @@
                     android:id="@+id/btnEdit"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:background="@drawable/bg_circle_white"
+                    android:elevation="2dp"
                     android:src="@drawable/ic_edit_24"
                     app:tint="#111827" />
 
                 <ImageButton
-                    android:id="@+id/btnMore"
+                    android:id="@+id/btnDelete"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_more_vert_24"
-                    app:tint="#111827" />
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_circle_white"
+                    android:elevation="2dp"
+                    android:src="@drawable/ic_delete_24"
+                    app:tint="@color/red_error"
+                    android:visibility="gone"/>
             </LinearLayout>
         </LinearLayout>
 
@@ -192,28 +197,28 @@
                 android:gravity="center_vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="Xác nhận đã thanh toán?"
                     android:textColor="#0F172A"
                     android:textSize="16sp" />
 
                 <Space
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1" />
+                    android:layout_width="26dp"
+                    android:layout_height="1dp"/>
 
                 <LinearLayout
                     android:id="@+id/btnPaid"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_outline_pill"
-                    android:clickable="true"
-                    android:focusable="true"
+                    android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:clickable="true"
+                    android:focusable="true">
 
-                    <CheckBox
+                    <com.google.android.material.checkbox.MaterialCheckBox
                         android:id="@+id/cbPaid"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -228,7 +233,7 @@
                         android:paddingRight="12sp"
                         android:text="Đã nhận tiền"
                         android:textColor="#0F172A"
-                        android:textSize="16sp" />
+                        android:textSize="16sp"/>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
