@@ -31,6 +31,10 @@ public class OrderDetailViewModel extends AndroidViewModel {
     public void updatePaymentStatus(OrderEntity order, boolean isPaid) { // [SỬA]
         repository.updatePaymentStatus(order, isPaid); // [SỬA]
     }
-
-    // [XOÁ] Hàm setPaid và deleteInvoice cũ (nếu cần delete thì thêm lại)
+    /**
+     * Hàm xoá
+     */
+    public void deleteOrder(OrderEntity order) {
+        repository.deleteOrder(order);
+    }
 }

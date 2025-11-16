@@ -20,7 +20,9 @@ import com.example.voicenote.data.local.entity.OrderEntity;
 import com.example.voicenote.data.local.entity.OrderItemEntity;
 import com.example.voicenote.data.local.rel.OrderWithItems;
 import com.example.voicenote.ui.sale.SaleActivity;
+import com.example.voicenote.util.SessionManager;
 import com.example.voicenote.vm.OrderDetailViewModel;
+import com.example.voicenote.vm.ProfileViewModel;
 
 import org.jspecify.annotations.NonNull;
 
@@ -32,6 +34,8 @@ import java.util.Locale;
  */
 public class OrderDetailActivity extends AppCompatActivity {
     private OrderDetailViewModel viewModel;
+    private ProfileViewModel profileViewModel;
+    private SessionManager sessionManager;
 
     // [MỚI] Khai báo tất cả View
     private TextView tvCustomer, tvDate, tvSubtotal, tvTotal;
@@ -39,7 +43,8 @@ public class OrderDetailActivity extends AppCompatActivity {
     private LinearLayout containerItems;
     private LinearLayout btnPaid; //layout cha của checkbox
     private OrderWithItems currentOrder; // Biến này được Observer gán
-    private ImageButton btnEdit;
+    private ImageButton btnEdit, btnDelete;
+    private long userId;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +56,12 @@ public class OrderDetailActivity extends AppCompatActivity {
             return;
         }
 
+        // --- Khởi tạo Session & ViewModel ---
+        sessionManager = new SessionManager(this);
+        userId = sessionManager.getUserId();
+        viewModel = new ViewModelProvider(this).get(OrderDetailViewModel.class);
+        profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
+
         // --- Ánh xạ View ---
         tvCustomer = findViewById(R.id.tvCustomer);
         tvTotal = findViewById(R.id.tvTotal);
@@ -60,6 +71,7 @@ public class OrderDetailActivity extends AppCompatActivity {
         tvSubtotal = findViewById(R.id.tvSubtotal);
         containerItems = findViewById(R.id.containerItems);
         btnEdit = findViewById(R.id.btnEdit);
+        btnDelete = findViewById(R.id.btnDelete);
 
         // --- Lấy ViewModel và Quan sát Dữ liệu ---
         viewModel = new ViewModelProvider(this).get(OrderDetailViewModel.class);
@@ -69,6 +81,9 @@ public class OrderDetailActivity extends AppCompatActivity {
                 populateData(orderWithItems); // Gọi hàm để điền dữ liệu
             }
         });
+
+        // --- Phân quyền ---
+        loadUserPermissions();
 
         // [MỚI] Thêm OnClickListener vào layout cha
         btnPaid.setOnClickListener(v -> {
@@ -95,11 +110,43 @@ public class OrderDetailActivity extends AppCompatActivity {
                     .show();
         });
 
-        // Nút đóng
-        findViewById(R.id.tvClose).setOnClickListener(v -> finish());
+        findViewById(R.id.tvClose).setOnClickListener(v -> finish()); // Nút đóng
+        btnEdit.setOnClickListener(v -> openEditMode()); // Nút sửa
+        btnDelete.setOnClickListener(v -> confirmDeleteOrder()); // Nút xóa
+    }
 
-        // Nút sửa
-        btnEdit.setOnClickListener(v -> openEditMode());
+    /**
+     * [MỚI] Lấy role của user và phân quyền
+     */
+    private void loadUserPermissions() {
+        if (userId == -1) return;
+
+        profileViewModel.getUser(userId).observe(this, user -> {
+            if (user != null && "OWNER".equals(user.role)) {
+                // Là Chủ quán
+                btnDelete.setVisibility(View.VISIBLE);
+            } else {
+                // Là Nhân viên
+                btnDelete.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    /**
+     * [MỚI] Hỏi xác nhận trước khi Xóa
+     */
+    private void confirmDeleteOrder() {
+        if (currentOrder == null) return;
+
+        new AlertDialog.Builder(this)
+                .setTitle("Xoá đơn hàng")
+                .setMessage("Bạn có chắc chắn muốn xoá đơn hàng này? Thao tác này không thể hoàn tác.")
+                .setPositiveButton("Xoá", (dialog, which) -> {
+                    viewModel.deleteOrder(currentOrder.order);
+                    finish(); // Xoá xong thì đóng lại
+                })
+                .setNegativeButton("Huỷ", null)
+                .show();
     }
 
     /**
