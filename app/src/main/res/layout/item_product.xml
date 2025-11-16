@@ -1,6 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:background="@drawable/bg_card_16"
     android:padding="16dp"
@@ -30,9 +31,10 @@
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/btnMore"
+        android:id="@+id/btnDelete"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/ic_more_vert_24"
+        android:src="@drawable/ic_delete_24"
+        app:tint="@color/red_error"
         android:background="?attr/selectableItemBackgroundBorderless"/>
 </LinearLayout>

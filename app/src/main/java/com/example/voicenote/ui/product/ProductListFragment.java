@@ -56,9 +56,9 @@ public class ProductListFragment extends Fragment {
         rvProducts.setAdapter(adapter);
 
         // --- Lắng nghe dữ liệu ---
-        productViewModel.getAllProducts().observe(getViewLifecycleOwner(), products -> {
-            tvEmpty.setVisibility(products == null || products.isEmpty() ? View.VISIBLE : View.GONE);
-            adapter.submitList(products);
+        productViewModel.getAllProductsGrouped().observe(getViewLifecycleOwner(), items -> {
+            tvEmpty.setVisibility(items == null || items.isEmpty() ? View.VISIBLE : View.GONE);
+            adapter.submitList(items);
         });
 
         // --- Listeners ---

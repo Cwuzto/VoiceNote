@@ -45,5 +45,6 @@
         android:layout_margin="16dp"
         android:src="@drawable/ic_add_24"
         app:tint="@android:color/white"
+        app:backgroundTint="@color/brand_blue"
         android:contentDescription="Thêm sản phẩm"/>
 </RelativeLayout>

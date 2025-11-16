@@ -66,6 +66,9 @@ dependencies {
     // Thư viện lottie
     implementation("com.airbnb.android:lottie:6.4.1")
 
+    // Thư viện MPChart
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
