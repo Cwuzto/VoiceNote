@@ -179,7 +179,9 @@ public class OrderListFragment extends Fragment {
      * Mở BottomSheet chọn Thời gian
      */
     private void showTimeFilter() {
-        TimeFilterSheet sheet = new TimeFilterSheet();
+        // Gọi newInstance(true)
+        TimeFilterSheet sheet = TimeFilterSheet.newInstance(true);
+
         sheet.setListener(new TimeFilterSheet.OnTimeSelectedListener() {
             @Override
             public void onTimeSelected(String rangeKey, String rangeText) {

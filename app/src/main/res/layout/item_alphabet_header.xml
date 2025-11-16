@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tvAlphabetHeader"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="16dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="4dp"
+    android:text="A"
+    android:textSize="20sp"
+    android:textStyle="bold"
+    android:textColor="@color/text_primary"
+    android:background="@drawable/bg_soft_gradient"/>

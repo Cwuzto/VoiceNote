@@ -6,11 +6,16 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 
 import com.example.voicenote.data.local.entity.ProductEntity; // [SỬA]
+import com.example.voicenote.data.local.rel.AlphabetHeaderItem;
 import com.example.voicenote.data.repo.ProductRepository; // [SỬA]
 
+import java.text.Collator;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * EN: ViewModel for product grid (used in SaleActivity).
@@ -18,20 +23,29 @@ import java.util.List;
  * (Đã refactor từ QuickItemsViewModel)
  */
 public class ProductViewModel extends AndroidViewModel {
-    private final ProductRepository repository; // [SỬA]
-    private final LiveData<List<ProductEntity>> allProducts; // [SỬA]
+    private final ProductRepository repository;
+    private final LiveData<List<ProductEntity>> allProducts;
+    private final MediatorLiveData<List<Object>> groupedProducts = new MediatorLiveData<>(); // LiveData mới để chứa danh sách đã nhóm
 
     public ProductViewModel(@NonNull Application application) {
         super(application);
-        repository = new ProductRepository(application); // [SỬA]
-        allProducts = repository.getAllProducts(); // [SỬA]
+        repository = new ProductRepository(application);
+        allProducts = repository.getAllProducts(); //nguồn dữ liệu gốc (List<ProductEntity>)
+        groupedProducts.addSource(allProducts, products -> { //nguồn dữ liệu đã nhóm (List<Object>)
+            groupedProducts.setValue(groupProductsAlphabetically(products));
+        });
+    }
+    /**
+     * Dùng cho ProductListFragment (Quản lý)
+     */
+    public LiveData<List<Object>> getAllProductsGrouped() {
+        return groupedProducts;
     }
 
     /**
-     * EN: Return LiveData of products for observing.
-     * VI: Trả về LiveData danh sách sản phẩm để UI quan sát.
+     * trả về danh sách sản phẩm (List<ProductEntity>) cho SaleActivity (QuickRV)
      */
-    public LiveData<List<ProductEntity>> getAllProducts() { // [SỬA]
+    public LiveData<List<ProductEntity>> getAllProducts() {
         return allProducts;
     }
 
@@ -39,15 +53,44 @@ public class ProductViewModel extends AndroidViewModel {
      * EN: Insert new product.
      * VI: Thêm sản phẩm mới.
      */
-    public void insertProduct(ProductEntity product) { // [SỬA]
-        repository.insertProduct(product); // [SỬA]
+    public void insertProduct(ProductEntity product) {
+        repository.insertProduct(product);
     }
 
     /**
      * EN: Delete product.
      * VI: Xoá sản phẩm.
      */
-    public void deleteProduct(ProductEntity product) { // [SỬA]
-        repository.deleteProduct(product); // [SỬA]
+    public void deleteProduct(ProductEntity product) {
+        repository.deleteProduct(product);
+    }
+    /**
+     * Sắp xếp và nhóm danh sách theo chữ cái
+     */
+    private List<Object> groupProductsAlphabetically(List<ProductEntity> products) {
+        if (products == null || products.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // 1. Sắp xếp danh sách theo Tiếng Việt
+        // Dùng Collator để "Đ" đứng sau "D"
+        Collator collator = Collator.getInstance(new Locale("vi", "VN"));
+        products.sort((p1, p2) -> collator.compare(p1.name, p2.name));
+
+        // 2. Nhóm
+        List<Object> groupedList = new ArrayList<>();
+        String currentLetter = "";
+
+        for (ProductEntity product : products) {
+            String firstLetter = product.name.substring(0, 1).toUpperCase(new Locale("vi"));
+
+            // Nếu chữ cái thay đổi
+            if (!firstLetter.equals(currentLetter)) {
+                currentLetter = firstLetter;
+                groupedList.add(new AlphabetHeaderItem(currentLetter)); // Thêm Header
+            }
+            groupedList.add(product); // Thêm Item
+        }
+        return groupedList;
     }
 }

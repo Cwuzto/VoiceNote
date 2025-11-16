@@ -10,16 +10,17 @@ import com.example.voicenote.data.local.dao.OrderDao;
 import com.example.voicenote.data.local.dao.OrderItemDao;
 import com.example.voicenote.data.local.entity.OrderEntity;
 import com.example.voicenote.data.local.entity.OrderItemEntity;
+import com.example.voicenote.data.local.rel.BestSellerItem;
+import com.example.voicenote.data.local.rel.ChartDataPoint;
 import com.example.voicenote.data.local.rel.OrderWithItems;
+import com.example.voicenote.data.local.rel.RevenueSummary;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * EN: Repository handles order + order item operations.
  * VI: Repository xử lý các thao tác hoá đơn (Order) và dòng hàng (OrderItem).
- * (Đã refactor từ InvoiceRepository)
  */
 public class OrderRepository {
     private final OrderDao orderDao;
@@ -48,10 +49,21 @@ public class OrderRepository {
     public LiveData<OrderWithItems> getOrderById(long id) {
         return orderDao.getOrderById(id);
     }
+    public LiveData<RevenueSummary> getRevenueSummary(long startTime, long endTime) {
+        return orderDao.getRevenueSummary(startTime, endTime);
+    }
+    public LiveData<List<BestSellerItem>> getBestSellers(long startTime, long endTime) {
+        return orderItemDao.getBestSellers(startTime, endTime);
+    }
+    public LiveData<List<ChartDataPoint>> getChartData(long startTime, long endTime) {
+        return orderDao.getChartData(startTime, endTime);
+    }
+    public LiveData<List<ChartDataPoint>> getChartDataHourly(long startTime, long endTime) {
+        return orderDao.getChartDataHourly(startTime, endTime);
+    }
 
     /**
-     * EN: Save (insert/update) an order with its items.
-     * VI: Lưu (thêm mới/cập nhật) một đơn hàng và các món hàng.
+     * Lưu (thêm mới/cập nhật) một đơn hàng và các món hàng.
      */
     public void saveOrder(OrderEntity order, List<OrderItemEntity> items) {
         executor.execute(() -> {
@@ -75,8 +87,7 @@ public class OrderRepository {
     }
 
     /**
-     * EN: Update the payment status of an order.
-     * VI: Cập nhật trạng thái thanh toán của một đơn hàng.
+     * Cập nhật trạng thái thanh toán của một đơn hàng.
      */
     public void updatePaymentStatus(OrderEntity order, boolean isPaid) {
         executor.execute(() -> {
@@ -87,10 +98,13 @@ public class OrderRepository {
     }
 
     /**
-     * EN: Delete an order (items are deleted by CASCADE).
-     * VI: Xoá một đơn hàng (các item sẽ bị xoá theo nhờ CASCADE).
+     * Xoá một đơn hàng (các item sẽ bị xoá theo nhờ CASCADE).
      */
     public void deleteOrder(OrderEntity order) {
         executor.execute(() -> orderDao.deleteOrder(order));
+    }
+
+    public LiveData<Integer> getPaidOrderCount() {
+        return orderDao.getPaidOrderCount();
     }
 }
