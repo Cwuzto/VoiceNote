@@ -52,6 +52,7 @@ public class OrderLineAdapter extends RecyclerView.Adapter<OrderLineAdapter.View
         holder.bind(item, listener);
     }
 
+
     @Override
     public int getItemCount() {
         return orderItems.size();
@@ -75,6 +76,8 @@ public class OrderLineAdapter extends RecyclerView.Adapter<OrderLineAdapter.View
         ImageButton btnMinus, btnPlus;
         LinearLayout clickableArea;
         NoteTextWatcher noteWatcher;
+        ImageButton btnEdit, btnDelete;
+        View contentView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -85,6 +88,10 @@ public class OrderLineAdapter extends RecyclerView.Adapter<OrderLineAdapter.View
             btnMinus = itemView.findViewById(R.id.btnMinus);
             btnPlus = itemView.findViewById(R.id.btnPlus);
             clickableArea = itemView.findViewById(R.id.clickableArea);
+
+            contentView = itemView.findViewById(R.id.contentView);
+            btnEdit = itemView.findViewById(R.id.btnEdit);
+            btnDelete = itemView.findViewById(R.id.btnDelete);
 
             // TextWatcher cho Ghi chú
             noteWatcher = new NoteTextWatcher();
@@ -119,6 +126,13 @@ public class OrderLineAdapter extends RecyclerView.Adapter<OrderLineAdapter.View
             // Click vào vùng tên/giá để mở dialog
             clickableArea.setOnClickListener(v -> {
                 listener.onItemClicked(position, item);
+            });
+            btnEdit.setOnClickListener(v -> {
+                listener.onItemClicked(position, item); // gọi hàm sửa
+            });
+
+            btnDelete.setOnClickListener(v -> {
+                listener.onDeleteClicked(position, item); // gọi hàm xóa
             });
         }
     }

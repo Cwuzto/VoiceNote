@@ -194,4 +194,13 @@
         android:elevation="4dp"
         android:padding="12dp"
         android:clipToPadding="false"/>
+    <!-- 🔊 LISTENING PANEL (ẩn mặc định) - nằm sau rvQuickGrid để overlay -->
+    <include
+        android:id="@+id/includeListening"
+        layout="@layout/listening_panel"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:visibility="gone"/>
+
 </RelativeLayout>

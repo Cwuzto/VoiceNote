@@ -37,7 +37,10 @@
         android:layout_height="48dp"
         android:paddingStart="14dp"
         android:paddingEnd="14dp"
-        android:background="@drawable/bg_field_outline_blue"/>
+        android:background="@drawable/bg_field_outline_blue"
+        android:focusable="false"
+        android:clickable="false"
+        android:inputType="none"/>
 
     <TextView
         android:text="Số lượng"
