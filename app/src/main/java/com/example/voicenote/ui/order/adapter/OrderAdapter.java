@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -43,26 +42,14 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         void onItemClick(OrderWithItems orderWithItems);
     }
 
-    public interface OnDeleteListener {
-        void onDelete(OrderEntity order);
-    }
-
     private final List<Object> data = new ArrayList<>(); // Adapter này chứa List<Object>
     private final OnPaidChange onPaidChangeCallback;
-    private final OnItemClickListener onItemClickCallback; // [MỚI]
-    private final OnDeleteListener onDeleteCallback;
+    private final OnItemClickListener onItemClickCallback;
     private String userRole = "EMPLOYEE"; // Mặc định Role là Employee
 
-    public OrderAdapter(OnPaidChange onPaidChange, OnItemClickListener onItemClick, OnDeleteListener onDelete) {
+    public OrderAdapter(OnPaidChange onPaidChange, OnItemClickListener onItemClick) {
         this.onPaidChangeCallback = onPaidChange;
         this.onItemClickCallback = onItemClick;
-        this.onDeleteCallback = onDelete;
-    }
-
-    // Hàm để Fragment cập nhật role
-    public void setUserRole(String role) {
-        this.userRole = role;
-        notifyDataSetChanged(); // Cập nhật lại list
     }
 
     // Nhận List<Object> từ ViewModel
@@ -104,7 +91,7 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             ((VHHeader) holder).bind(header);
         } else {
             OrderWithItems order = (OrderWithItems) data.get(position);
-            ((VHItem) holder).bind(order, onPaidChangeCallback, onItemClickCallback, onDeleteCallback, userRole);
+            ((VHItem) holder).bind(order, onPaidChangeCallback, onItemClickCallback);
         }
     }
 
@@ -168,12 +155,10 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     static class VHItem extends RecyclerView.ViewHolder {
-        TextView tvCustomer, tvTime, tvTotal, tvLines,tvSellerName;
+        TextView tvCustomer, tvTime, tvTotal, tvLines,tvSellerName, tvNotesSummary;
         CheckBox cbPaid;
         LinearLayout btnPaidArea;
-        TextView btnDelete;
         Context context;
-        private String userRole = "EMPLOYEE";
 
         VHItem(View v) {
             super(v);
@@ -184,12 +169,11 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             tvLines = v.findViewById(R.id.tvLines);
             cbPaid = v.findViewById(R.id.cbPaid);
             btnPaidArea = v.findViewById(R.id.btnPaidArea);
-            btnDelete = v.findViewById(R.id.btnDelete);
             tvSellerName = v.findViewById(R.id.tvSellerName);
+            tvNotesSummary = v.findViewById(R.id.tvNotesSummary);
         }
 
-        void bind(OrderWithItems orderWithItems, OnPaidChange paidChangeCb, OnItemClickListener itemClickCb, OnDeleteListener deleteCb, String role) {
-            this.userRole = role;
+        void bind(OrderWithItems orderWithItems, OnPaidChange paidChangeCb, OnItemClickListener itemClickCb) {
             OrderEntity order = orderWithItems.order;
 
             // Bind dữ liệu Order
@@ -216,16 +200,16 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             // Build chuỗi tóm tắt món hàng giới hạn là 5
             if (orderWithItems.orderItems != null && !orderWithItems.orderItems.isEmpty()) {
                 StringBuilder linesSummary = new StringBuilder();
+                StringBuilder notesSummary = new StringBuilder();
 
                 // Giới hạn 5 dòng
                 int maxLinesToShow = 5;
                 int totalItems = orderWithItems.orderItems.size();
 
                 for (int i = 0; i < totalItems; i++) {
-
+                    OrderItemEntity item = orderWithItems.orderItems.get(i);
                     if (i < maxLinesToShow) {
                         // Hiển thị các món 1, 2, 3, 4
-                        OrderItemEntity item = orderWithItems.orderItems.get(i);
                         if (i > 0) {
                             linesSummary.append("\n"); // Thêm xuống dòng
                         }
@@ -240,10 +224,26 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                                     .append(remaining)
                                     .append(" hàng khác");
                         }
-                        break; // Dừng vòng lặp
+                        // (Không break, vẫn chạy để lấy Ghi chú)
+                    }
+                    // [MỚI] Build tóm tắt ghi chú
+                    if (item.note != null && !item.note.isEmpty()) {
+                        if (notesSummary.length() > 0) {
+                            notesSummary.append("\n");
+                        }
+                        // Format: "Ghi chú"
+                        notesSummary.append(item.note);
                     }
                 }
                 tvLines.setText(linesSummary.toString());
+
+                // Hiển thị Ghi chú
+                if (notesSummary.length() > 0) {
+                    tvNotesSummary.setText(notesSummary.toString());
+                    tvNotesSummary.setVisibility(View.VISIBLE);
+                } else {
+                    tvNotesSummary.setVisibility(View.GONE);
+                }
             } else {
                 tvLines.setText("Đơn hàng trống");
             }
@@ -269,30 +269,6 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 if (itemClickCb != null) {
                     itemClickCb.onItemClick(orderWithItems);
                 }
-            });
-
-            // [SỬA] Phân quyền và gán listener cho nút Xóa
-            if ("OWNER".equals(userRole)) {
-                btnDelete.setEnabled(true);
-                btnDelete.setTextColor(ContextCompat.getColor(context, R.color.red_error));
-            } else {
-                btnDelete.setEnabled(false);
-                btnDelete.setTextColor(ContextCompat.getColor(context, R.color.gray_disabled));
-            }
-
-            btnDelete.setOnClickListener(v -> {
-                // Kiểm tra lại quyền
-                if (!"OWNER".equals(userRole)) return;
-
-                // Hỏi xác nhận
-                new AlertDialog.Builder(context)
-                        .setTitle("Xoá đơn hàng")
-                        .setMessage("Bạn có chắc muốn xoá đơn hàng này?")
-                        .setPositiveButton("Xoá", (dialog, which) -> {
-                            deleteCb.onDelete(order);
-                        })
-                        .setNegativeButton("Huỷ", null)
-                        .show();
             });
         }
     }

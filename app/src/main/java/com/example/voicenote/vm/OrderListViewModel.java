@@ -103,13 +103,6 @@ public class OrderListViewModel extends AndroidViewModel {
         repository.updatePaymentStatus(order, isPaid);
     }
 
-    /**
-     * Hàm xoá
-     */
-    public void deleteOrder(OrderEntity order) {
-        repository.deleteOrder(order);
-    }
-
     // ----------------- Helpers -----------------
 
     // Cập nhật hàm applyFilter

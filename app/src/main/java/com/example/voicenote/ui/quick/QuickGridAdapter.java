@@ -107,6 +107,15 @@ public class QuickGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         itemViewHolder.itemView.setOnClickListener(view -> {
             if (item.showRemove) return;
+            // Tăng số lượng chọn
+            item.selected++;
+
+            // Cập nhật lại giao diện
+            RecyclerView.Adapter<?> adapter = itemViewHolder.getBindingAdapter();
+            if (adapter != null) {
+                adapter.notifyItemChanged(itemViewHolder.getBindingAdapterPosition());
+            }
+
             if (onPick != null) {
                 onPick.onPick(item, position - 1);
             }
@@ -123,7 +132,12 @@ public class QuickGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         itemViewHolder.ivRemove.setOnClickListener(view -> {
             if (onRemove != null) {
-                onRemove.onRemove(item, position - 1);
+                // Xóa tất cả item có showRemove = true
+                for (int i = data.size() - 1; i >= 0; i--) {
+                    if (data.get(i).showRemove) {
+                        onRemove.onRemove(data.get(i), i);
+                    }
+                }
             }
         });
     }
