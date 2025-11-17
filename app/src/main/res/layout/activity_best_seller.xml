@@ -14,15 +14,23 @@
             android:id="@+id/headerLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:padding="16dp"
-            android:gravity="center_vertical">
+            android:visibility="visible">
+            <ImageButton
+                android:id="@+id/btnClose"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:padding="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_close_24" />
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Hoá đơn"
+                android:text="Hàng hoá bán chạy"
                 android:textColor="#0F172A"
-                android:textSize="26sp"
+                android:textSize="22sp"
                 android:textStyle="bold" />
             <ImageView
                 android:id="@+id/btnSearch"
@@ -49,7 +57,7 @@
                 android:layout_width="0dp"
                 android:layout_height="44dp"
                 android:layout_weight="1"
-                android:hint="Tìm theo hàng hóa, khách hàng"
+                android:hint="Tìm theo hàng hóa"
                 android:background="@drawable/bg_input_pill"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
@@ -76,7 +84,6 @@
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:gravity="center_vertical">
-
         <TextView
             android:id="@+id/chipTime"
             android:layout_width="wrap_content"
@@ -84,23 +91,21 @@
             android:gravity="center"
             android:paddingLeft="14dp"
             android:paddingRight="10dp"
-            android:text="Toàn thời gian"
+            android:text="Tháng này"
             android:textColor="#374151"
             android:textStyle="bold"
             android:background="@drawable/bg_filter_button"
             android:drawableEnd="@drawable/ic_arrow_down_24"
             android:drawablePadding="4dp"/>
-
         <Space android:layout_width="12dp" android:layout_height="1dp"/>
-
         <TextView
-            android:id="@+id/chipStatus"
+            android:id="@+id/chipSort"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:gravity="center"
             android:paddingLeft="14dp"
             android:paddingRight="10dp"
-            android:text="Tất cả đơn"
+            android:text="Theo số lượng"
             android:textColor="#374151"
             android:textStyle="bold"
             android:background="@drawable/bg_filter_button"
@@ -108,20 +113,22 @@
             android:drawablePadding="4dp"/>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tvEmptyHint"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Danh sách đơn hàng đang trống.\nBấm Bán hàng để tạo đơn"
-        android:textAlignment="center"
-        android:paddingTop="48dp"
-        android:textColor="#6B7280"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvOrder"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="16dp"
-        android:clipToPadding="false"/>
-
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvBestSellers"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp"
+            android:clipToPadding="false"/>
+        <TextView
+            android:id="@+id/tvEmpty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Chưa có dữ liệu bán chạy"
+            android:visibility="gone"/>
+    </FrameLayout>
 </LinearLayout>

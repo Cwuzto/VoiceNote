@@ -96,6 +96,11 @@ public class OverviewFragment extends Fragment {
         chipRevenueChartTimeRange = v.findViewById(R.id.chipRevenueChartTimeRange);
         chipBestSellerTimeRange = v.findViewById(R.id.chipBestSellerTimeRange);
 
+        // Nút xem tất cả
+        v.findViewById(R.id.btnViewAllBestSellers).setOnClickListener(view -> {
+            startActivity(new Intent(getContext(), BestSellerActivity.class));
+        });
+
         // Gán 3 listener riêng biệt cho 3 nút lọc
         tvRevenueTimeRange.setOnClickListener(view -> showTimeFilter("REVENUE"));
         chipRevenueChartTimeRange.setOnClickListener(view -> showTimeFilter("CHART"));

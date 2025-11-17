@@ -51,8 +51,9 @@ public class OverviewViewModel extends AndroidViewModel {
                 repository.getRevenueSummary(range.first, range.second) // Truyền 2 tham số
         );
 
+        // BestSellers (mặc định) sẽ lấy theo SỐ LƯỢNG
         bestSellers = Transformations.switchMap(bestSellerTimeRange, range ->
-                repository.getBestSellers(range.first, range.second) // Truyền 2 tham số
+                repository.getBestSellersByQuantity(range.first, range.second)
         );
 
         chartData = Transformations.switchMap(chartTimeRange, range -> {
@@ -70,7 +71,14 @@ public class OverviewViewModel extends AndroidViewModel {
         return revenueSummary;
     }
     public LiveData<List<BestSellerItem>> getBestSellers() {
-        return bestSellers;
+        // Lọc 3 item đầu tiên cho Overview
+        return Transformations.map(bestSellers, list -> {
+            if (list == null) return null;
+            if (list.size() > 3) {
+                return list.subList(0, 3);
+            }
+            return list;
+        });
     }
     public LiveData<List<ChartDataPoint>> getChartData() { return chartData; }
 

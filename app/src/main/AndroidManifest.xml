@@ -15,7 +15,6 @@
         <activity
             android:name=".MainActivity"
             android:exported="false"/>
-
         <activity
             android:name=".ui.splash.SplashActivity"
             android:exported="true"
@@ -25,53 +24,46 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.auth.LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.VoiceNote"/>
-
         <activity
             android:name=".ui.auth.RegisterActivity"
             android:exported="false"
             android:theme="@style/Theme.VoiceNote" />
-
         <activity
             android:name="com.example.voicenote.ui.order.OrderDetailActivity"
             android:exported="false"
             android:theme="@style/Theme.VoiceNote" />
-
         <activity
             android:name="com.example.voicenote.ui.order.OrderEditActivity"
             android:exported="false"
             android:theme="@style/Theme.VoiceNote" />
-
         <activity
             android:name=".ui.sale.SaleActivity"
             android:exported="false"
             android:theme="@style/Theme.VoiceNote"
             android:windowSoftInputMode="adjustResize"/>
-
         <activity
             android:name=".ui.auth.CreateStoreActivity"
             android:exported="false"
             android:theme="@style/Theme.VoiceNote" />
-
         <activity
             android:name=".ui.more.EmployeeListActivity"
             android:exported="false"
             android:theme="@style/Theme.VoiceNote" />
-
         <activity
             android:name=".ui.more.ProfileActivity"
             android:exported="false"
             android:theme="@style/Theme.VoiceNote" />
-
         <activity
             android:name=".ui.more.StoreInfoActivity"
             android:exported="false"
             android:theme="@style/Theme.VoiceNote" />
-
+        <activity
+            android:name=".ui.overview.BestSellerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.VoiceNote" />
     </application>
-
 </manifest>

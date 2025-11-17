@@ -10,4 +10,7 @@ public class BestSellerItem {
 
     @ColumnInfo(name = "total_quantity")
     public int totalQuantity;
+
+    @ColumnInfo(name = "total_revenue") // tổng doanh thu
+    public long totalRevenue;
 }

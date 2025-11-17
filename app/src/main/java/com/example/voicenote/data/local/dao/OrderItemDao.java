@@ -30,14 +30,24 @@ public interface OrderItemDao {
     List<OrderItemEntity> getByOrderId(long orderId);
 
     /**
-     * Lấy top 3 sản phẩm bán chạy (theo số lượng) Kể từ startTime
+     * [MỚI] Sắp xếp theo SỐ LƯỢNG
      */
-    @Query("SELECT product_name, SUM(quantity) as total_quantity " +
+    @Query("SELECT product_name, SUM(quantity) as total_quantity, SUM(quantity * unit_price) as total_revenue " +
             "FROM order_item " +
             "INNER JOIN `order` ON order_item.order_id = `order`.id " +
             "WHERE `order`.status = 'PAID' AND `order`.created_at >= :startTime AND `order`.created_at <= :endTime " +
             "GROUP BY product_name " +
-            "ORDER BY total_quantity DESC " +
-            "LIMIT 3")
-    LiveData<List<BestSellerItem>> getBestSellers(long startTime, long endTime);
+            "ORDER BY total_quantity DESC")
+    LiveData<List<BestSellerItem>> getBestSellersByQuantity(long startTime, long endTime);
+
+    /**
+     * [MỚI] Sắp xếp theo DOANH THU
+     */
+    @Query("SELECT product_name, SUM(quantity) as total_quantity, SUM(quantity * unit_price) as total_revenue " +
+            "FROM order_item " +
+            "INNER JOIN `order` ON order_item.order_id = `order`.id " +
+            "WHERE `order`.status = 'PAID' AND `order`.created_at >= :startTime AND `order`.created_at <= :endTime " +
+            "GROUP BY product_name " +
+            "ORDER BY total_revenue DESC")
+    LiveData<List<BestSellerItem>> getBestSellersByRevenue(long startTime, long endTime);
 }
