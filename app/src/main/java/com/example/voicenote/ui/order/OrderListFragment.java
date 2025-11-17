@@ -46,23 +46,18 @@ import java.util.TimeZone;
  */
 public class OrderListFragment extends Fragment {
     private OrderListViewModel viewModel;
-    private ProfileViewModel profileViewModel;
-    private SessionManager sessionManager;
     private OrderAdapter adapter;
     private TextView chipTime, chipStatus, tvEmpty;
     private LinearLayoutManager layoutManager;
     private RecyclerView rv;
     private View headerLayout, searchBar;
     private EditText edtSearch;
-    private String currentUserRole = "EMPLOYEE"; // [MỚI] Mặc định là NV
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Khởi tạo 1 lần
         viewModel = new ViewModelProvider(this).get(OrderListViewModel.class);
-        profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
-        sessionManager = new SessionManager(requireContext());
     }
 
     @Nullable
@@ -92,10 +87,6 @@ public class OrderListFragment extends Fragment {
                     Intent intent = new Intent(getContext(), OrderDetailActivity.class);
                     intent.putExtra("order_id", orderWithItems.order.id);
                     startActivity(intent);
-                },
-                // [MỚI] Thêm listener cho Xóa
-                (order) -> {
-                    viewModel.deleteOrder(order);
                 }
         );
         rv.setAdapter(adapter);
@@ -110,8 +101,6 @@ public class OrderListFragment extends Fragment {
             adapter.submit(items);
             tvEmpty.setVisibility(items == null || items.isEmpty() ? View.VISIBLE : View.GONE);
         });
-
-        loadUserRole();
 
         // --- Xử lý hiển thị search bar ---
         btnSearch.setOnClickListener(v1 -> toggleSearch(true));
@@ -151,21 +140,6 @@ public class OrderListFragment extends Fragment {
             InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(edtSearch.getWindowToken(), 0);
         }
-    }
-
-    /**
-     * Lấy user role và cập nhật adapter
-     */
-    private void loadUserRole() {
-        long userId = sessionManager.getUserId();
-        if (userId == -1) return;
-
-        profileViewModel.getUser(userId).observe(getViewLifecycleOwner(), user -> {
-            if (user != null) {
-                this.currentUserRole = user.role;
-                adapter.setUserRole(this.currentUserRole);
-            }
-        });
     }
 
     /**

@@ -1,8 +1,10 @@
-// File: com/example/voicenote/ui/overview/BestSellerActivity.java
+// File: com/example/voicenote/ui/overview/BestSellerActivity.java (CẬP NHẬT)
 package com.example.voicenote.ui.overview;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -29,6 +31,7 @@ public class BestSellerActivity extends AppCompatActivity {
     private BestSellerViewModel viewModel;
     private BestSellerAdapter adapter;
     private TextView chipTime, chipSort, tvEmpty;
+
     private View headerLayout, searchBar;
     private EditText edtSearch;
 
@@ -45,7 +48,6 @@ public class BestSellerActivity extends AppCompatActivity {
         tvEmpty = findViewById(R.id.tvEmpty);
         RecyclerView rvBestSellers = findViewById(R.id.rvBestSellers);
 
-        // Ánh xạ Search Bar
         headerLayout = findViewById(R.id.headerLayout);
         searchBar = findViewById(R.id.searchBar);
         edtSearch = findViewById(R.id.edtSearch);
@@ -59,8 +61,20 @@ public class BestSellerActivity extends AppCompatActivity {
         findViewById(R.id.btnClose).setOnClickListener(v -> finish());
         chipTime.setOnClickListener(v -> showTimeFilter());
         chipSort.setOnClickListener(v -> showSortFilter());
+
         findViewById(R.id.btnSearch).setOnClickListener(v -> toggleSearch(true));
         findViewById(R.id.btnCancelSearch).setOnClickListener(v -> toggleSearch(false));
+
+        edtSearch.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // [SỬA LỖI] Gọi đúng hàm
+                viewModel.setSearchKeyword(s.toString());
+            }
+
+            @Override public void afterTextChanged(Editable s) {}
+        });
 
         // --- Observe VM ---
         viewModel.getBestSellersList().observe(this, bestSellers -> {
@@ -75,9 +89,6 @@ public class BestSellerActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Ẩn/Hiện Search Bar
-     */
     private void toggleSearch(boolean show) {
         headerLayout.setVisibility(show ? View.GONE : View.VISIBLE);
         searchBar.setVisibility(show ? View.VISIBLE : View.GONE);
@@ -94,7 +105,7 @@ public class BestSellerActivity extends AppCompatActivity {
     }
 
     private void showTimeFilter() {
-        TimeFilterSheet sheet = TimeFilterSheet.newInstance(false); // Ẩn "Toàn thời gian"
+        TimeFilterSheet sheet = TimeFilterSheet.newInstance(false);
         sheet.setListener(new TimeFilterSheet.OnTimeSelectedListener() {
             @Override
             public void onTimeSelected(String rangeKey, String rangeText) {
@@ -112,15 +123,16 @@ public class BestSellerActivity extends AppCompatActivity {
     private void showSortFilter() {
         SortFilterSheet sheet = new SortFilterSheet();
         sheet.setListener((sortKey, sortText) -> {
+            // Phải báo cho Adapter biết tiêu chí SẮP TỚI
+            adapter.setSortCriteria(sortKey);
+            // Mới gọi ViewModel để lấy dữ liệu SẮP TỚI
             viewModel.setSortCriteria(sortKey);
             chipSort.setText(sortText);
-            adapter.setSortCriteria(sortKey); // [QUAN TRỌNG] Báo cho Adapter
         });
         sheet.show(getSupportFragmentManager(), "SortFilterSheet");
     }
 
     private void showDateRangePicker() {
-        // (Code copy từ OverviewFragment)
         MaterialDatePicker<Pair<Long, Long>> dateRangePicker =
                 MaterialDatePicker.Builder.dateRangePicker().build();
 

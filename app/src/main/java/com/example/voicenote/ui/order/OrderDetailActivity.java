@@ -15,14 +15,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.voicenote.R;
-// [SỬA] Import entity và viewmodel mới
 import com.example.voicenote.data.local.entity.OrderEntity;
 import com.example.voicenote.data.local.entity.OrderItemEntity;
 import com.example.voicenote.data.local.rel.OrderWithItems;
 import com.example.voicenote.ui.sale.SaleActivity;
-import com.example.voicenote.util.SessionManager;
 import com.example.voicenote.vm.OrderDetailViewModel;
-import com.example.voicenote.vm.ProfileViewModel;
 
 import org.jspecify.annotations.NonNull;
 
@@ -34,17 +31,13 @@ import java.util.Locale;
  */
 public class OrderDetailActivity extends AppCompatActivity {
     private OrderDetailViewModel viewModel;
-    private ProfileViewModel profileViewModel;
-    private SessionManager sessionManager;
 
-    // [MỚI] Khai báo tất cả View
     private TextView tvCustomer, tvDate, tvSubtotal, tvTotal;
     private CheckBox cbPaid;
     private LinearLayout containerItems;
     private LinearLayout btnPaid; //layout cha của checkbox
     private OrderWithItems currentOrder; // Biến này được Observer gán
-    private ImageButton btnEdit, btnDelete;
-    private long userId;
+    private ImageButton btnEdit;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,11 +49,8 @@ public class OrderDetailActivity extends AppCompatActivity {
             return;
         }
 
-        // --- Khởi tạo Session & ViewModel ---
-        sessionManager = new SessionManager(this);
-        userId = sessionManager.getUserId();
+        // --- Khởi tạo ViewModel ---
         viewModel = new ViewModelProvider(this).get(OrderDetailViewModel.class);
-        profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
 
         // --- Ánh xạ View ---
         tvCustomer = findViewById(R.id.tvCustomer);
@@ -71,7 +61,6 @@ public class OrderDetailActivity extends AppCompatActivity {
         tvSubtotal = findViewById(R.id.tvSubtotal);
         containerItems = findViewById(R.id.containerItems);
         btnEdit = findViewById(R.id.btnEdit);
-        btnDelete = findViewById(R.id.btnDelete);
 
         // --- Lấy ViewModel và Quan sát Dữ liệu ---
         viewModel = new ViewModelProvider(this).get(OrderDetailViewModel.class);
@@ -82,10 +71,7 @@ public class OrderDetailActivity extends AppCompatActivity {
             }
         });
 
-        // --- Phân quyền ---
-        loadUserPermissions();
-
-        // [MỚI] Thêm OnClickListener vào layout cha
+        // Thêm OnClickListener vào layout cha
         btnPaid.setOnClickListener(v -> {
             if (this.currentOrder == null || this.currentOrder.order == null) {
                 // Dữ liệu chưa tải xong, không làm gì cả
@@ -98,7 +84,7 @@ public class OrderDetailActivity extends AppCompatActivity {
             // Nếu đã paid (bị khóa) thì không làm gì
             if ("PAID".equals(current.status)) return;
 
-            // Yêu cầu 1: Hỏi xác nhận
+            // Hỏi xác nhận
             new AlertDialog.Builder(this)
                     .setTitle("Xác nhận thanh toán")
                     .setMessage("Bạn có chắc chắn muốn đánh dấu đơn hàng này là ĐÃ NHẬN TIỀN?")
@@ -112,45 +98,10 @@ public class OrderDetailActivity extends AppCompatActivity {
 
         findViewById(R.id.tvClose).setOnClickListener(v -> finish()); // Nút đóng
         btnEdit.setOnClickListener(v -> openEditMode()); // Nút sửa
-        btnDelete.setOnClickListener(v -> confirmDeleteOrder()); // Nút xóa
     }
 
     /**
-     * [MỚI] Lấy role của user và phân quyền
-     */
-    private void loadUserPermissions() {
-        if (userId == -1) return;
-
-        profileViewModel.getUser(userId).observe(this, user -> {
-            if (user != null && "OWNER".equals(user.role)) {
-                // Là Chủ quán
-                btnDelete.setVisibility(View.VISIBLE);
-            } else {
-                // Là Nhân viên
-                btnDelete.setVisibility(View.GONE);
-            }
-        });
-    }
-
-    /**
-     * [MỚI] Hỏi xác nhận trước khi Xóa
-     */
-    private void confirmDeleteOrder() {
-        if (currentOrder == null) return;
-
-        new AlertDialog.Builder(this)
-                .setTitle("Xoá đơn hàng")
-                .setMessage("Bạn có chắc chắn muốn xoá đơn hàng này? Thao tác này không thể hoàn tác.")
-                .setPositiveButton("Xoá", (dialog, which) -> {
-                    viewModel.deleteOrder(currentOrder.order);
-                    finish(); // Xoá xong thì đóng lại
-                })
-                .setNegativeButton("Huỷ", null)
-                .show();
-    }
-
-    /**
-     * [MỚI] Gửi dữ liệu đơn hàng sang SaleActivity
+     * Gửi dữ liệu đơn hàng sang SaleActivity
      */
     private void openEditMode() {
         if (currentOrder == null || currentOrder.order == null) return;
@@ -223,7 +174,7 @@ public class OrderDetailActivity extends AppCompatActivity {
             tvItemQty.setText(String.format(Locale.US, "%d x %,d", item.quantity, item.unitPrice));
 
             if (item.note != null && !item.note.isEmpty()) {
-                tvItemNote.setText("Ghi chú: " + item.note);
+                tvItemNote.setText(item.note); // tvItemNote.setText("Ghi chú: " + item.note);
                 tvItemNote.setVisibility(View.VISIBLE);
             } else {
                 tvItemNote.setVisibility(View.GONE);

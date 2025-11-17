@@ -18,9 +18,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * EN: ViewModel for product grid (used in SaleActivity).
- * VI: ViewModel cho danh sách sản phẩm (dùng trong SaleActivity).
- * (Đã refactor từ QuickItemsViewModel)
+ * ViewModel cho danh sách sản phẩm (dùng trong SaleActivity).
  */
 public class ProductViewModel extends AndroidViewModel {
     private final ProductRepository repository;
@@ -50,8 +48,35 @@ public class ProductViewModel extends AndroidViewModel {
     }
 
     /**
-     * EN: Insert new product.
-     * VI: Thêm sản phẩm mới.
+     * [MỚI] Hàm lưu có kiểm tra trùng lặp (cho ProductListFragment)
+     * @return true nếu lưu thành công, false nếu tên bị trùng
+     */
+    public boolean saveProduct(ProductEntity productToSave) {
+        List<ProductEntity> currentList = allProducts.getValue();
+        if (currentList == null) {
+            // Nếu LiveData chưa tải xong, cứ cho phép lưu
+            // (DB sẽ tự bắt lỗi UNIQUE nếu có, nhưng hiếm)
+            repository.insertProduct(productToSave);
+            return true;
+        }
+
+        String newName = productToSave.name.trim();
+
+        // 1. Kiểm tra trùng lặp (không phân biệt hoa thường)
+        for (ProductEntity product : currentList) {
+            // Nếu tên trùng VÀ ID khác (tức là đang sửa món này)
+            if (product.name.equalsIgnoreCase(newName) && product.id != productToSave.id) {
+                return false; // Báo lỗi: Đã tìm thấy trùng lặp
+            }
+        }
+
+        // 2. Không trùng lặp, tiến hành lưu
+        repository.insertProduct(productToSave);
+        return true;
+    }
+
+    /**
+     * Thêm sản phẩm mới.
      */
     public void insertProduct(ProductEntity product) {
         repository.insertProduct(product);

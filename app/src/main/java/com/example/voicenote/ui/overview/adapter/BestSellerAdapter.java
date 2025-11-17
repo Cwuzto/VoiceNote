@@ -1,7 +1,6 @@
 // File: com/example/voicenote/ui/overview/adapter/BestSellerAdapter.java
 package com.example.voicenote.ui.overview.adapter;
 
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,28 +10,28 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.ListAdapter;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView; // [SỬA] Dùng RecyclerView.Adapter
 import com.example.voicenote.R;
 import com.example.voicenote.data.local.rel.BestSellerItem;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class BestSellerAdapter extends ListAdapter<BestSellerItem, BestSellerAdapter.ViewHolder> {
-    // Biến để biết đang sort theo cái gì
+public class BestSellerAdapter extends RecyclerView.Adapter<BestSellerAdapter.ViewHolder> {
+
     private String sortCriteria = "QUANTITY";
+    private final List<BestSellerItem> data = new ArrayList<>(); // [MỚI]
 
     // Màu cho Top 3
-    private final int[] rankColors = { 0xFFF59E0B, 0xFF6B7280, 0xFF8D6E63 }; // Vàng, Bạc, Đồng
+    private final int[] rankColors = { 0xFFF59E0B, 0xFF6B7280, 0xFF8D6E63 };
     private final int[] rankIconColors = { 0xFFFDE68A, 0xFFD1D5DB, 0xFFA1887F };
     // Màu cho Rank 4+
-    private final int defaultRankColor = 0xFF6B7280; // Xám
-    private final int defaultIconColor = 0xFFD1D5DB; // Xám nhạt
+    private final int defaultRankColor = 0xFF6B7280;
+    private final int defaultIconColor = 0xFFD1D5DB;
 
     public BestSellerAdapter() {
-        super(DIFF_CALLBACK);
+        // (Không cần super)
     }
 
     /**
@@ -40,16 +39,17 @@ public class BestSellerAdapter extends ListAdapter<BestSellerItem, BestSellerAda
      */
     public void setSortCriteria(String criteria) {
         this.sortCriteria = criteria;
-        // (Không cần notify, submitList sẽ làm việc đó)
     }
 
-    // Ghi đè submitList để cập nhật sortCriteria
-    @Override
-    public void submitList(@Nullable List<BestSellerItem> list) {
-        // (Chúng ta có thể làm 1 hàm submitList(list, criteria) riêng,
-        // nhưng làm vậy sẽ phải sửa cả BestSellerViewModel)
-        // Tạm thời, chúng ta sẽ gọi setSortCriteria từ Activity
-        super.submitList(list);
+    /**
+     * [SỬA] Hàm submitList mới
+     */
+    public void submitList(List<BestSellerItem> list) {
+        data.clear();
+        if (list != null) {
+            data.addAll(list);
+        }
+        notifyDataSetChanged(); // Buộc vẽ lại toàn bộ
     }
 
     @NonNull
@@ -60,10 +60,18 @@ public class BestSellerAdapter extends ListAdapter<BestSellerItem, BestSellerAda
         return new ViewHolder(view);
     }
 
+    /**
+     * Lấy item tại 'position' mới và truyền 'position' đó vào
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        BestSellerItem item = getItem(position);
-        holder.bind(item, position, sortCriteria);
+        BestSellerItem item = data.get(position); // Lấy từ list
+        holder.bind(item, position, sortCriteria); // 'position' là vị trí mới (0, 1, 2...)
+    }
+
+    @Override
+    public int getItemCount() {
+        return data.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -77,13 +85,17 @@ public class BestSellerAdapter extends ListAdapter<BestSellerItem, BestSellerAda
             tvProductName = itemView.findViewById(R.id.tvProductName);
             tvQuantity = itemView.findViewById(R.id.tvQuantity);
         }
-
+        /**
+         * Hàm bind này nhận 'position' (vị trí 0, 1, 2...)
+         */
         public void bind(BestSellerItem item, int position, String sortCriteria) {
+            // Luôn lấy position (0, 1, 2...) + 1 để ra rank (1, 2, 3...)
             int rank = position + 1;
+
             tvRank.setText(String.valueOf(rank));
             tvProductName.setText(item.productName);
 
-            // Hiển thị đúng dữ liệu
+            // [SỬA LỖI] Hiển thị đúng dữ liệu
             if ("REVENUE".equals(sortCriteria)) {
                 // Hiển thị Doanh thu
                 tvQuantity.setText(String.format(Locale.US, "%,dđ", item.totalRevenue));
@@ -109,19 +121,4 @@ public class BestSellerAdapter extends ListAdapter<BestSellerItem, BestSellerAda
             tvRank.setBackground(rankBg);
         }
     }
-
-    private static final DiffUtil.ItemCallback<BestSellerItem> DIFF_CALLBACK =
-            new DiffUtil.ItemCallback<BestSellerItem>() {
-                @Override
-                public boolean areItemsTheSame(@NonNull BestSellerItem oldItem, @NonNull BestSellerItem newItem) {
-                    // ProductName là key duy nhất
-                    return oldItem.productName.equals(newItem.productName);
-                }
-                @Override
-                public boolean areContentsTheSame(@NonNull BestSellerItem oldItem, @NonNull BestSellerItem newItem) {
-                    // Phải kiểm tra cả hai
-                    return oldItem.totalQuantity == newItem.totalQuantity &&
-                            oldItem.totalRevenue == newItem.totalRevenue;
-                }
-            };
 }

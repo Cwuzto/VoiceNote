@@ -29,18 +29,19 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/tvItemNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#64748B"
+        android:textStyle="italic"
+        android:textSize="14sp"
+        android:visibility="gone"
+        android:layout_marginBottom="4dp"/>
+
+    <TextView
         android:id="@+id/tvItemQty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="#64748B"
         android:textSize="14sp" />
-
-    <TextView
-        android:id="@+id/tvItemNote"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#475569"
-        android:textStyle="italic"
-        android:textSize="14sp"
-        android:visibility="gone"/>
 </LinearLayout>

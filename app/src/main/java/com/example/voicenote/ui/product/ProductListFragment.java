@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -87,8 +89,13 @@ public class ProductListFragment extends Fragment {
                     productToDatabase.name = name;
                     productToDatabase.price = price;
 
-                    // Gửi object (mới toanh) này đến ViewModel
-                    productViewModel.insertProduct(productToDatabase);
+                    // Gọi hàm saveProduct (thay vì insertProduct)
+                    boolean success = productViewModel.saveProduct(productToDatabase);
+
+                    // Kiểm tra kết quả
+                    if (!success) {
+                        Toast.makeText(getContext(), "Tên sản phẩm này đã tồn tại", Toast.LENGTH_SHORT).show();
+                    }
                 });
         dialog.show(getChildFragmentManager(), "AddProductSheet");
     }

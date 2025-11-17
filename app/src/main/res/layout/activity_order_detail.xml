@@ -47,16 +47,6 @@
                     android:src="@drawable/ic_edit_24"
                     app:tint="#111827" />
 
-                <ImageButton
-                    android:id="@+id/btnDelete"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginStart="8dp"
-                    android:background="@drawable/bg_circle_white"
-                    android:elevation="2dp"
-                    android:src="@drawable/ic_delete_24"
-                    app:tint="@color/red_error"
-                    android:visibility="gone"/>
             </LinearLayout>
         </LinearLayout>
 
