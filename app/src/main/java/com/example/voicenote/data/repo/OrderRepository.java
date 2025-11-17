@@ -52,8 +52,11 @@ public class OrderRepository {
     public LiveData<RevenueSummary> getRevenueSummary(long startTime, long endTime) {
         return orderDao.getRevenueSummary(startTime, endTime);
     }
-    public LiveData<List<BestSellerItem>> getBestSellers(long startTime, long endTime) {
-        return orderItemDao.getBestSellers(startTime, endTime);
+    public LiveData<List<BestSellerItem>> getBestSellersByQuantity(long startTime, long endTime) {
+        return orderItemDao.getBestSellersByQuantity(startTime, endTime);
+    }
+    public LiveData<List<BestSellerItem>> getBestSellersByRevenue(long startTime, long endTime) {
+        return orderItemDao.getBestSellersByRevenue(startTime, endTime);
     }
     public LiveData<List<ChartDataPoint>> getChartData(long startTime, long endTime) {
         return orderDao.getChartData(startTime, endTime);

@@ -52,6 +52,8 @@ public class OrderListFragment extends Fragment {
     private TextView chipTime, chipStatus, tvEmpty;
     private LinearLayoutManager layoutManager;
     private RecyclerView rv;
+    private View headerLayout, searchBar;
+    private EditText edtSearch;
     private String currentUserRole = "EMPLOYEE"; // [MỚI] Mặc định là NV
 
     @Override
@@ -74,11 +76,12 @@ public class OrderListFragment extends Fragment {
         chipStatus = v.findViewById(R.id.chipStatus);
         tvEmpty = v.findViewById(R.id.tvEmptyHint);
 
-        // (Các ánh xạ cho Search bar)
-        View searchBar = v.findViewById(R.id.searchBar);
-        EditText edtSearch = v.findViewById(R.id.edtSearch);
-        TextView btnCancelSearch = v.findViewById(R.id.btnCancelSearch);
+        // (Các ánh xạ cho Header và Search bar)
+        headerLayout = v.findViewById(R.id.headerLayout);
+        searchBar = v.findViewById(R.id.searchBar);
+        edtSearch = v.findViewById(R.id.edtSearch);
         ImageView btnSearch = v.findViewById(R.id.btnSearch);
+        TextView btnCancelSearch = v.findViewById(R.id.btnCancelSearch);
 
         // --- Setup RecyclerView ---
         layoutManager = new LinearLayoutManager(getContext());
@@ -111,22 +114,8 @@ public class OrderListFragment extends Fragment {
         loadUserRole();
 
         // --- Xử lý hiển thị search bar ---
-        btnSearch.setOnClickListener(v1 -> {
-            searchBar.setVisibility(View.VISIBLE);
-            btnSearch.setVisibility(View.GONE);
-            edtSearch.requestFocus();
-            InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(edtSearch, InputMethodManager.SHOW_IMPLICIT);
-        });
-
-        btnCancelSearch.setOnClickListener(v2 -> {
-            searchBar.setVisibility(View.GONE);
-            btnSearch.setVisibility(View.VISIBLE);
-            edtSearch.setText("");
-            edtSearch.clearFocus();
-            InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(edtSearch.getWindowToken(), 0);
-        });
+        btnSearch.setOnClickListener(v1 -> toggleSearch(true));
+        btnCancelSearch.setOnClickListener(v2 -> toggleSearch(false));
 
         // Xử lý click cho Chip Lọc Trạng thái
         chipStatus.setOnClickListener(view -> showStatusFilter());
@@ -138,7 +127,7 @@ public class OrderListFragment extends Fragment {
         edtSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                viewModel.filterOrders(s.toString()); // [SỬA]
+                viewModel.filterOrders(s.toString());
             }
             @Override public void afterTextChanged(Editable s) {}
         });
@@ -147,7 +136,25 @@ public class OrderListFragment extends Fragment {
     }
 
     /**
-     * [MỚI] Lấy user role và cập nhật adapter
+     * Ẩn/Hiện Search Bar
+     */
+    private void toggleSearch(boolean show) {
+        headerLayout.setVisibility(show ? View.GONE : View.VISIBLE);
+        searchBar.setVisibility(show ? View.VISIBLE : View.GONE);
+
+        if (show) {
+            edtSearch.requestFocus();
+            InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(edtSearch, InputMethodManager.SHOW_IMPLICIT);
+        } else {
+            edtSearch.setText(""); // Xóa text khi Hủy
+            InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(edtSearch.getWindowToken(), 0);
+        }
+    }
+
+    /**
+     * Lấy user role và cập nhật adapter
      */
     private void loadUserRole() {
         long userId = sessionManager.getUserId();
