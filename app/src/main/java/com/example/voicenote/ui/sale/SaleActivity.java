@@ -22,6 +22,9 @@ import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -79,7 +82,7 @@ public class SaleActivity extends AppCompatActivity {
     private NestedScrollView cartScrollView; // [MỚI]
     private EditText edtLine;
     private TextView tvCustomer, btnDone, tvTotal; // [MỚI] tvTotal
-    private ImageButton btnMic, btnSendListening, btnCancelListening;
+    private ImageButton btnMic, btnSendListening, btnCancelListening, btnSend;
     private View includeListening;
 
     private WaveformView waveView ;
@@ -212,6 +215,7 @@ public class SaleActivity extends AppCompatActivity {
         waveView = includeListening.findViewById(R.id.waveView);
         btnSendListening = findViewById(R.id.btnSendListening);
         btnCancelListening = findViewById(R.id.btnCancelListening);
+        btnSend = findViewById(R.id.btnSend);
     }
 
     private void setupListeners() {
@@ -244,6 +248,21 @@ public class SaleActivity extends AppCompatActivity {
                 listeningVisible = false;
                 updateLayout();
             }
+        });
+        edtLine.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                // 1. Nếu grid hoặc listening panel đang mở, ẩn chúng
+                if (gridVisible || listeningVisible) hidePanels();
+
+                // 2. Post task để focus và mở bàn phím sau khi layout ổn định
+                v.post(() -> {
+                    edtLine.requestFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) imm.showSoftInput(edtLine, InputMethodManager.SHOW_IMPLICIT);
+                });
+            }
+            // Trả về false để hệ thống vẫn xử lý focus và bàn phím
+            return false;
         });
 
         edtLine.setOnEditorActionListener((v, actionId, event) -> {
@@ -280,7 +299,66 @@ public class SaleActivity extends AppCompatActivity {
             stopListening();            // dừng speech recognizer
         });
 
+        // Thêm TextWatcher cho EditText
+        edtLine.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Không cần xử lý
+            }
 
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Không cần xử lý
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // Kiểm tra logic
+                // Dùng TextUtils.isEmpty để kiểm tra null và rỗng an toàn
+                if (TextUtils.isEmpty(s)) {
+                    // Nếu EditText rỗng: Hiện Mic, Ẩn Gửi
+                    btnMic.setVisibility(View.VISIBLE);
+                    btnSend.setVisibility(View.GONE);
+                } else {
+                    // Nếu EditText có chữ: Ẩn Mic, Hiện Gửi
+                    btnMic.setVisibility(View.GONE);
+                    btnSend.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        btnSend.setOnClickListener(v -> {
+            String line = edtLine.getText().toString().trim();
+            if (!line.isEmpty()) {
+                addItemFromEditText();
+                edtLine.setText("");
+                listeningVisible = false;
+                updateLayout();             // cập nhật UI
+                isCancelled = true;         // đặt cờ hủy
+                stopListening();            // dừng speech recognizer
+            }
+        });
+    }
+    // hàm helper mới để đóng các panel
+    private void hidePanels() {
+        boolean panelWasOpen = false;
+
+        if (gridVisible) {
+            gridVisible = false;
+            panelWasOpen = true;
+        }
+
+        if (listeningVisible) {
+            listeningVisible = false;
+            panelWasOpen = true;
+
+            // Quan trọng: Dừng SpeechRecognizer nếu nó đang chạy
+            isCancelled = true; // Đặt cờ hủy
+            stopListening();    // Gọi hàm stop
+        }
+
+        if (panelWasOpen) {
+            updateLayout(); // Chỉ cập nhật layout nếu có gì đó thay đổi
+        }
     }
 
     private void setupQuickGrid() {
@@ -412,6 +490,56 @@ public class SaleActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    // phương thúc nhấn ngoài để đóng grid, listening
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        // Chỉ kiểm tra khi có sự kiện nhấn xuống (ACTION_DOWN)
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+
+            // Chỉ xử lý nếu 1 trong 2 panel đang mở
+            if (gridVisible || listeningVisible) {
+
+                // Lấy vùng chữ nhật (Rect) của các view "an toàn"
+                // (những view mà khi nhấn vào SẼ KHÔNG đóng panel)
+
+                // 1. Vùng an toàn: quickBar
+                Rect quickBarRect = new Rect();
+                quickBar.getHitRect(quickBarRect);
+
+                // Nếu nhấn vào quickBar, thì không làm gì, để hệ thống tự xử lý
+                if (quickBarRect.contains((int) ev.getX(), (int) ev.getY())) {
+                    return super.dispatchTouchEvent(ev);
+                }
+
+                // 2. Vùng an toàn: rvQuickGrid (nếu đang mở)
+                if (gridVisible) {
+                    Rect gridRect = new Rect();
+                    rvQuickGrid.getHitRect(gridRect);
+                    // Nếu nhấn vào trong grid, không làm gì
+                    if (gridRect.contains((int) ev.getX(), (int) ev.getY())) {
+                        return super.dispatchTouchEvent(ev);
+                    }
+                }
+
+                // 3. Vùng an toàn: includeListening (nếu đang mở)
+                if (listeningVisible) {
+                    Rect listeningRect = new Rect();
+                    includeListening.getHitRect(listeningRect);
+                    // Nếu nhấn vào trong panel listening, không làm gì
+                    if (listeningRect.contains((int) ev.getX(), (int) ev.getY())) {
+                        return super.dispatchTouchEvent(ev);
+                    }
+                }
+                // tới đây nghĩa là 1 trong 2 panel đang MỞ, và người dùng nhấn ra NGOÀI tất cả các vùng an toàn (quickBar, grid, listening).
+                //  gọi hàm hidePanels()
+                hidePanels();
+            }
+        }
+
+        // Luôn gọi super để các sự kiện chạm khác vẫn hoạt động bình thường
+        return super.dispatchTouchEvent(ev);
     }
 
     // --- Logic nghiệp vụ chính ---

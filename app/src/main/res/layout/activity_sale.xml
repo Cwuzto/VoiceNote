@@ -177,13 +177,26 @@
             android:hint="Nhập tên hàng + giá"
             android:background="@drawable/bg_input_pill"/>
 
-        <ImageButton
-            android:id="@+id/btnMic"
+        <FrameLayout
             android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:background="@drawable/bg_circle_soft"
-            android:src="@drawable/ic_mic_24"
-            android:contentDescription="mic button"/>
+            android:layout_height="44dp">
+
+            <ImageButton
+                android:id="@+id/btnMic"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_circle_soft"
+                android:src="@drawable/ic_mic_24"
+                android:contentDescription="mic button"
+                android:visibility="visible" />
+            <ImageButton
+            android:id="@+id/btnSend"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_badge_circle"
+            android:src="@drawable/ic_send"  android:contentDescription="send button"
+            android:visibility="gone" />
+        </FrameLayout>
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
