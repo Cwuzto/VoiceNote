@@ -79,7 +79,7 @@ public class EmployeeListActivity extends AppCompatActivity {
         dialog.setOnSaveListener((userToSave, password) -> {
             if (userToSave.id == 0) {
                 // Thêm mới
-                employeeViewModel.addEmployee(userToSave.fullName, userToSave.username, password);
+                employeeViewModel.addEmployee(userToSave, password);
             } else {
                 // Cập nhật
                 employeeViewModel.updateEmployee(userToSave, password);

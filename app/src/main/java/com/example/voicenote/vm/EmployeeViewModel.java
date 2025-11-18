@@ -34,19 +34,16 @@ public class EmployeeViewModel extends AndroidViewModel {
     /**
      * Thêm nhân viên mới
      */
-    public void addEmployee(String fullName, String username, String password) {
+    public void addEmployee(UserEntity employee, String password) {
         // (Trong thực tế, bạn cần kiểm tra username trùng, nhưng tạm thời bỏ qua)
 
         String salt = PasswordUtils.generateSalt();
         String hash = PasswordUtils.hashPassword(password, salt);
 
-        UserEntity employee = new UserEntity();
-        employee.fullName = fullName;
-        employee.username = username;
         employee.passwordHash = hash;
         employee.passwordSalt = salt;
-        employee.role = "EMPLOYEE"; // Gán role
-        employee.isActive = true;
+        employee.role = "EMPLOYEE";
+        // (isActive, fullName, username, email, phone, gender đã được set từ Dialog)
         employee.createdAt = System.currentTimeMillis();
         employee.updatedAt = System.currentTimeMillis();
 

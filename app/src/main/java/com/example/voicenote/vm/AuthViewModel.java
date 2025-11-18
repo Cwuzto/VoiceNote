@@ -20,7 +20,7 @@ public class AuthViewModel extends AndroidViewModel {
 
 
 
-    // [SỬA] Dùng LiveData  để quản lý điều hướng
+    // Dùng LiveData  để quản lý điều hướng
     private final MutableLiveData<LoginNavigationEvent> loginNavigationEvent = new MutableLiveData<>();
     // LiveData cho kết quả Đăng ký
     private final MutableLiveData<Boolean> registrationResult = new MutableLiveData<>();
@@ -50,8 +50,14 @@ public class AuthViewModel extends AndroidViewModel {
      */
     public void login(String username, String password) {
         userRepository.findByUsername(username, user -> {
-            if (user == null || !user.isActive) {
-                loginError.postValue("Sai tên đăng nhập hoặc mật khẩu"); // [MỚI]
+            if (user == null) {
+                loginError.postValue("Sai tên đăng nhập hoặc mật khẩu");
+                return;
+            }
+
+            // Kiểm tra Active TRƯỚC khi kiểm tra mật khẩu
+            if (!user.isActive) {
+                loginError.postValue("Tài khoản này đã bị khoá");
                 return;
             }
 

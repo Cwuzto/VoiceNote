@@ -9,12 +9,14 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import com.example.voicenote.R;
 import com.example.voicenote.data.local.entity.UserEntity;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 public class AddEmployeeDialog extends DialogFragment {
 
@@ -22,11 +24,13 @@ public class AddEmployeeDialog extends DialogFragment {
         void onSave(UserEntity user, String password);
     }
 
-    private UserEntity existingUser; // null nếu là "Thêm mới"
+    private UserEntity existingUser; // null nếu là thêm mới
     private OnSaveListener onSaveListener;
 
-    private EditText edtFullName, edtUsername, edtPassword;
+    private EditText edtFullName, edtUsername, edtPassword, edtEmail, edtPhone;
     private TextView tvDialogTitle, tvPasswordLabel;
+    private SwitchMaterial switchActive;
+    private RadioGroup rgGender;
 
     public static AddEmployeeDialog newInstance(UserEntity user) {
         AddEmployeeDialog dialog = new AddEmployeeDialog();
@@ -35,6 +39,10 @@ public class AddEmployeeDialog extends DialogFragment {
             args.putString("fullName", user.fullName);
             args.putString("username", user.username);
             args.putLong("id", user.id);
+            args.putBoolean("isActive", user.isActive);
+            args.putString("email", user.email);
+            args.putString("phone", user.phone);
+            args.putString("gender", user.gender);
             // Không truyền mật khẩu
         }
         dialog.setArguments(args);
@@ -53,6 +61,10 @@ public class AddEmployeeDialog extends DialogFragment {
             existingUser.id = getArguments().getLong("id");
             existingUser.fullName = getArguments().getString("fullName");
             existingUser.username = getArguments().getString("username");
+            existingUser.isActive = getArguments().getBoolean("isActive");
+            existingUser.email = getArguments().getString("email");
+            existingUser.phone = getArguments().getString("phone");
+            existingUser.gender = getArguments().getString("gender");
         }
     }
 
@@ -80,6 +92,10 @@ public class AddEmployeeDialog extends DialogFragment {
         edtFullName = v.findViewById(R.id.edtFullName);
         edtUsername = v.findViewById(R.id.edtUsername);
         edtPassword = v.findViewById(R.id.edtPassword);
+        edtEmail = v.findViewById(R.id.edtEmail);
+        edtPhone = v.findViewById(R.id.edtPhone);
+        rgGender = v.findViewById(R.id.rgGender);
+        switchActive = v.findViewById(R.id.switchActive);
         TextView btnCancel = v.findViewById(R.id.btnCancel);
         TextView btnSave = v.findViewById(R.id.btnSave);
 
@@ -91,9 +107,22 @@ public class AddEmployeeDialog extends DialogFragment {
             edtUsername.setEnabled(false); // Không cho sửa tên đăng nhập
             tvPasswordLabel.setText("Mật khẩu mới (Bỏ trống nếu không đổi)");
             edtPassword.setHint("Nhập mật khẩu mới");
+            switchActive.setChecked(existingUser.isActive);
+            edtEmail.setText(existingUser.email);
+            edtPhone.setText(existingUser.phone);
+
+            // Set Gender
+            if ("Nữ".equals(existingUser.gender)) {
+                rgGender.check(R.id.radioFemale);
+            } else if ("Khác".equals(existingUser.gender)) {
+                rgGender.check(R.id.radioOther);
+            } else {
+                rgGender.check(R.id.radioMale); // Mặc định là Nam
+            }
         } else {
             // Chế độ Thêm mới
             tvDialogTitle.setText("Thêm nhân viên mới");
+            switchActive.setChecked(true); // Mặc định là kích hoạt
         }
 
         btnCancel.setOnClickListener(view -> dismiss());
@@ -106,6 +135,18 @@ public class AddEmployeeDialog extends DialogFragment {
         String fullName = edtFullName.getText().toString().trim();
         String username = edtUsername.getText().toString().trim();
         String password = edtPassword.getText().toString().trim();
+        boolean isActive = switchActive.isChecked();
+
+        // Lấy dữ liệu mới
+        String email = edtEmail.getText().toString().trim();
+        String phone = edtPhone.getText().toString().trim();
+        String gender = "Nam"; // Mặc định
+        int checkedGenderId = rgGender.getCheckedRadioButtonId();
+        if (checkedGenderId == R.id.radioFemale) {
+            gender = "Nữ";
+        } else if (checkedGenderId == R.id.radioOther) {
+            gender = "Khác";
+        }
 
         if (fullName.isEmpty()) {
             edtFullName.setError("Tên không được trống"); return;
@@ -120,12 +161,14 @@ public class AddEmployeeDialog extends DialogFragment {
                 edtPassword.setError("Mật khẩu cần ít nhất 6 ký tự"); return;
             }
             existingUser = new UserEntity(); // Tạo mới
-            existingUser.fullName = fullName;
             existingUser.username = username;
-        } else {
-            // Cập nhật
-            existingUser.fullName = fullName;
         }
+        // Gán dữ liệu
+        existingUser.fullName = fullName;
+        existingUser.isActive = isActive;
+        existingUser.email = email;
+        existingUser.phone = phone;
+        existingUser.gender = gender;
 
         if (onSaveListener != null) {
             onSaveListener.onSave(existingUser, password);
