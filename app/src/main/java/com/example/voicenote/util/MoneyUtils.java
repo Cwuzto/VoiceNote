@@ -8,14 +8,12 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 /**
- * EN: Utility class providing live money formatting in EditText.
- * VI: Lớp tiện ích hỗ trợ định dạng tiền tệ trực tiếp trong EditText.
+ * Lớp tiện ích hỗ trợ định dạng tiền tệ trực tiếp trong EditText.
  */
 public class MoneyUtils {
 
     /**
-     * EN: Attach a TextWatcher to format input while typing.
-     * VI: Gắn TextWatcher để định dạng tiền khi người dùng nhập.
+     * Gắn TextWatcher để định dạng tiền khi người dùng nhập.
      */
     public static void attachMoneyFormatter(EditText editText) {
         editText.addTextChangedListener(new TextWatcher() {

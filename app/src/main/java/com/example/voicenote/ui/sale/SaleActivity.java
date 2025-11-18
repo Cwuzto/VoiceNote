@@ -5,14 +5,14 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Canvas; // [MỚI]
-import android.graphics.Color; // [MỚI]
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.drawable.ColorDrawable; // [MỚI]
-import android.graphics.drawable.Drawable; // [MỚI]
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
@@ -38,32 +38,29 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull; // [MỚI]
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat; // [MỚI]
 import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.ItemTouchHelper; // [MỚI]
-import androidx.recyclerview.widget.LinearLayoutManager; // [MỚI]
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.voicenote.MainActivity;
 import com.example.voicenote.R;
-// [SỬA] Import các entity và adapter mới
 import com.example.voicenote.data.local.entity.OrderEntity;
 import com.example.voicenote.data.local.entity.OrderItemEntity;
 import com.example.voicenote.data.local.entity.ProductEntity;
 import com.example.voicenote.ui.custom.WaveformView;
 import com.example.voicenote.ui.dialog.AddProductSheet;
 import com.example.voicenote.ui.dialog.CustomerNameDialog;
-import com.example.voicenote.ui.dialog.EditOrderItemDialog; // [MỚI]
+import com.example.voicenote.ui.dialog.EditOrderItemDialog;
 import com.example.voicenote.ui.order.OrderDetailActivity;
 import com.example.voicenote.ui.quick.GridSpacingItemDecoration;
 import com.example.voicenote.ui.quick.QuickGridAdapter;
-// [SỬA] Import ViewModel mới
 import com.example.voicenote.util.SessionManager;
 import com.example.voicenote.vm.OrderEditViewModel;
 import com.example.voicenote.vm.ProductViewModel;
@@ -77,21 +74,21 @@ public class SaleActivity extends AppCompatActivity {
     private static final int REQUEST_RECORD_AUDIO = 101;
 
     // --- Views ---
-    private RecyclerView rvQuickGrid, rvOrderLines; // [MỚI] rvOrderLines
+    private RecyclerView rvQuickGrid, rvOrderLines;
     private LinearLayout quickBar, rowCustomer;
-    private LinearLayout contentGuide; // [SỬA]
-    private NestedScrollView cartScrollView; // [MỚI]
+    private LinearLayout contentGuide;
+    private NestedScrollView cartScrollView;
     private EditText edtLine;
-    private TextView tvCustomer, btnDone, tvTotal; // [MỚI] tvTotal
+    private TextView tvCustomer, btnDone, tvTotal;
     private ImageButton btnMic, btnSendListening, btnCancelListening, btnSend;
     private View includeListening;
 
     private WaveformView waveView ;
     // --- Adapters & ViewModels ---
     private QuickGridAdapter quickGridAdapter;
-    private OrderLineAdapter orderLineAdapter; // [MỚI]
+    private OrderLineAdapter orderLineAdapter;
     private ProductViewModel productViewModel;
-    private OrderEditViewModel orderEditViewModel; // [MỚI]
+    private OrderEditViewModel orderEditViewModel;
 
     // --- Data ---
     private final List<ProductEntity> quickProducts = new ArrayList<>();
@@ -101,6 +98,7 @@ public class SaleActivity extends AppCompatActivity {
     private boolean isEditMode = false;
     private long editingOrderId = 0; // ID của đơn hàng đang sửa
 
+    private boolean isListening = false; // gán biến để theo dõi trạng thái mic (mặc định false)
     private boolean gridVisible = false;
     boolean listeningVisible = false;
     private boolean isCancelled = false;
@@ -204,13 +202,13 @@ public class SaleActivity extends AppCompatActivity {
         quickBar = findViewById(R.id.quickBar);
         edtLine = findViewById(R.id.edtLine);
         rvQuickGrid = findViewById(R.id.rvQuickGrid);
-        rvOrderLines = findViewById(R.id.rvOrderLines); // [MỚI]
+        rvOrderLines = findViewById(R.id.rvOrderLines);
         rowCustomer = findViewById(R.id.rowCustomer);
         tvCustomer = findViewById(R.id.tvCustomer);
-        cartScrollView = findViewById(R.id.cartScrollView); // [MỚI]
+        cartScrollView = findViewById(R.id.cartScrollView);
         btnDone = findViewById(R.id.btnDone);
-        tvTotal = findViewById(R.id.tvTotal); // [MỚI]
-        contentGuide = findViewById(R.id.contentGuide); // [SỬA]
+        tvTotal = findViewById(R.id.tvTotal);
+        contentGuide = findViewById(R.id.contentGuide);
         btnMic = findViewById(R.id.btnMic);
         includeListening = findViewById(R.id.includeListening);
         waveView = includeListening.findViewById(R.id.waveView);
@@ -223,7 +221,7 @@ public class SaleActivity extends AppCompatActivity {
         findViewById(R.id.btnClose).setOnClickListener(v -> finish());
 
         btnDone.setEnabled(false); // Mặc định tắt
-        btnDone.setOnClickListener(v -> saveOrderAndFinish()); // [SỬA] Gọi hàm mới
+        btnDone.setOnClickListener(v -> saveOrderAndFinish()); // Gọi hàm mới
 
         rowCustomer.setOnClickListener(v -> {
             String current = tvCustomer.getText() != null ? tvCustomer.getText().toString() : "";
@@ -370,7 +368,7 @@ public class SaleActivity extends AppCompatActivity {
         quickGridAdapter = new QuickGridAdapter(
                 quickProducts,
                 this::openAddDialog,
-                this::onProductPicked, // [MỚI] Logic thêm vào giỏ hàng
+                this::onProductPicked, // Logic thêm vào giỏ hàng
                 (item, position) -> productViewModel.deleteProduct(item)
         );
         rvQuickGrid.setAdapter(quickGridAdapter);
@@ -463,11 +461,11 @@ public class SaleActivity extends AppCompatActivity {
         });
         rvOrderLines.setAdapter(orderLineAdapter);
 
-        // [MỚI] Gắn Swipe Helper
+        // Gắn Swipe Helper
         attachSwipeHelper();
     }
 
-    // [MỚI] Lắng nghe danh sách sản phẩm từ DB
+    // Lắng nghe danh sách sản phẩm từ DB
     private void observeQuickProducts() {
         productViewModel.getAllProducts().observe(this, productEntities -> {
             quickProducts.clear();
@@ -547,7 +545,11 @@ public class SaleActivity extends AppCompatActivity {
     // --- Speech Recognizer ---
     private void initSpeechRecognizer() {
         // Kiểm tra thiết bị có hỗ trợ Speech Recognition không
-        if (!SpeechRecognizer.isRecognitionAvailable(this)) return;
+        if (!SpeechRecognizer.isRecognitionAvailable(this)) {
+            speechRecognizer = null;
+            return;
+        }
+
         // Tạo đối tượng SpeechRecognizer
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         // Thiết lập RecognitionListener để nhận các callback từ SpeechRecognizer
@@ -656,23 +658,40 @@ public class SaleActivity extends AppCompatActivity {
             Toast.makeText(this, "Thiết bị không hỗ trợ nhận dạng giọng nói", Toast.LENGTH_SHORT).show();
             return;
         }
+        isListening = true;
         playStartTone(); // âm báo bắt đầu
+
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "vi-VN");
         intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
-        speechRecognizer.startListening(intent);
+        // không gọi start nếu speechRecognizer null
+        try {
+            speechRecognizer.startListening(intent);
+        } catch (Exception ignored) {}
     }
 
     private void stopListening() {
-        playStopTone(); // âm báo dừng
-        speechRecognizer.stopListening();
+        if (isListening) {
+            playStopTone();  // chỉ phát âm khi đang nghe mic
+        }
+
+        isListening = false;
+
+        if (speechRecognizer != null) { // kiểm tra xem mic có đang chạy không, nếu có thì mới gọi hàm dừng
+            try {
+                speechRecognizer.stopListening();
+            } catch (Exception ignored) {}
+        }
     }
 
     @Override
     protected void onDestroy() {
+        if (speechRecognizer != null) {
+            speechRecognizer.destroy();
+            speechRecognizer = null;
+        }
         super.onDestroy();
-        if (speechRecognizer != null) speechRecognizer.destroy();
     }
     private void playStartTone() {
         ToneGenerator toneGen = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
@@ -684,7 +703,7 @@ public class SaleActivity extends AppCompatActivity {
         toneGen.startTone(ToneGenerator.TONE_PROP_PROMPT, 200); // 200ms
     }
 
-    // [MỚI] Khi chọn 1 món từ lưới (QuickGrid)
+    // Khi chọn 1 món từ lưới (QuickGrid)
     private void onProductPicked(ProductEntity product, int position) {
         // Nếu item đang mở → tự đóng lại
         if (openedViewHolder != null) {
@@ -907,7 +926,7 @@ public class SaleActivity extends AppCompatActivity {
     }
 
 
-    // [MỚI] Khi mở dialog thêm sản phẩm (nút +)
+    // Khi mở dialog thêm sản phẩm (nút +)
     private void openAddDialog() {
         AddProductSheet sheet = new AddProductSheet((name, price) -> {
             ProductEntity product = new ProductEntity(name, price);
@@ -917,7 +936,7 @@ public class SaleActivity extends AppCompatActivity {
         sheet.show(getSupportFragmentManager(), "add_product");
     }
 
-    // [MỚI] Mở dialog chỉnh sửa
+    // Mở dialog chỉnh sửa
     private void openEditDialog(OrderItemEntity item, int position) {
         EditOrderItemDialog dialog = EditOrderItemDialog.newInstance(item);
         dialog.setOnSaveListener(updatedItem -> {
@@ -947,17 +966,17 @@ public class SaleActivity extends AppCompatActivity {
         dialog.show(getSupportFragmentManager(), "edit_order_item");
     }
 
-    // [MỚI] Cập nhật UI giỏ hàng (tổng tiền, ẩn/hiện guide)
+    // Cập nhật UI giỏ hàng (tổng tiền, ẩn/hiện guide)
     private void updateCartUI() {
         if (currentOrderItems.isEmpty()) {
             // Giỏ hàng rỗng
             contentGuide.setVisibility(View.VISIBLE);
-            cartScrollView.setVisibility(View.GONE); // [SỬA]
+            cartScrollView.setVisibility(View.GONE);
             btnDone.setEnabled(false);
         } else {
             // Có hàng
             contentGuide.setVisibility(View.GONE);
-            cartScrollView.setVisibility(View.VISIBLE); // [SỬA]
+            cartScrollView.setVisibility(View.VISIBLE);
             btnDone.setEnabled(true);
         }
 
@@ -1027,7 +1046,7 @@ public class SaleActivity extends AppCompatActivity {
             finish();
         }
 
-        // 7. [SỬA] Chuyển hướng về MainActivity VÀ yêu cầu mở tab Order
+        // 7. Chuyển hướng về MainActivity VÀ yêu cầu mở tab Order
         Intent intent = new Intent(this, MainActivity.class);
 
         // Đặt cờ để không tạo MainActivity mới nếu nó đã chạy
@@ -1042,7 +1061,7 @@ public class SaleActivity extends AppCompatActivity {
         finish();
     }
 
-    // [MỚI] Gắn ItemTouchHelper để xử lý vuốt
+    // Gắn ItemTouchHelper để xử lý vuốt
     private RecyclerView.ViewHolder openedViewHolder = null; // giữ item đang mở
     private void attachSwipeHelper() {
         final int buttonWidth = dp(160);

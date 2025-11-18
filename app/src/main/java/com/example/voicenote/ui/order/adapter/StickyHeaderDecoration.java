@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -56,7 +55,7 @@ public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
             View child = parent.getChildAt(i);
             int adapterPos = parent.getChildAdapterPosition(child);
 
-            // [SỬA] Thêm parent.getPaddingLeft() vào phép so sánh
+            // Thêm parent.getPaddingLeft() vào phép so sánh
             int childLeft = child.getLeft();
             if (adapterPos != -1 && adapter.getItemViewType(adapterPos) == 0 && child.getTop() <= headerView.getHeight() && child.getTop() > 0) {
                 translationY = child.getTop() - headerView.getHeight();
@@ -66,7 +65,7 @@ public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
 
         c.save();
 
-        // [SỬA LỖI CĂN LỀ] Dịch chuyển header ghim sang phải
+        // Dịch chuyển header ghim sang phải
         // bằng đúng padding của RecyclerView
         c.translate(parent.getPaddingLeft(), translationY);
 
@@ -85,7 +84,7 @@ public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
 
             stickyHeaderBackground = ContextCompat.getDrawable(parent.getContext(), R.drawable.bg_soft_gradient);
 
-            // [SỬA LỖI CĂN LỀ] Đo chiều rộng của header
+            // Đo chiều rộng của header
             // bằng chiều rộng của parent TRỪ ĐI padding trái và phải
             int widthSpec = View.MeasureSpec.makeMeasureSpec(
                     parent.getWidth() - parent.getPaddingLeft() - parent.getPaddingRight(),

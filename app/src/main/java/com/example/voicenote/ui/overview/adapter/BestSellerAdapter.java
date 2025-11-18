@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView; // [SỬA] Dùng RecyclerView.Adapter
+import androidx.recyclerview.widget.RecyclerView;
 import com.example.voicenote.R;
 import com.example.voicenote.data.local.rel.BestSellerItem;
 
@@ -21,7 +21,7 @@ import java.util.Locale;
 public class BestSellerAdapter extends RecyclerView.Adapter<BestSellerAdapter.ViewHolder> {
 
     private String sortCriteria = "QUANTITY";
-    private final List<BestSellerItem> data = new ArrayList<>(); // [MỚI]
+    private final List<BestSellerItem> data = new ArrayList<>();
 
     // Màu cho Top 3
     private final int[] rankColors = { 0xFFF59E0B, 0xFF6B7280, 0xFF8D6E63 };
@@ -42,7 +42,7 @@ public class BestSellerAdapter extends RecyclerView.Adapter<BestSellerAdapter.Vi
     }
 
     /**
-     * [SỬA] Hàm submitList mới
+     * Hàm submitList mới
      */
     public void submitList(List<BestSellerItem> list) {
         data.clear();

@@ -93,7 +93,7 @@ public class OverviewViewModel extends AndroidViewModel {
         return chartTimeRange;
     }
 
-    /** Setters cho Fragment */ //
+    /** Setters cho Fragment */
     /**
      * Dùng cho ô "Doanh thu tháng này"
      */

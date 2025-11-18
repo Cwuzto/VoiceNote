@@ -48,7 +48,7 @@ public class ProductViewModel extends AndroidViewModel {
     }
 
     /**
-     * [MỚI] Hàm lưu có kiểm tra trùng lặp (cho ProductListFragment)
+     * Hàm lưu có kiểm tra trùng lặp (cho ProductListFragment)
      * @return true nếu lưu thành công, false nếu tên bị trùng
      */
     public boolean saveProduct(ProductEntity productToSave) {
@@ -83,8 +83,7 @@ public class ProductViewModel extends AndroidViewModel {
     }
 
     /**
-     * EN: Delete product.
-     * VI: Xoá sản phẩm.
+     * Xoá sản phẩm.
      */
     public void deleteProduct(ProductEntity product) {
         repository.deleteProduct(product);

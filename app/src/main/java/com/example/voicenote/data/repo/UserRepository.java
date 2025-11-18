@@ -61,17 +61,17 @@ public class UserRepository {
         });
     }
 
-    // [MỚI] Lấy danh sách nhân viên
+    // Lấy danh sách nhân viên
     public LiveData<List<UserEntity>> getAllEmployees() {
         return userDao.getAllEmployees();
     }
 
-    // [MỚI] Cập nhật nhân viên
+    // Cập nhật nhân viên
     public void updateUser(UserEntity user) {
         executor.execute(() -> userDao.updateUser(user));
     }
 
-    // [MỚI] Xoá nhân viên
+    // Xoá nhân viên
     public void deleteUser(UserEntity user) {
         executor.execute(() -> userDao.deleteUser(user));
     }

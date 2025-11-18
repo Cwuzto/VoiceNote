@@ -4,8 +4,6 @@ package com.example.voicenote.ui.order;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextWatcher;
 import android.text.Editable;
 import android.view.LayoutInflater;
@@ -20,8 +18,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.DefaultLifecycleObserver;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,9 +26,7 @@ import com.example.voicenote.R;
 import com.example.voicenote.ui.dialog.StatusFilterSheet;
 import com.example.voicenote.ui.dialog.TimeFilterSheet;
 import com.example.voicenote.ui.order.adapter.OrderAdapter;
-import com.example.voicenote.util.SessionManager;
 import com.example.voicenote.vm.OrderListViewModel;
-import com.example.voicenote.vm.ProfileViewModel;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.example.voicenote.ui.order.adapter.StickyHeaderDecoration;
 
@@ -41,9 +35,6 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
-/**
- * Fragment hiển thị danh sách Order (đã refactor từ InvoiceListFragment)
- */
 public class OrderListFragment extends Fragment {
     private OrderListViewModel viewModel;
     private OrderAdapter adapter;
@@ -243,7 +234,7 @@ public class OrderListFragment extends Fragment {
     }
 
     /**
-     * [MỚI] Mở Date Picker chuẩn của Material
+     * Mở Date Picker chuẩn của Material
      */
     private void showDateRangePicker() {
 

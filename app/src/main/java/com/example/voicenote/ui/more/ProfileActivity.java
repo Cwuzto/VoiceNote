@@ -95,7 +95,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     /**
-     * [MỚI] Kiểm tra quyền trước khi mở thư viện
+     * Kiểm tra quyền trước khi mở thư viện
      */
     private void checkPermissionAndPickImage() {
         // Chỉ Owner mới được đổi ảnh (theo yêu cầu của bạn)
@@ -222,7 +222,7 @@ public class ProfileActivity extends AppCompatActivity {
     private void saveProfile() {
         if (currentUser == null) return;
 
-        // [SỬA] Chỉ cập nhật các trường được phép
+        // Chỉ cập nhật các trường được phép
 
         // 1. Cập nhật thông tin (Chỉ OWNER mới cập nhật Tên/Giới tính)
         if ("OWNER".equals(currentUser.role)) {

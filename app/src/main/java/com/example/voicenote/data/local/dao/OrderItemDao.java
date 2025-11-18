@@ -30,7 +30,7 @@ public interface OrderItemDao {
     List<OrderItemEntity> getByOrderId(long orderId);
 
     /**
-     * [MỚI] Sắp xếp theo SỐ LƯỢNG
+     * Sắp xếp theo SỐ LƯỢNG
      */
     @Query("SELECT product_name, SUM(quantity) as total_quantity, SUM(quantity * unit_price) as total_revenue " +
             "FROM order_item " +
@@ -41,7 +41,7 @@ public interface OrderItemDao {
     LiveData<List<BestSellerItem>> getBestSellersByQuantity(long startTime, long endTime);
 
     /**
-     * [MỚI] Sắp xếp theo DOANH THU
+     * Sắp xếp theo DOANH THU
      */
     @Query("SELECT product_name, SUM(quantity) as total_quantity, SUM(quantity * unit_price) as total_revenue " +
             "FROM order_item " +

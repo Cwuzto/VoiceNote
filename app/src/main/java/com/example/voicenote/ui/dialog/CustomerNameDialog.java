@@ -2,14 +2,14 @@ package com.example.voicenote.ui.dialog;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.text.Editable; // [MỚI]
-import android.text.TextWatcher; // [MỚI]
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
-import android.view.View; // [MỚI]
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.ImageButton; // [MỚI]
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,8 +18,7 @@ import androidx.fragment.app.DialogFragment;
 import com.example.voicenote.R;
 
 /**
- * EN: Dialog to edit customer's name.
- * VI: Dialog chỉnh sửa tên khách hàng.
+ * Dialog chỉnh sửa tên khách hàng.
  */
 public class CustomerNameDialog extends DialogFragment {
 
@@ -29,7 +28,7 @@ public class CustomerNameDialog extends DialogFragment {
 
     private static final String ARG_NAME = "arg_name";
     private Callback callback;
-    private final String PLACEHOLDER_TEXT = "Khách hàng, phòng bàn..."; // [MỚI]
+    private final String PLACEHOLDER_TEXT = "Khách hàng, phòng bàn...";
 
     public static CustomerNameDialog newInstance(String currentName) {
         CustomerNameDialog d = new CustomerNameDialog();

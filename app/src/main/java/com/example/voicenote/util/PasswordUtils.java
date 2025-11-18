@@ -16,7 +16,7 @@ public class PasswordUtils {
     private static final int KEY_LENGTH = 512;
     private static final int SALT_LENGTH = 16;
 
-    // [MỚI] Định nghĩa cờ (flag) để sử dụng
+    // Định nghĩa cờ (flag) để sử dụng
     // Dùng NO_WRAP để đảm bảo không có ký tự ngắt dòng trong chuỗi lưu vào DB
     private static final int BASE64_FLAGS = Base64.NO_WRAP;
 
@@ -28,7 +28,7 @@ public class PasswordUtils {
         byte[] salt = new byte[SALT_LENGTH];
         random.nextBytes(salt);
 
-        // [SỬA] Gọi hàm static encodeToString với cờ (flag)
+        // Gọi hàm static encodeToString với cờ (flag)
         return Base64.encodeToString(salt, BASE64_FLAGS);
     }
 
@@ -37,7 +37,7 @@ public class PasswordUtils {
      */
     public static String hashPassword(String password, String salt) {
         try {
-            // [SỬA] Gọi hàm static decode với cờ (flag)
+            // Gọi hàm static decode với cờ (flag)
             byte[] saltBytes = Base64.decode(salt, BASE64_FLAGS);
 
             KeySpec spec = new PBEKeySpec(

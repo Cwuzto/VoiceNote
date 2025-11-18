@@ -117,7 +117,7 @@ public class OverviewFragment extends Fragment {
     }
 
     private void observeViewModel() {
-        // 1. [MỚI] Observe "Trạng thái toàn cục"
+        // 1. Observe "Trạng thái toàn cục"
         // Quyết định xem nên hiện "Tạo thử đơn" hay "Card Doanh thu"
         viewModel.getPaidOrderCount().observe(getViewLifecycleOwner(), count -> {
             boolean hasAnyData = (count != null && count > 0);
@@ -220,7 +220,7 @@ public class OverviewFragment extends Fragment {
     }
 
     /**
-     * [MỚI] Hàm này chỉ chạy khi CẢ HAI LiveData (data và range) đã sẵn sàng
+     * Hàm này chỉ chạy khi CẢ HAI LiveData (data và range) đã sẵn sàng
      */
     private void checkAndDrawChart() {
         // Nếu 1 trong 2 chưa sẵn sàng, thoát
@@ -251,7 +251,7 @@ public class OverviewFragment extends Fragment {
         sheet.setListener(new TimeFilterSheet.OnTimeSelectedListener() {
             @Override
             public void onTimeSelected(String rangeKey, String rangeText) {
-                // [SỬA] Cập nhật đúng ViewModel
+                // Cập nhật đúng ViewModel
                 switch (filterType) {
                     case "REVENUE":
                         viewModel.setRevenueTimeRange(rangeKey);
@@ -259,7 +259,7 @@ public class OverviewFragment extends Fragment {
                         tvOrderTimeRange.setText("Đơn " + rangeText.toLowerCase());
                         break;
                     case "CHART":
-                        currentChartRangeKey = rangeKey; // [SỬA]
+                        currentChartRangeKey = rangeKey;
                         viewModel.setChartTimeRange(rangeKey);
                         chipRevenueChartTimeRange.setText(rangeText);
                         break;

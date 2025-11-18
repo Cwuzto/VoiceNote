@@ -136,7 +136,7 @@ public class EmployeeAdapter extends ListAdapter<UserEntity, EmployeeAdapter.Emp
                 popup.show();
             });
         }
-        // [MỚI] Hàm helper tạo chữ cái đầu
+        // Hàm helper tạo chữ cái đầu
         private String makeInitial(String name){
             if (name == null || name.isEmpty()) return "?";
             String[] parts = name.trim().split("\\s+");

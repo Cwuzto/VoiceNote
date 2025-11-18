@@ -1,0 +1,56 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/bg_soft_gradient">
+
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp">
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/ic_arrow_back_24"
+            app:tint="#0F172A"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Loa đọc tiền"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textColor="#0F172A"
+            android:layout_marginStart="12dp"/>
+        <TextView
+            android:id="@+id/btnDone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Xong"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="6dp"
+            android:background="@drawable/bg_button_primary"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvHint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/header"
+        android:text="Tùy chỉnh thông báo để mỗi lần nhận tiền thêm ý nghĩa"
+        android:padding="16dp"
+        android:textColor="#64748B"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvTemplates"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tvHint"
+        android:padding="16dp"
+        android:clipToPadding="false"/>
+</RelativeLayout>

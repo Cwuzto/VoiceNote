@@ -1,5 +1,5 @@
 // File: com/example/voicenote/ui/order/OrderDetailActivity.java
-package com.example.voicenote.ui.order; // [SỬA] Package
+package com.example.voicenote.ui.order;
 
 import android.content.Context;
 import android.content.Intent;
@@ -27,7 +27,6 @@ import com.example.voicenote.data.local.entity.OrderItemEntity;
 import com.example.voicenote.data.local.rel.OrderWithItems;
 import com.example.voicenote.ui.sale.SaleActivity;
 import com.example.voicenote.vm.OrderDetailViewModel;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.jspecify.annotations.NonNull;
 
@@ -35,16 +34,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-/** * Activity chi tiết Order (đã refactor từ InvoiceDetailActivity) 
- */
 public class OrderDetailActivity extends AppCompatActivity {
     private OrderDetailViewModel viewModel;
 
     private TextView tvCustomer, tvDate, tvSubtotal, tvTotal;
     private CheckBox cbPaid;
     private LinearLayout containerItems;
-    private LinearLayout btnPaid; //layout cha của checkbox
-    private OrderWithItems currentOrder; // Biến này được Observer gán
+    private LinearLayout btnPaid;
+    private OrderWithItems currentOrder;
     private ImageButton btnEdit;
     private LinearLayout btnNewOrder, btnShare, btnPrint;
     private WebView webViewForPrinting; // Dùng để In
@@ -152,7 +149,7 @@ public class OrderDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * [MỚI] Tạo tóm tắt đơn hàng và gọi Intent.ACTION_SEND
+     * Tạo tóm tắt đơn hàng và gọi Intent.ACTION_SEND
      */
     private void shareOrder() {
         if (currentOrder == null) {
@@ -175,7 +172,7 @@ public class OrderDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * [MỚI] In hóa đơn (chuyển thành HTML và dùng PrintManager)
+     * In hóa đơn (chuyển thành HTML và dùng PrintManager)
      */
     private void printOrder() {
         if (currentOrder == null) {
@@ -208,7 +205,7 @@ public class OrderDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * [MỚI] Hàm helper tạo nội dung Text (cho Share)
+     * Hàm helper tạo nội dung Text (cho Share)
      */
     private String buildOrderSummaryText() {
         StringBuilder summary = new StringBuilder();
@@ -234,7 +231,7 @@ public class OrderDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * [MỚI] Hàm helper tạo nội dung HTML (cho Print)
+     * Hàm helper tạo nội dung HTML (cho Print)
      */
     private String buildOrderSummaryHtml() {
         // (Đây là code HTML cơ bản, bạn có thể CSS tùy ý)

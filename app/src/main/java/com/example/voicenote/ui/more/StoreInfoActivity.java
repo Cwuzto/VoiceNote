@@ -13,7 +13,6 @@ import com.example.voicenote.R;
 import com.example.voicenote.data.local.entity.StoreEntity;
 import com.example.voicenote.util.SessionManager;
 import com.example.voicenote.vm.StoreViewModel;
-// import com.example.voicenote.vm.StoreViewModel;
 
 public class StoreInfoActivity extends AppCompatActivity {
 
@@ -38,7 +37,7 @@ public class StoreInfoActivity extends AppCompatActivity {
         findViewById(R.id.btnClose).setOnClickListener(v -> finish());
         btnSave.setOnClickListener(v -> saveStoreInfo());
 
-        observeViewModel(); // [MỚI]
+        observeViewModel();
     }
 
     private void findViews() {
@@ -48,7 +47,7 @@ public class StoreInfoActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btnSave);
     }
 
-    // [SỬA] Đổi tên từ loadStoreData
+    // Đổi tên từ loadStoreData
     private void observeViewModel() {
         if (ownerId == -1) {
             Toast.makeText(this, "Lỗi phiên đăng nhập", Toast.LENGTH_SHORT).show();

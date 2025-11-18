@@ -73,13 +73,13 @@ public class AuthViewModel extends AndroidViewModel {
                     loginNavigationEvent.postValue(new LoginNavigationEvent(Destination.MAIN_ACTIVITY, user.id));
                 }
             } else {
-                loginError.postValue("Sai tên đăng nhập hoặc mật khẩu"); // [MỚI]
+                loginError.postValue("Sai tên đăng nhập hoặc mật khẩu");
             }
         });
     }
 
     /**
-     * [MỚI] Hàm kiểm tra cửa hàng (chạy sau khi login thành công)
+     * Hàm kiểm tra cửa hàng (chạy sau khi login thành công)
      */
     private void checkStoreExists(UserEntity owner) {
         storeRepository.getStoreByOwnerId(owner.id, store -> {
@@ -130,7 +130,7 @@ public class AuthViewModel extends AndroidViewModel {
         });
     }
 
-    // --- [MỚI] Lớp Helper và Enum để điều hướng ---
+    // --- Lớp Helper và Enum để điều hướng ---
     public enum Destination {
         MAIN_ACTIVITY,
         CREATE_STORE

@@ -2,7 +2,7 @@
 package com.example.voicenote.data.local.rel;
 
 /**
- * Đây là một POJO (Model) đơn giản
+ * Đây là một POJO (Model)
  * chỉ để chứa dữ liệu cho dòng Header (Ngày + Tổng tiền) trong danh sách Order
  */
 public class OrderHeaderItem {

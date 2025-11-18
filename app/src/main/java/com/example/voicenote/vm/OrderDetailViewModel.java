@@ -17,19 +17,19 @@ import com.example.voicenote.data.repo.OrderRepository; // [SỬA]
  * (Đã refactor từ InvoiceDetailViewModel)
  */
 public class OrderDetailViewModel extends AndroidViewModel {
-    private final OrderRepository repository; // [SỬA]
+    private final OrderRepository repository;
 
     public OrderDetailViewModel(@NonNull Application app) {
         super(app);
-        repository = new OrderRepository(app); // [SỬA]
+        repository = new OrderRepository(app);
     }
 
-    public LiveData<OrderWithItems> getOrderById(long id) { // [SỬA]
-        return repository.getOrderById(id); // [SỬA]
+    public LiveData<OrderWithItems> getOrderById(long id) {
+        return repository.getOrderById(id);
     }
 
-    public void updatePaymentStatus(OrderEntity order, boolean isPaid) { // [SỬA]
-        repository.updatePaymentStatus(order, isPaid); // [SỬA]
+    public void updatePaymentStatus(OrderEntity order, boolean isPaid) {
+        repository.updatePaymentStatus(order, isPaid);
     }
     /**
      * Hàm xoá
