@@ -1,14 +1,21 @@
 // File: com/example/voicenote/ui/order/OrderDetailActivity.java
 package com.example.voicenote.ui.order; // [SỬA] Package
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.print.PrintAttributes;
+import android.print.PrintDocumentAdapter;
+import android.print.PrintManager;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +27,7 @@ import com.example.voicenote.data.local.entity.OrderItemEntity;
 import com.example.voicenote.data.local.rel.OrderWithItems;
 import com.example.voicenote.ui.sale.SaleActivity;
 import com.example.voicenote.vm.OrderDetailViewModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.jspecify.annotations.NonNull;
 
@@ -38,7 +46,8 @@ public class OrderDetailActivity extends AppCompatActivity {
     private LinearLayout btnPaid; //layout cha của checkbox
     private OrderWithItems currentOrder; // Biến này được Observer gán
     private ImageButton btnEdit;
-
+    private LinearLayout btnNewOrder, btnShare, btnPrint;
+    private WebView webViewForPrinting; // Dùng để In
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_detail);
@@ -62,8 +71,12 @@ public class OrderDetailActivity extends AppCompatActivity {
         containerItems = findViewById(R.id.containerItems);
         btnEdit = findViewById(R.id.btnEdit);
 
+        // Ánh xạ 3 nút dưới
+        btnNewOrder = findViewById(R.id.btnNewOrder);
+        btnShare = findViewById(R.id.btnShare);
+        btnPrint = findViewById(R.id.btnPrint);
+
         // --- Lấy ViewModel và Quan sát Dữ liệu ---
-        viewModel = new ViewModelProvider(this).get(OrderDetailViewModel.class);
         viewModel.getOrderById(orderId).observe(this, orderWithItems -> {
             if (orderWithItems != null && orderWithItems.order != null) {
                 this.currentOrder = orderWithItems; // Lưu lại đơn hàng hiện tại
@@ -98,6 +111,20 @@ public class OrderDetailActivity extends AppCompatActivity {
 
         findViewById(R.id.tvClose).setOnClickListener(v -> finish()); // Nút đóng
         btnEdit.setOnClickListener(v -> openEditMode()); // Nút sửa
+
+        // Gán listener cho 3 nút
+        btnNewOrder.setOnClickListener(v -> {
+            startActivity(new Intent(OrderDetailActivity.this, SaleActivity.class));
+            finish();
+        });
+
+        btnShare.setOnClickListener(v -> {
+            shareOrder(); // Gọi hàm chia sẻ
+        });
+
+        btnPrint.setOnClickListener(v -> {
+            printOrder(); // Gọi hàm in
+        });
     }
 
     /**
@@ -125,12 +152,130 @@ public class OrderDetailActivity extends AppCompatActivity {
     }
 
     /**
+     * [MỚI] Tạo tóm tắt đơn hàng và gọi Intent.ACTION_SEND
+     */
+    private void shareOrder() {
+        if (currentOrder == null) {
+            Toast.makeText(this, "Chưa tải xong đơn hàng", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 1. Tạo nội dung Text (dùng hàm helper)
+        String summary = buildOrderSummaryText();
+
+        // 2. Tạo Intent
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, summary);
+        sendIntent.setType("text/plain");
+
+        // 3. Hiển thị cửa sổ chọn App
+        Intent shareIntent = Intent.createChooser(sendIntent, "Chia sẻ hóa đơn qua");
+        startActivity(shareIntent);
+    }
+
+    /**
+     * [MỚI] In hóa đơn (chuyển thành HTML và dùng PrintManager)
+     */
+    private void printOrder() {
+        if (currentOrder == null) {
+            Toast.makeText(this, "Chưa tải xong đơn hàng", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 1. Tạo một WebView (ẩn)
+        WebView webView = new WebView(this);
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                // 3. Khi HTML đã tải xong, gọi PrintManager
+                PrintManager printManager = (PrintManager) getSystemService(Context.PRINT_SERVICE);
+                String jobName = "HoaDon_" + currentOrder.order.id;
+                PrintDocumentAdapter printAdapter = view.createPrintDocumentAdapter(jobName);
+
+                // 4. Mở cửa sổ In của Android (cho phép in Wifi hoặc Save as PDF)
+                printManager.print(jobName, printAdapter, new PrintAttributes.Builder().build());
+                webViewForPrinting = null; // Xóa tham chiếu
+            }
+        });
+
+        // 2. Chuyển tóm tắt đơn hàng thành HTML
+        String htmlDocument = buildOrderSummaryHtml();
+        webView.loadDataWithBaseURL(null, htmlDocument, "text/HTML", "UTF-8", null);
+
+        // Giữ tham chiếu đến WebView (để nó không bị GC)
+        webViewForPrinting = webView;
+    }
+
+    /**
+     * [MỚI] Hàm helper tạo nội dung Text (cho Share)
+     */
+    private String buildOrderSummaryText() {
+        StringBuilder summary = new StringBuilder();
+        summary.append("--- HÓA ĐƠN ---\n");
+        summary.append("Khách hàng: ").append(currentOrder.order.customerName).append("\n");
+        summary.append("Thời gian: ").append(tvDate.getText().toString()).append("\n");
+        summary.append("----------------\n");
+
+        for (OrderItemEntity item : currentOrder.orderItems) {
+            summary.append(String.format(Locale.US, "%d x %s = %,d\n",
+                    item.quantity,
+                    item.productName,
+                    (item.quantity * item.unitPrice)
+            ));
+            if (item.note != null && !item.note.isEmpty()) {
+                summary.append("  (Ghi chú: ").append(item.note).append(")\n");
+            }
+        }
+
+        summary.append("----------------\n");
+        summary.append("TỔNG CỘNG: ").append(String.format(Locale.US, "%,dđ", currentOrder.order.totalAmount));
+        return summary.toString();
+    }
+
+    /**
+     * [MỚI] Hàm helper tạo nội dung HTML (cho Print)
+     */
+    private String buildOrderSummaryHtml() {
+        // (Đây là code HTML cơ bản, bạn có thể CSS tùy ý)
+        StringBuilder html = new StringBuilder();
+        html.append("<html><head><style>body{font-family:sans-serif; padding:10px;}");
+        html.append("table{width:100%; border-collapse:collapse;}");
+        html.append("th, td{border-bottom:1px solid #ddd; padding:8px; text-align:left;}");
+        html.append("th{background-color:#f2f2f2;}");
+        html.append(".total{font-weight:bold; font-size:1.2em;}");
+        html.append("</style></head><body>");
+
+        html.append("<h2>Hóa Đơn Bán Hàng</h2>");
+        html.append("<p>Khách hàng: <b>").append(currentOrder.order.customerName).append("</b></p>");
+        html.append("<p>Thời gian: ").append(tvDate.getText().toString()).append("</p>");
+
+        html.append("<table>");
+        html.append("<tr><th>Món</th><th>SL</th><th>Ghi chú</th><th>Thành tiền</th></tr>");
+
+        for (OrderItemEntity item : currentOrder.orderItems) {
+            html.append("<tr>");
+            html.append("<td>").append(item.productName).append("</td>");
+            html.append("<td>").append(item.quantity).append("</td>");
+            html.append("<td>").append(item.note != null ? item.note : "").append("</td>");
+            html.append("<td>").append(String.format(Locale.US, "%,d", item.quantity * item.unitPrice)).append("</td>");
+            html.append("</tr>");
+        }
+
+        html.append("</table>");
+        html.append("<p class='total'>TỔNG CỘNG: ").append(String.format(Locale.US, "%,dđ", currentOrder.order.totalAmount)).append("</p>");
+        html.append("</body></html>");
+
+        return html.toString();
+    }
+
+    /**
      * Hàm điền toàn bộ dữ liệu thật vào View
      */
     private void populateData(@NonNull OrderWithItems orderWithItems) {
         OrderEntity order = orderWithItems.order;
 
-        // 1. Điền thông tin cơ bản
+        // Điền thông tin cơ bản
         tvCustomer.setText(order.customerName);
         tvTotal.setText(String.format(Locale.US, "%,d", order.totalAmount));
         tvSubtotal.setText(String.format(Locale.US, "%,d", order.totalAmount)); // (Tạm thời subtotal = total)
@@ -146,7 +291,14 @@ public class OrderDetailActivity extends AppCompatActivity {
         cbPaid.setEnabled(!isPaid); // Khóa nếu đã thanh toán
         btnPaid.setEnabled(!isPaid); // Khóa luôn cả layout cha
 
-        // 2. Điền danh sách món hàng
+        // Ẩn nút "Sửa" nếu đã thanh toán
+        if (isPaid) {
+            btnEdit.setVisibility(View.GONE);
+        } else {
+            btnEdit.setVisibility(View.VISIBLE);
+        }
+
+        // Điền danh sách món hàng
         containerItems.removeAllViews(); // Xoá hết view giả (nếu có)
         LayoutInflater inflater = LayoutInflater.from(this);
 

@@ -5,6 +5,9 @@
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 
     <application
         android:allowBackup="true"
@@ -67,6 +70,10 @@
             android:theme="@style/Theme.VoiceNote" />
         <activity
             android:name=".ui.overview.BestSellerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.VoiceNote" />
+        <activity
+            android:name=".ui.more.BankAccountListActivity"
             android:exported="false"
             android:theme="@style/Theme.VoiceNote" />
     </application>

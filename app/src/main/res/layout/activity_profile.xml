@@ -141,13 +141,6 @@
                     android:layout_marginStart="16dp"
                     android:text="Nữ"
                     android:enabled="false"/>
-                <RadioButton
-                    android:id="@+id/radioOther"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="Khác"
-                    android:enabled="false"/>
             </RadioGroup>
 
             <TextView
