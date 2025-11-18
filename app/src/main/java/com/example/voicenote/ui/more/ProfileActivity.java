@@ -1,16 +1,26 @@
 // File: com/example/voicenote/ui/more/ProfileActivity.java
 package com.example.voicenote.ui.more;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
 import com.example.voicenote.R;
 import com.example.voicenote.data.local.entity.UserEntity;
 import com.example.voicenote.util.SessionManager;
@@ -27,6 +37,30 @@ public class ProfileActivity extends AppCompatActivity {
     private ImageView imgAvatar;
     private RadioGroup rgGender;
     private long userId;
+    private String newImageUriString = null; // Lưu URI ảnh mới
+
+    /**
+     * 1. ĐỊNH NGHĨA imagePickerLauncher TRƯỚC.
+     */
+    private final ActivityResultLauncher<String> imagePickerLauncher =
+            registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+                if (uri != null) {
+                    handleImageSelection(uri);
+                }
+            });
+
+    /**
+     * 2. ĐỊNH NGHĨA requestPermissionLauncher SAU.
+     */
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    // Đã có quyền, mở thư viện ảnh
+                    imagePickerLauncher.launch("image/*");
+                } else {
+                    Toast.makeText(this, "Cần cấp quyền để chọn ảnh", Toast.LENGTH_SHORT).show();
+                }
+            });
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,6 +76,8 @@ public class ProfileActivity extends AppCompatActivity {
         findViewById(R.id.btnClose).setOnClickListener(v -> finish());
         btnSave.setOnClickListener(v -> saveProfile());
 
+        imgAvatar.setOnClickListener(v -> checkPermissionAndPickImage());
+
         observeViewModel();
         loadCurrentUserData();
     }
@@ -56,6 +92,58 @@ public class ProfileActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btnSave);
         imgAvatar = findViewById(R.id.imgAvatar);
         rgGender = findViewById(R.id.rgGender);
+    }
+
+    /**
+     * [MỚI] Kiểm tra quyền trước khi mở thư viện
+     */
+    private void checkPermissionAndPickImage() {
+        // Chỉ Owner mới được đổi ảnh (theo yêu cầu của bạn)
+        if (currentUser == null || !"OWNER".equals(currentUser.role)) {
+            Toast.makeText(this, "Chỉ chủ quán mới được đổi ảnh", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String permission;
+        // Kiểm tra phiên bản Android
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permission = Manifest.permission.READ_MEDIA_IMAGES;
+        } else {
+            permission = Manifest.permission.READ_EXTERNAL_STORAGE;
+        }
+
+        // Kiểm tra xem đã có quyền chưa
+        if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
+            // Đã có quyền, mở thư viện
+            imagePickerLauncher.launch("image/*");
+        } else {
+            // Chưa có quyền, xin quyền
+            requestPermissionLauncher.launch(permission);
+        }
+    }
+
+    /**
+     * Xử lý ảnh sau khi chọn
+     */
+    private void handleImageSelection(Uri uri) {
+        try {
+            // [QUAN TRỌNG] Lấy quyền truy cập vĩnh viễn
+            final int takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
+            getContentResolver().takePersistableUriPermission(uri, takeFlags);
+
+            // Lưu URI (dưới dạng String) để chuẩn bị lưu
+            this.newImageUriString = uri.toString();
+
+            // Hiển thị ảnh (dùng Glide)
+            Glide.with(this)
+                    .load(uri)
+                    .circleCrop() // [Bonus] Bo tròn ảnh
+                    .into(imgAvatar);
+
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Không thể truy cập ảnh này", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void loadCurrentUserData() {
@@ -74,18 +162,19 @@ public class ProfileActivity extends AppCompatActivity {
                 edtPhone.setText(user.phone);
                 edtEmail.setText(user.email);
 
-                // (Tải ảnh - Dùng Glide)
-                // if (user.imageUrl != null) {
-                //    Glide.with(this).load(user.imageUrl).into(imgAvatar);
-                // }
-
                 // Set Gender
                 if ("Nữ".equals(user.gender)) {
                     rgGender.check(R.id.radioFemale);
-                } else if ("Khác".equals(user.gender)) {
-                    rgGender.check(R.id.radioOther);
                 } else {
                     rgGender.check(R.id.radioMale);
+                }
+
+                // Tải ảnh đại diện (nếu có)
+                if (user.imageUrl != null && !user.imageUrl.isEmpty()) {
+                    Glide.with(this)
+                            .load(Uri.parse(user.imageUrl))
+                            .circleCrop() // Bo tròn
+                            .into(imgAvatar);
                 }
 
                 // PHÂN QUYỀN
@@ -140,13 +229,17 @@ public class ProfileActivity extends AppCompatActivity {
             currentUser.fullName = edtFullName.getText().toString().trim();
             int checkedId = rgGender.getCheckedRadioButtonId();
             if (checkedId == R.id.radioFemale) currentUser.gender = "Nữ";
-            else if (checkedId == R.id.radioOther) currentUser.gender = "Khác";
             else currentUser.gender = "Nam";
         }
 
         // Cả hai đều được cập nhật SĐT/Email
         currentUser.phone = edtPhone.getText().toString().trim();
         currentUser.email = edtEmail.getText().toString().trim();
+
+        // Cập nhật ảnh (nếu người dùng vừa chọn ảnh mới)
+        if (newImageUriString != null) {
+            currentUser.imageUrl = newImageUriString;
+        }
 
         viewModel.updateProfile(currentUser);
 

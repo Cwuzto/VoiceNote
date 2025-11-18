@@ -42,10 +42,21 @@ public class EmployeeListActivity extends AppCompatActivity {
             public void onEditClick(UserEntity user) {
                 openAddEmployeeDialog(user);
             }
-
             @Override
             public void onDeleteClick(UserEntity user) {
                 confirmDelete(user);
+            }
+            // Xử lý logic Vô hiệu hoá/Kích hoạt
+            @Override
+            public void onDeactivateClick(UserEntity user) {
+                // Đảo ngược trạng thái
+                user.isActive = !user.isActive;
+
+                // Gọi ViewModel để lưu (không đổi mật khẩu)
+                employeeViewModel.updateEmployee(user, null);
+
+                String message = user.isActive ? "Đã kích hoạt" : "Đã vô hiệu hoá";
+                Toast.makeText(EmployeeListActivity.this, message, Toast.LENGTH_SHORT).show();
             }
         });
         rvEmployees.setLayoutManager(new LinearLayoutManager(this));

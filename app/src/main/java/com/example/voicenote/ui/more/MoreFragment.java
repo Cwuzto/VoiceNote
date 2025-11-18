@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.ImageView;
+import com.bumptech.glide.Glide;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,6 +32,7 @@ public class MoreFragment extends Fragment {
     // Views cho header
     private TextView tvOwnerName, tvOwnerPhone, tvRole;
     private TextView btnLogout;
+    private ImageView imgAvatar;
 
     // [MỚI] Views cho phân quyền
     private View rowStoreInfo, dividerStoreInfo;
@@ -54,6 +57,7 @@ public class MoreFragment extends Fragment {
         tvOwnerPhone = v.findViewById(R.id.tvOwnerPhone);
         tvRole = v.findViewById(R.id.tvRole);
         btnLogout = v.findViewById(R.id.btnLogout);
+        imgAvatar = v.findViewById(R.id.imgAvatar);
 
         // [MỚI] Ánh xạ view phân quyền
         rowStoreInfo = v.findViewById(R.id.rowStoreInfo);
@@ -82,6 +86,11 @@ public class MoreFragment extends Fragment {
         v.findViewById(R.id.rowHotline).setOnClickListener(x -> {
             Intent i = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + tvHotline.getText().toString().replace(" ", "")));
             startActivity(i);
+        });
+
+        // 5. Quản lý tài khoản ngân hàng
+        v.findViewById(R.id.rowAddQR).setOnClickListener(view -> {
+            startActivity(new Intent(getContext(), BankAccountListActivity.class));
         });
 
         // Nút đăng xuất ---
@@ -139,6 +148,17 @@ public class MoreFragment extends Fragment {
                 dividerEmployee.setVisibility(View.GONE);
             }
             tvRole.setText(roleDisplay + " " + user.fullName);
+
+            // Cập nhật Avatar
+            if (user.imageUrl != null && !user.imageUrl.isEmpty()) {
+                Glide.with(this)
+                        .load(Uri.parse(user.imageUrl))
+                        .circleCrop()
+                        .into(imgAvatar);
+            } else {
+                // (Nếu không có ảnh, set ảnh mặc định)
+                imgAvatar.setImageResource(R.drawable.ic_user_circle_24);
+            }
         });
     }
 

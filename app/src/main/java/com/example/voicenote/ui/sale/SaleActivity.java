@@ -60,6 +60,7 @@ import com.example.voicenote.ui.custom.WaveformView;
 import com.example.voicenote.ui.dialog.AddProductSheet;
 import com.example.voicenote.ui.dialog.CustomerNameDialog;
 import com.example.voicenote.ui.dialog.EditOrderItemDialog; // [MỚI]
+import com.example.voicenote.ui.order.OrderDetailActivity;
 import com.example.voicenote.ui.quick.GridSpacingItemDecoration;
 import com.example.voicenote.ui.quick.QuickGridAdapter;
 // [SỬA] Import ViewModel mới
@@ -982,7 +983,7 @@ public class SaleActivity extends AppCompatActivity {
 
         // Nếu là Sửa, dùng lại ID cũ
         if (isEditMode) {
-            order.id = editingOrderId;
+            order.id = editingOrderId; // Gán lại ID cũ để Update
         }
 
         // 3. Lấy thông tin khách hàng
@@ -1010,10 +1011,13 @@ public class SaleActivity extends AppCompatActivity {
         // (currentOrderItems chính là List<OrderItemEntity> mà ViewModel cần)
         orderEditViewModel.saveOrder(order, currentOrderItems);
 
-        // [SỬA] Logic điều hướng
+        // Logic điều hướng
         if (isEditMode) {
-            // Nếu là Sửa, chỉ cần đóng lại
-            finish();
+            //Quay trở lại OrderDetailActivity
+            Intent intent = new Intent(this, OrderDetailActivity.class);
+            intent.putExtra("order_id", editingOrderId); // Gửi lại ID
+            startActivity(intent);
+            finish(); // Đóng SaleActivity
         } else {
             // Nếu là Tạo mới, quay về Main và mở tab Order
             Intent intent = new Intent(this, MainActivity.class);
