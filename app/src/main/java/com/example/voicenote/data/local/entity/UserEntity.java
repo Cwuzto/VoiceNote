@@ -18,13 +18,12 @@ public class UserEntity {
     @ColumnInfo(name = "username")
     public String username;
 
-    // [SỬA] Đổi tên 2 cột này
+    // Đổi tên 2 cột này
     @ColumnInfo(name = "password_hash")
     public String passwordHash; // Sẽ lưu hash
 
     @ColumnInfo(name = "password_salt")
     public String passwordSalt; // Sẽ lưu salt
-    // [XOÁ] Xoá cột 'password' cũ
 
     @ColumnInfo(name = "full_name")
     public String fullName;
@@ -37,6 +36,12 @@ public class UserEntity {
 
     @ColumnInfo(name = "email")
     public String email;
+
+    @ColumnInfo(name = "gender")
+    public String gender;
+
+    @ColumnInfo(name = "image_url")
+    public String imageUrl;
 
     @ColumnInfo(name = "is_active")
     public boolean isActive;

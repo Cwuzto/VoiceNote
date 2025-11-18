@@ -3,6 +3,8 @@ package com.example.voicenote.ui.more;
 
 import android.os.Bundle;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
@@ -15,14 +17,16 @@ import com.example.voicenote.util.SessionManager;
 import com.example.voicenote.vm.ProfileViewModel;
 
 public class ProfileActivity extends AppCompatActivity {
-    private ProfileViewModel viewModel; // [SỬA]
-    private SessionManager sessionManager; // [MỚI]
-    private UserEntity currentUser; // [MỚI]
+    private ProfileViewModel viewModel;
+    private SessionManager sessionManager;
+    private UserEntity currentUser;
 
     private EditText edtFullName, edtUsername, edtPhone, edtEmail;
     private EditText edtOldPassword, edtNewPassword;
     private TextView btnSave;
-    private long userId; // [MỚI]
+    private ImageView imgAvatar;
+    private RadioGroup rgGender;
+    private long userId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,8 +42,8 @@ public class ProfileActivity extends AppCompatActivity {
         findViewById(R.id.btnClose).setOnClickListener(v -> finish());
         btnSave.setOnClickListener(v -> saveProfile());
 
-        observeViewModel(); // [MỚI]
-        loadCurrentUserData(); // [SỬA]
+        observeViewModel();
+        loadCurrentUserData();
     }
 
     private void findViews() {
@@ -50,6 +54,8 @@ public class ProfileActivity extends AppCompatActivity {
         edtOldPassword = findViewById(R.id.edtOldPassword);
         edtNewPassword = findViewById(R.id.edtNewPassword);
         btnSave = findViewById(R.id.btnSave);
+        imgAvatar = findViewById(R.id.imgAvatar);
+        rgGender = findViewById(R.id.rgGender);
     }
 
     private void loadCurrentUserData() {
@@ -61,13 +67,48 @@ public class ProfileActivity extends AppCompatActivity {
         // [SỬA] Lấy dữ liệu từ ViewModel
         viewModel.getUser(userId).observe(this, user -> {
             if (user != null) {
+                //Điền dữ liệu
                 currentUser = user; // Lưu lại user hiện tại
                 edtFullName.setText(user.fullName);
                 edtUsername.setText(user.username);
                 edtPhone.setText(user.phone);
                 edtEmail.setText(user.email);
+
+                // (Tải ảnh - Dùng Glide)
+                // if (user.imageUrl != null) {
+                //    Glide.with(this).load(user.imageUrl).into(imgAvatar);
+                // }
+
+                // Set Gender
+                if ("Nữ".equals(user.gender)) {
+                    rgGender.check(R.id.radioFemale);
+                } else if ("Khác".equals(user.gender)) {
+                    rgGender.check(R.id.radioOther);
+                } else {
+                    rgGender.check(R.id.radioMale);
+                }
+
+                // PHÂN QUYỀN
+                if ("OWNER".equals(user.role)) {
+                    // Chủ quán được sửa
+                    edtFullName.setEnabled(true);
+                    setRadioGroupEnabled(rgGender, true);
+                    // (Thêm code cho phép upload ảnh)
+                } else {
+                    // Nhân viên không được sửa
+                    edtFullName.setEnabled(false);
+                    setRadioGroupEnabled(rgGender, false);
+                    // (Thêm code ẩn nút upload ảnh)
+                }
             }
         });
+    }
+
+    // Hàm helper để disable RadioGroup
+    private void setRadioGroupEnabled(RadioGroup radioGroup, boolean enabled) {
+        for (int i = 0; i < radioGroup.getChildCount(); i++) {
+            radioGroup.getChildAt(i).setEnabled(enabled);
+        }
     }
 
     // Lắng nghe kết quả từ ViewModel
@@ -92,24 +133,26 @@ public class ProfileActivity extends AppCompatActivity {
     private void saveProfile() {
         if (currentUser == null) return;
 
-        String fullName = edtFullName.getText().toString().trim();
-        String phone = edtPhone.getText().toString().trim();
-        String email = edtEmail.getText().toString().trim();
-        String oldPass = edtOldPassword.getText().toString().trim();
-        String newPass = edtNewPassword.getText().toString().trim();
+        // [SỬA] Chỉ cập nhật các trường được phép
 
-        if (fullName.isEmpty()) {
-            edtFullName.setError("Tên không được trống");
-            return;
+        // 1. Cập nhật thông tin (Chỉ OWNER mới cập nhật Tên/Giới tính)
+        if ("OWNER".equals(currentUser.role)) {
+            currentUser.fullName = edtFullName.getText().toString().trim();
+            int checkedId = rgGender.getCheckedRadioButtonId();
+            if (checkedId == R.id.radioFemale) currentUser.gender = "Nữ";
+            else if (checkedId == R.id.radioOther) currentUser.gender = "Khác";
+            else currentUser.gender = "Nam";
         }
 
-        // 1. Cập nhật thông tin
-        currentUser.fullName = fullName;
-        currentUser.phone = phone;
-        currentUser.email = email;
+        // Cả hai đều được cập nhật SĐT/Email
+        currentUser.phone = edtPhone.getText().toString().trim();
+        currentUser.email = edtEmail.getText().toString().trim();
+
         viewModel.updateProfile(currentUser);
 
-        // 2. Đổi mật khẩu (nếu có)
+        // 2. Đổi mật khẩu (Cả hai đều được)
+        String oldPass = edtOldPassword.getText().toString().trim();
+        String newPass = edtNewPassword.getText().toString().trim();
         if (!oldPass.isEmpty() || !newPass.isEmpty()) {
             if (oldPass.isEmpty()) {
                 edtOldPassword.setError("Cần nhập mật khẩu cũ"); return;
@@ -119,7 +162,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
             viewModel.changePassword(userId, oldPass, newPass);
         }
-
+        Toast.makeText(this, "Đã lưu", Toast.LENGTH_SHORT).show();
         // Không finish() ngay, đợi kết quả từ observeViewModel
     }
 }

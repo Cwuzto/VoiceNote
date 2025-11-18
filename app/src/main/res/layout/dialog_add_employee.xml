@@ -26,6 +26,61 @@
         android:background="@drawable/bg_field_outline_blue"/>
 
     <TextView
+        android:text="Email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"/>
+    <EditText
+        android:id="@+id/edtEmail"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Nhập email (không bắt buộc)"
+        android:inputType="textEmailAddress"
+        android:background="@drawable/bg_field_outline_blue"/>
+
+    <TextView
+        android:text="Số điện thoại"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"/>
+    <EditText
+        android:id="@+id/edtPhone"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Nhập SĐT (không bắt buộc)"
+        android:inputType="phone"
+        android:background="@drawable/bg_field_outline_blue"/>
+
+    <TextView
+        android:text="Giới tính"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"/>
+    <RadioGroup
+        android:id="@+id/rgGender"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RadioButton
+            android:id="@+id/radioMale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nam"/>
+        <RadioButton
+            android:id="@+id/radioFemale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Nữ"/>
+        <RadioButton
+            android:id="@+id/radioOther"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Khác"/>
+    </RadioGroup>
+
+    <TextView
         android:text="Tên đăng nhập"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -51,6 +106,16 @@
         android:hint="Tối thiểu 6 ký tự"
         android:inputType="textPassword"
         android:background="@drawable/bg_field_outline_blue"/>
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switchActive"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Kích hoạt tài khoản"
+        android:textSize="16sp"
+        android:textColor="@color/text_primary"
+        android:checked="true"/>
 
     <LinearLayout
         android:layout_marginTop="16dp"

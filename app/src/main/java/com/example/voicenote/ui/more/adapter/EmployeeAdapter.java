@@ -57,7 +57,16 @@ public class EmployeeAdapter extends ListAdapter<UserEntity, EmployeeAdapter.Emp
             tvEmployeeName.setText(user.fullName);
             tvEmployeeUsername.setText(user.username);
 
-            // Xử lý menu Sửa/Xoá (bạn có thể dùng PopupMenu)
+            // Làm mờ nếu user không active
+            if (user.isActive) {
+                itemView.setAlpha(1.0f);
+                btnMore.setEnabled(true);
+            } else {
+                itemView.setAlpha(0.5f); // Làm mờ
+                btnMore.setEnabled(false); // Tắt nút ...
+            }
+
+            // Xử lý menu Sửa/Xoá (có thể dùng PopupMenu)
             btnMore.setOnClickListener(v -> {
                 // Tạm thời: Bấm vào là Edit
                 listener.onEditClick(user);
@@ -82,7 +91,8 @@ public class EmployeeAdapter extends ListAdapter<UserEntity, EmployeeAdapter.Emp
                 @Override
                 public boolean areContentsTheSame(@NonNull UserEntity oldItem, @NonNull UserEntity newItem) {
                     return oldItem.fullName.equals(newItem.fullName) &&
-                            oldItem.username.equals(newItem.username);
+                            oldItem.username.equals(newItem.username) &&
+                            oldItem.isActive == newItem.isActive;
                 }
             };
 }
