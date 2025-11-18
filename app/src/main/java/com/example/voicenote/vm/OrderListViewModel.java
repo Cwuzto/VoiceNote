@@ -20,10 +20,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-/**
- * ViewModel cho màn danh sách hoá đơn (Order), có lọc theo từ khoá.
- * (Đã refactor từ InvoiceListViewModel)
- */
 public class OrderListViewModel extends AndroidViewModel {
 
     private final OrderRepository repository;
@@ -56,7 +52,7 @@ public class OrderListViewModel extends AndroidViewModel {
     }
 
     /**
-     * [SỬA] Fragment sẽ observe LiveData này
+     * Fragment sẽ observe LiveData này
      */
     public LiveData<List<Object>> getGroupedOrders() {
         return groupedAndFilteredOrders;
@@ -163,7 +159,7 @@ public class OrderListViewModel extends AndroidViewModel {
         return groupFilteredList(keywordFilteredList);
     }
     /**
-     * [MỚI] Hàm này nhận danh sách đã lọc và chèn các Header vào
+     * Hàm này nhận danh sách đã lọc và chèn các Header vào
      */
     private List<Object> groupFilteredList(List<OrderWithItems> filteredList) {
         List<Object> displayList = new ArrayList<>();

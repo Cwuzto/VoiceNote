@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * [MỚI] Tải User và ẩn Tab nếu là EMPLOYEE
+     * Tải User và ẩn Tab nếu là EMPLOYEE
      */
     private void loadUserAndSetupPermissions() {
         long userId = sessionManager.getUserId();
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * [MỚI] Hàm trung tâm xử lý "tin nhắn" điều hướng
+     * Hàm trung tâm xử lý "tin nhắn" điều hướng
      */
     private void handleNavigationIntent(Intent intent) {
         if (intent == null || intent.getStringExtra("NAVIGATE_TO") == null) {

@@ -14,8 +14,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * EN: Repository for managing products.
- * VI: Repository quản lý các sản phẩm (Product).
+ * Repository quản lý các sản phẩm (Product).
  * (Đã refactor từ QuickItemRepository)
  */
 public class ProductRepository {
@@ -29,24 +28,21 @@ public class ProductRepository {
     }
 
     /**
-     * EN: Retrieve all products (LiveData for auto updates).
-     * VI: Lấy danh sách sản phẩm (LiveData giúp UI tự động cập nhật).
+     * Lấy danh sách sản phẩm (LiveData giúp UI tự động cập nhật).
      */
     public LiveData<List<ProductEntity>> getAllProducts() {
         return productDao.getAllProducts();
     }
 
     /**
-     * EN: Insert a new product.
-     * VI: Thêm mới một sản phẩm.
+     * Thêm mới một sản phẩm.
      */
     public void insertProduct(ProductEntity product) {
         executor.execute(() -> productDao.insertProduct(product));
     }
 
     /**
-     * EN: Delete a product.
-     * VI: Xoá một sản phẩm khỏi cơ sở dữ liệu.
+     * Xoá một sản phẩm khỏi cơ sở dữ liệu.
      */
     public void deleteProduct(ProductEntity product) {
         executor.execute(() -> productDao.deleteProduct(product));

@@ -42,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
         });
 
-        // [SỬA] Lắng nghe sự kiện điều hướng mới
+        // Lắng nghe sự kiện điều hướng mới
         authViewModel.getLoginNavigationEvent().observe(this, event -> {
             if (event == null) return;
 
@@ -64,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        // [MỚI] Lắng nghe lỗi đăng nhập
+        // Lắng nghe lỗi đăng nhập
         authViewModel.getLoginError().observe(this, error -> {
             if (error != null && !error.isEmpty()) {
                 Toast.makeText(this, error, Toast.LENGTH_SHORT).show();

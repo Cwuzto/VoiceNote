@@ -81,7 +81,7 @@ public class BestSellerViewModel extends AndroidViewModel {
             currentSource = repository.getBestSellersByQuantity(range.first, range.second);
         }
 
-        // 2. [MỚI] Lọc theo Keyword (bằng Java)
+        // 2. Lọc theo Keyword (bằng Java)
         bestSellersList.addSource(currentSource, data -> {
             if (keyword.isEmpty()) {
                 bestSellersList.setValue(data); // Không tìm -> Hiển thị tất cả

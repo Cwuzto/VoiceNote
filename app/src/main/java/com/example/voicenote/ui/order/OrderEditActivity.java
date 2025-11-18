@@ -17,19 +17,19 @@ import java.util.List;
  * Activity sửa/tạo Order (đã refactor từ InvoiceEditActivity)
  */
 public class OrderEditActivity extends AppCompatActivity {
-    private OrderEditViewModel viewModel; // [SỬA]
+    private OrderEditViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
-        // [SỬA] Đổi layout (bạn cần đổi tên file XML)
+        // Đổi layout (bạn cần đổi tên file XML)
 
-        // [SỬA] ViewModel
+        // ViewModel
         viewModel = new ViewModelProvider(this).get(OrderEditViewModel.class);
-        findViewById(R.id.btnDone).setOnClickListener(v -> saveOrder()); // [SỬA]
+        findViewById(R.id.btnDone).setOnClickListener(v -> saveOrder());
     }
 
-    // [SỬA] Cập nhật logic
+    // Cập nhật logic
     private void saveOrder() {
         OrderEntity order = new OrderEntity();
         order.customerName = "Khách mới";
@@ -46,7 +46,7 @@ public class OrderEditActivity extends AppCompatActivity {
         item.note = "";
         items.add(item);
 
-        viewModel.saveOrder(order, items); // [SỬA]
+        viewModel.saveOrder(order, items);
         finish();
     }
 }

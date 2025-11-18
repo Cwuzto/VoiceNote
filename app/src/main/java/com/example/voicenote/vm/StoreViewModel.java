@@ -27,18 +27,12 @@ public class StoreViewModel extends AndroidViewModel {
     public LiveData<Boolean> getCreateStoreResult() {
         return createStoreResult;
     }
-
-    // [MỚI]
     public LiveData<Boolean> getUpdateStoreResult() {
         return updateStoreResult;
     }
-
-    // [MỚI] Lấy LiveData Store
     public LiveData<StoreEntity> getStore(long ownerId) {
         return repository.getStoreByOwnerIdLiveData(ownerId);
     }
-
-    // [MỚI] Lấy LiveData Owner
     public LiveData<UserEntity> getOwner(long ownerId) {
         return userRepository.getUserById(ownerId);
     }

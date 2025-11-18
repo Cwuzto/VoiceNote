@@ -18,8 +18,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.voicenote.R;
-import com.example.voicenote.data.local.entity.OrderItemEntity; // Import
-import com.example.voicenote.util.MoneyUtils; // Import MoneyUtils
+import com.example.voicenote.data.local.entity.OrderItemEntity;
+import com.example.voicenote.util.MoneyUtils;
 
 import java.util.Locale;
 

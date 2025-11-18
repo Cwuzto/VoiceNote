@@ -76,5 +76,9 @@
             android:name=".ui.more.BankAccountListActivity"
             android:exported="false"
             android:theme="@style/Theme.VoiceNote" />
+        <activity
+            android:name=".ui.more.SpeakerSettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.VoiceNote" />
     </application>
 </manifest>

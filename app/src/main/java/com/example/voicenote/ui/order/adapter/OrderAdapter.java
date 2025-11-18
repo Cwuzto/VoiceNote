@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.voicenote.R;
@@ -45,7 +44,6 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private final List<Object> data = new ArrayList<>(); // Adapter này chứa List<Object>
     private final OnPaidChange onPaidChangeCallback;
     private final OnItemClickListener onItemClickCallback;
-    private String userRole = "EMPLOYEE"; // Mặc định Role là Employee
 
     public OrderAdapter(OnPaidChange onPaidChange, OnItemClickListener onItemClick) {
         this.onPaidChangeCallback = onPaidChange;
@@ -71,7 +69,7 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // [SỬA] Inflate layout dựa trên viewType
+        // Inflate layout dựa trên viewType
         if (viewType == TYPE_HEADER) {
             View v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_order_header, parent, false);
@@ -183,7 +181,7 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             // Logic hiển thị và Khóa Checkbox
             boolean isPaid = "PAID".equals(order.status);
             cbPaid.setChecked(isPaid);
-            cbPaid.setEnabled(!isPaid); // Yêu cầu 2: Khóa nếu đã thanh toán
+            cbPaid.setEnabled(!isPaid); // Khóa nếu đã thanh toán
             btnPaidArea.setEnabled(!isPaid); // Khóa luôn cả layout cha
 
             SimpleDateFormat df = new SimpleDateFormat("HH:mm", Locale.getDefault());

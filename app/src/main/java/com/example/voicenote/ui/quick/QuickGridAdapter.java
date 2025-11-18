@@ -9,19 +9,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.voicenote.R;
-// [SỬA] Import entity mới
 import com.example.voicenote.data.local.entity.ProductEntity;
 
 import java.util.List;
 
-/**
- * 4-column grid with a static "Add item" tile at position 0.
- */
 public class QuickGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // --- Interfaces for callbacks ---
     public interface OnAddClick { void onAddClick(); }
-    // [SỬA] Cập nhật interface
+    // Cập nhật interface
     public interface OnPick { void onPick(ProductEntity item, int position); }
     public interface OnRemove { void onRemove(ProductEntity item, int position); }
 
@@ -30,12 +26,12 @@ public class QuickGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static final int VT_ITEM = 1;
 
     // --- Fields ---
-    private final List<ProductEntity> data; // [SỬA]
+    private final List<ProductEntity> data;
     private final OnAddClick onAddClick;
     private final OnPick onPick;
     private final OnRemove onRemove;
 
-    // [SỬA] Cập nhật constructor
+    // Cập nhật constructor
     public QuickGridAdapter(List<ProductEntity> data, OnAddClick onAddClick, OnPick onPick, OnRemove onRemove) {
         this.data = data;
         this.onAddClick = onAddClick;
@@ -75,17 +71,17 @@ public class QuickGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             return;
         }
 
-        // [SỬA] Lấy ProductEntity
+        // Lấy ProductEntity
         final ProductEntity item = data.get(position - 1);
         final VHItem itemViewHolder = (VHItem) holder;
 
         // Gán dữ liệu cơ bản
         itemViewHolder.tvName.setText(item.name);
 
-        // [MỚI] Tính toán "initial" vì ProductEntity không có trường này
+        // Tính toán "initial" vì ProductEntity không có trường này
         itemViewHolder.tvInitial.setText(makeInitial(item.name));
 
-        // EN: pastel background per position; VI: đổi màu pastel theo vị trí
+        // đổi màu pastel theo vị trí
         int[] pastel = {0xFFEAF1FF, 0xFFF0E7FF, 0xFFEFFCF3, 0xFFFFF3E0, 0xFFFFE4EC};
         View chip = itemViewHolder.itemView.findViewById(R.id.chipBox);
         if (chip.getBackground() != null) {
@@ -143,7 +139,7 @@ public class QuickGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     /**
-     * [MỚI] Hàm helper để tính toán initial từ tên
+     * Hàm helper để tính toán initial từ tên
      */
     private String makeInitial(String name){
         if (name == null || name.isEmpty()) return "?";

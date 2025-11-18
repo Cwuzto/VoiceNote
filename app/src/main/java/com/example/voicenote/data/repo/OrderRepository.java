@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * VI: Repository xử lý các thao tác hoá đơn (Order) và dòng hàng (OrderItem).
+ * Repository xử lý các thao tác hoá đơn (Order) và dòng hàng (OrderItem).
  */
 public class OrderRepository {
     private final OrderDao orderDao;
@@ -28,23 +28,21 @@ public class OrderRepository {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public OrderRepository(Application app) {
-        // [SỬA] Sử dụng AppDatabase singleton
+        // Sử dụng AppDatabase singleton
         AppDatabase db = AppDatabase.getInstance(app);
         this.orderDao = db.orderDao();
         this.orderItemDao = db.orderItemDao();
     }
 
     /**
-     * EN: Get all orders with their items.
-     * VI: Lấy tất cả đơn hàng và các món hàng bên trong.
+     * Lấy tất cả đơn hàng và các món hàng bên trong.
      */
     public LiveData<List<OrderWithItems>> getOrdersWithItems() {
         return orderDao.getOrdersWithItems();
     }
 
     /**
-     * EN: Get a specific order by its ID.
-     * VI: Lấy một đơn hàng cụ thể bằng ID.
+     * lấy một đơn hàng cụ thể bằng ID.
      */
     public LiveData<OrderWithItems> getOrderById(long id) {
         return orderDao.getOrderById(id);

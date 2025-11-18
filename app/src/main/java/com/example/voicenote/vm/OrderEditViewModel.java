@@ -6,32 +6,24 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
-import com.example.voicenote.data.local.entity.OrderEntity; // [SỬA]
-import com.example.voicenote.data.local.entity.OrderItemEntity; // [SỬA]
-import com.example.voicenote.data.repo.OrderRepository; // [SỬA]
+import com.example.voicenote.data.local.entity.OrderEntity;
+import com.example.voicenote.data.local.entity.OrderItemEntity;
+import com.example.voicenote.data.repo.OrderRepository;
 
 import java.util.List;
 
-/**
- * EN: ViewModel for order editing / creation screen.
- * VI: ViewModel cho màn hình chỉnh sửa / tạo hoá đơn (Order).
- * (Đã refactor từ InvoiceEditViewModel)
- */
 public class OrderEditViewModel extends AndroidViewModel {
-    private final OrderRepository repository; // [SỬA]
+    private final OrderRepository repository;
 
     public OrderEditViewModel(@NonNull Application app) {
         super(app);
-        repository = new OrderRepository(app); // [SỬA]
+        repository = new OrderRepository(app);
     }
 
     /**
-     * EN: Save a new order with lines.
-     * VI: Lưu một hoá đơn mới cùng danh sách dòng hàng.
+     * Lưu một hoá đơn mới cùng danh sách dòng hàng.
      */
-    public void saveOrder(OrderEntity order, List<OrderItemEntity> items) { // [SỬA]
-        repository.saveOrder(order, items); // [SỬA]
+    public void saveOrder(OrderEntity order, List<OrderItemEntity> items) {
+        repository.saveOrder(order, items);
     }
-
-    // [XOÁ] Hàm insertInvoiceWithLines cũ
 }

@@ -58,7 +58,7 @@ public interface OrderDao {
     LiveData<List<ChartDataPoint>> getChartData(long startTime);
 
     /**
-     * [MỚI] Lấy dữ liệu doanh thu (đã trả) nhóm theo GIỜ
+     * Lấy dữ liệu doanh thu (đã trả) nhóm theo GIỜ
      * (Chỉ dùng cho "Hôm nay" và "Hôm qua")
      */
     @Query("SELECT (created_at / 3600000) * 3600000 as day_millis, SUM(total_amount) as day_revenue " +

@@ -28,23 +28,24 @@ public class BankAccountViewModel extends AndroidViewModel {
     public LiveData<List<BankAccountEntity>> getAllAccounts() {
         return allAccounts;
     }
-
+    // Nếu là tài khoản đầu tiên, set mặc định
     public void insertAccount(BankAccountEntity account) {
         executor.execute(() -> {
             account.createdAt = System.currentTimeMillis();
             account.updatedAt = System.currentTimeMillis();
-            // Nếu là tài khoản đầu tiên, set mặc định
-            // (Logic này có thể cần query count trước, nhưng tạm thời bỏ qua)
-            dao.insertAccount(account);
+            dao.insertAccount(account); // Gọi hàm transaction trong DAO
         });
     }
 
     public void updateAccount(BankAccountEntity account) {
         executor.execute(() -> {
             account.updatedAt = System.currentTimeMillis();
-            dao.insertAccount(account); // Insert with REPLACE acts as Update
+            dao.updateAccount(account); // Gọi hàm transaction trong DAO
         });
     }
 
-    // (Bạn có thể thêm deleteAccount nếu cần, thêm hàm delete vào DAO trước)
+    // Thêm hàm xoá
+    public void deleteAccount(BankAccountEntity account) {
+        executor.execute(() -> dao.deleteAccount(account));
+    }
 }
