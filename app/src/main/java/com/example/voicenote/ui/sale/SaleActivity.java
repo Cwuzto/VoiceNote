@@ -97,6 +97,7 @@ public class SaleActivity extends AppCompatActivity {
     // Biến theo dõi chế độ Sửa
     private boolean isEditMode = false;
     private long editingOrderId = 0; // ID của đơn hàng đang sửa
+    private long editingCreatedAt = 0; // Biến lưu thời gian tạo cũ
 
     private boolean isListening = false; // gán biến để theo dõi trạng thái mic (mặc định false)
     private boolean gridVisible = false;
@@ -178,6 +179,7 @@ public class SaleActivity extends AppCompatActivity {
             editingOrderId = intent.getLongExtra("EDIT_ORDER_ID", 0);
 
             // Lấy dữ liệu cũ
+            editingCreatedAt = intent.getLongExtra("CREATED_AT", System.currentTimeMillis()); // thời gian tạo đơn cũ
             String customerName = intent.getStringExtra("CUSTOMER_NAME");
             ArrayList<OrderItemEntity> items = intent.getParcelableArrayListExtra("ORDER_ITEMS");
 
@@ -1003,6 +1005,8 @@ public class SaleActivity extends AppCompatActivity {
         // Nếu là Sửa, dùng lại ID cũ
         if (isEditMode) {
             order.id = editingOrderId; // Gán lại ID cũ để Update
+            // Gán lại thời gian tạo cũ Nếu không gán, nó sẽ là 0, và Room sẽ ghi đè số 0 vào DB
+            order.createdAt = editingCreatedAt;
         }
 
         // 3. Lấy thông tin khách hàng

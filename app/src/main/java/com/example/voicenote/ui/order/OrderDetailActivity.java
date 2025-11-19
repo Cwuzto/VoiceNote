@@ -138,6 +138,9 @@ public class OrderDetailActivity extends AppCompatActivity {
         // Gửi Tên khách
         intent.putExtra("CUSTOMER_NAME", currentOrder.order.customerName);
 
+        // Gửi thời gian tạo đơn
+        intent.putExtra("CREATED_AT", currentOrder.order.createdAt);
+
         // Gửi danh sách món (đã làm Parcelable)
         intent.putParcelableArrayListExtra(
                 "ORDER_ITEMS",
