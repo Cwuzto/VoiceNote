@@ -13,16 +13,12 @@ import com.example.voicenote.vm.OrderEditViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Activity sửa/tạo Order (đã refactor từ InvoiceEditActivity)
- */
 public class OrderEditActivity extends AppCompatActivity {
     private OrderEditViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
-        // Đổi layout (bạn cần đổi tên file XML)
 
         // ViewModel
         viewModel = new ViewModelProvider(this).get(OrderEditViewModel.class);
