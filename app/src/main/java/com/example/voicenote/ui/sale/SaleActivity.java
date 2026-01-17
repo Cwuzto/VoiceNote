@@ -1040,14 +1040,12 @@ public class SaleActivity extends AppCompatActivity {
             Intent intent = new Intent(this, OrderDetailActivity.class);
             intent.putExtra("order_id", editingOrderId); // Gửi lại ID
             startActivity(intent);
-            finish(); // Đóng SaleActivity
         } else {
             // Nếu là Tạo mới, quay về Main và mở tab Order
             Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             intent.putExtra("NAVIGATE_TO", "ORDERS_TAB");
             startActivity(intent);
-            finish();
         }
 
         // 7. Chuyển hướng về MainActivity VÀ yêu cầu mở tab Order
@@ -1059,10 +1057,7 @@ public class SaleActivity extends AppCompatActivity {
         // Gửi "tin nhắn"
         intent.putExtra("NAVIGATE_TO", "ORDERS_TAB");
 
-        startActivity(intent);
-
-        // 7. Lưu thành công, đóng Activity
-        finish();
+        finish(); //Đóng sale activity
     }
 
     // Gắn ItemTouchHelper để xử lý vuốt
